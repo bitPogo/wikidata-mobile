@@ -1,0 +1,28 @@
+build:
+  - .github/**/*
+
+scripts:
+  - buildSrc/src/main/kotlin/**/script/**/*.kts
+
+dependencies:
+  - buildSrc/**/*
+  - gradlePlugin/test-util-dependency/**/*
+
+documentation:
+  - docs/**/*
+  - README.adoc
+  - LICENSE
+  - CHANGELOG.adoc
+  - CODE-OF-CONDUCT.adoc
+  - CONTRIBUTION.adoc
+  - readmeOSS.adoc
+
+# Library
+mw-client:
+  - mw-client/**/*
+
+# Features
+
+# AppAndroid
+app:
+  - app-android/**/*

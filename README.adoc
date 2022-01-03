@@ -1,0 +1,20 @@
+= Banana-i18n-KMP
+:link-repository: https://github.com/bitPogo/wikidata-mobile
+:project-version: 0.1.0
+:doctype: article
+:!showtitle:
+:toc: macro
+:toclevels: 2
+:toc-title:
+:icons: font
+:imagesdir: assets/images
+ifdef::env-github[]
+:warning-caption: :warning:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+endif::[]
+
+
+Comming soon
