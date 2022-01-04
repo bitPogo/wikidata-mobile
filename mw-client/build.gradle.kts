@@ -34,6 +34,10 @@ kotlin {
                         "kotlin-stdlib-jdk8"
                     )
                 }
+
+                implementation(Dependency.multiplatform.coroutines.common)
+                implementation(Dependency.multiplatform.ktor.common.core)
+                implementation(Dependency.multiplatform.ktor.common.serialization)
             }
         }
         val commonTest by getting {
@@ -41,13 +45,20 @@ kotlin {
                 implementation(Dependency.multiplatform.test.common)
                 implementation(Dependency.multiplatform.test.annotations)
                 implementation(Dependency.multiplatform.test.fixture)
-                implementation(LocalDependency.antibytes.test)
+
+                implementation(Dependency.multiplatform.ktor.mock)
+
+                implementation(LocalDependency.antibytes.test.core)
+                implementation(LocalDependency.antibytes.test.coroutine)
+                implementation(LocalDependency.antibytes.test.ktor)
             }
         }
 
         val androidMain by getting {
             dependencies {
                implementation(Dependency.multiplatform.kotlin.android)
+                implementation(Dependency.multiplatform.coroutines.android)
+                implementation(Dependency.multiplatform.ktor.android.client)
             }
         }
         val androidTest by getting {
@@ -63,6 +74,8 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(Dependency.multiplatform.kotlin.jdk8)
+                implementation(Dependency.multiplatform.coroutines.common)
+                implementation(Dependency.multiplatform.ktor.jvm.core)
             }
         }
         val jvmTest by getting {

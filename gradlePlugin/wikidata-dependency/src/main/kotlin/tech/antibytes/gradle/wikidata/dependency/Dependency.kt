@@ -11,6 +11,12 @@ object Dependency {
     val antibytes = AntiBytes
 
     object AntiBytes {
-        val test = "tech.antibytes.test-utils-kmp:test-utils:${Version.antibytes.test}"
+        val test = Test
+
+        object Test {
+            val core = "tech.antibytes.test-utils-kmp:test-utils:${Version.antibytes.test}"
+            val coroutine = "tech.antibytes.test-utils-kmp:test-utils-coroutine:${Version.antibytes.test}"
+            val ktor = "tech.antibytes.test-utils-kmp:test-utils-ktor:${Version.antibytes.test}"
+        }
     }
 }
