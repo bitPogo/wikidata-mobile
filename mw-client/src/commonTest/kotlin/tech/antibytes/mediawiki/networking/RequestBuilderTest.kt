@@ -18,6 +18,7 @@ import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.util.toMap
 import kotlinx.coroutines.GlobalScope
+import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.util.test.coroutine.runBlockingTestWithContext
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
@@ -342,7 +343,7 @@ class RequestBuilderTest {
         val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
 
         // Then
-        val error = assertFailsWith<HttpRuntimeError.RequestValidationFailure> {
+        val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
             RequestBuilder(
                 client,
@@ -363,7 +364,7 @@ class RequestBuilderTest {
         val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
 
         // Then
-        val error = assertFailsWith<HttpRuntimeError.RequestValidationFailure> {
+        val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
             RequestBuilder(
                 client,
@@ -384,7 +385,7 @@ class RequestBuilderTest {
         val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
 
         // Then
-        val error = assertFailsWith<HttpRuntimeError.RequestValidationFailure> {
+        val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
             RequestBuilder(
                 client,
@@ -405,7 +406,7 @@ class RequestBuilderTest {
         val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
 
         // Then
-        val error = assertFailsWith<HttpRuntimeError.RequestValidationFailure> {
+        val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
             RequestBuilder(
                 client,
@@ -426,7 +427,7 @@ class RequestBuilderTest {
         val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
 
         // Then
-        val error = assertFailsWith<HttpRuntimeError.RequestValidationFailure> {
+        val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
             RequestBuilder(
                 client,

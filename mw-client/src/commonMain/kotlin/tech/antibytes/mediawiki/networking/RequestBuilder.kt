@@ -15,6 +15,7 @@ import io.ktor.client.request.port
 import io.ktor.client.statement.HttpStatement
 import io.ktor.http.HttpMethod
 import io.ktor.http.URLProtocol
+import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract.RequestBuilder.Companion.BODYLESS_METHODS
 
 internal class RequestBuilder constructor(
@@ -47,13 +48,13 @@ internal class RequestBuilder constructor(
     private fun validateBodyAgainstMethod(method: NetworkingContract.Method) {
         if (body != null) {
             if (BODYLESS_METHODS.contains(method)) {
-                throw HttpRuntimeError.RequestValidationFailure(
+                throw MwClientError.RequestValidationFailure(
                     "${method.name.uppercase()} cannot be combined with a RequestBody."
                 )
             }
         } else {
             if (!BODYLESS_METHODS.contains(method)) {
-                throw HttpRuntimeError.RequestValidationFailure(
+                throw MwClientError.RequestValidationFailure(
                     "${method.name.uppercase()} must be combined with a RequestBody."
                 )
             }

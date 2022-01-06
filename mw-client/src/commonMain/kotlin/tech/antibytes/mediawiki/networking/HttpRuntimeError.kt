@@ -6,10 +6,4 @@
 
 package tech.antibytes.mediawiki.networking
 
-import io.ktor.http.HttpStatusCode
-
-internal sealed class HttpRuntimeError(message: String? = null) : RuntimeException(message) {
-    class RequestError(val status: HttpStatusCode) : HttpRuntimeError()
-    class NoConnection : HttpRuntimeError()
-    class RequestValidationFailure(message: String) : HttpRuntimeError(message)
-}
+internal sealed class HttpRuntimeError(message: String? = null) : RuntimeException(message)
