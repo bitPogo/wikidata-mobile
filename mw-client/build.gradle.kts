@@ -6,7 +6,6 @@
 
 import tech.antibytes.gradle.dependency.Dependency
 import tech.antibytes.gradle.wikidata.dependency.Dependency as LocalDependency
-import tech.antibytes.gradle.coverage.api.JvmJacocoConfiguration
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 
 plugins {
@@ -25,6 +24,12 @@ kotlin {
     jvm()
 
     sourceSets {
+        all {
+            languageSettings.apply {
+                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+            }
+        }
+
         val commonMain by getting {
             dependencies {
                 implementation(Dependency.multiplatform.kotlin.common)
@@ -44,11 +49,11 @@ kotlin {
             dependencies {
                 implementation(Dependency.multiplatform.test.common)
                 implementation(Dependency.multiplatform.test.annotations)
-                implementation(Dependency.multiplatform.test.fixture)
 
                 implementation(Dependency.multiplatform.ktor.mock)
 
                 implementation(LocalDependency.antibytes.test.core)
+                implementation(LocalDependency.antibytes.test.fixture)
                 implementation(LocalDependency.antibytes.test.coroutine)
                 implementation(LocalDependency.antibytes.test.ktor)
             }
