@@ -61,7 +61,7 @@ class ResponseValidatorConfiguratorTest {
         // Given
         val propagator = ErrorMapperStub()
 
-        propagator.whenPropagate = {
+        propagator.propagate = {
             throw RuntimeException()
         }
 

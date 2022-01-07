@@ -11,14 +11,14 @@ import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
 internal class ErrorMapperStub(
-    var whenPropagate: ((error: Throwable) -> Unit)? = null
+    var propagate: ((error: Throwable) -> Unit)? = null
 ) : KtorPluginsContract.ErrorMapper, MockContract.Mock {
 
     override fun mapAndThrow(error: Throwable) {
-        whenPropagate?.invoke(error) ?: throw MockError.MissingStub("Missing sideeffect of mapAndThrow")
+        propagate?.invoke(error) ?: throw MockError.MissingStub("Missing sideeffect of mapAndThrow")
     }
 
     override fun clear() {
-        whenPropagate = null
+        propagate = null
     }
 }
