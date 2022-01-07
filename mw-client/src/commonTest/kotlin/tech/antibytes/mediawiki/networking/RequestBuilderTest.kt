@@ -24,7 +24,9 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fixture.pairFixture
+import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory
+import tech.antibytes.util.test.mustBe
 import kotlin.math.absoluteValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -65,7 +67,7 @@ class RequestBuilderTest {
         )
 
         // Then
-        assertTrue(builder is NetworkingContract.RequestBuilder)
+        builder fulfils NetworkingContract.RequestBuilder::class
     }
 
     @Test
@@ -73,10 +75,7 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.method,
-                expected = HttpMethod.Get
-            )
+            request.method mustBe HttpMethod.Get
         }
 
         // When
@@ -92,10 +91,7 @@ class RequestBuilderTest {
         val host: String = fixture.fixture()
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.url.host,
-                expected = host
-            )
+            request.url.host mustBe host
         }
 
         // When
@@ -110,10 +106,7 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.url.fullPath,
-                expected = "/"
-            )
+            request.url.fullPath mustBe "/"
         }
 
         // When
@@ -131,10 +124,7 @@ class RequestBuilderTest {
         val host: String = fixture.fixture()
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.url.fullPath,
-                expected = "/${path.joinToString("/")}"
-            )
+            request.url.fullPath mustBe "/${path.joinToString("/")}"
         }
 
         // When
@@ -149,10 +139,7 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.url.protocol,
-                expected = URLProtocol.HTTPS
-            )
+            request.url.protocol mustBe URLProtocol.HTTPS
         }
 
         // When
@@ -167,10 +154,7 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.url.protocol,
-                expected = URLProtocol.HTTP
-            )
+            request.url.protocol mustBe URLProtocol.HTTP
         }
 
         // When
@@ -186,10 +170,7 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.url.port,
-                expected = URLProtocol.HTTPS.defaultPort
-            )
+            request.url.port mustBe URLProtocol.HTTPS.defaultPort
         }
 
         // When
@@ -207,10 +188,7 @@ class RequestBuilderTest {
 
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.url.port,
-                expected = port
-            )
+            request.url.port mustBe port
         }
 
         // When
@@ -226,12 +204,9 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.headers.toMap(),
-                expected = mapOf(
-                    "Accept-Charset" to listOf("UTF-8"),
-                    "Accept" to listOf("*/*")
-                )
+            request.headers.toMap() mustBe mapOf(
+                "Accept-Charset" to listOf("UTF-8"),
+                "Accept" to listOf("*/*")
             )
         }
 
@@ -254,14 +229,11 @@ class RequestBuilderTest {
         val host: String = fixture.fixture()
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals<Any>(
-                actual = request.headers.toMap(),
-                expected = mapOf(
-                    "Accept-Charset" to listOf("UTF-8"),
-                    "Accept" to listOf("*/*"),
-                    keys[0] to listOf(headers[keys[0]]),
-                    keys[1] to listOf(headers[keys[1]])
-                )
+            request.headers.toMap() mustBe mapOf(
+                "Accept-Charset" to listOf("UTF-8"),
+                "Accept" to listOf("*/*"),
+                keys[0] to listOf(headers[keys[0]]),
+                keys[1] to listOf(headers[keys[1]])
             )
         }
 
@@ -277,10 +249,7 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.url.parameters.toMap(),
-                expected = emptyMap()
-            )
+            request.url.parameters.toMap() mustBe emptyMap()
         }
 
         // When
@@ -303,12 +272,9 @@ class RequestBuilderTest {
         val host: String = fixture.fixture()
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals<Any>(
-                actual = request.url.parameters.toMap(),
-                expected = mapOf(
-                    keys[0] to listOf(parameter[keys[0]]),
-                    keys[1] to listOf(parameter[keys[1]])
-                )
+            request.url.parameters.toMap() mustBe mapOf(
+                keys[0] to listOf(parameter[keys[0]]),
+                keys[1] to listOf(parameter[keys[1]])
             )
         }
 
@@ -324,10 +290,7 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.body.contentLength,
-                expected = 0
-            )
+            request.body.contentLength!! mustBe 0
         }
 
         // When
@@ -352,10 +315,7 @@ class RequestBuilderTest {
         }
 
         // Then
-        assertEquals(
-            actual = error.message,
-            expected = "GET cannot be combined with a RequestBody."
-        )
+        error.message!! mustBe "GET cannot be combined with a RequestBody."
     }
 
     @Test
@@ -373,10 +333,7 @@ class RequestBuilderTest {
         }
 
         // Then
-        assertEquals(
-            actual = error.message,
-            expected = "HEAD cannot be combined with a RequestBody."
-        )
+        error.message!! mustBe "HEAD cannot be combined with a RequestBody."
     }
 
     @Test
@@ -394,10 +351,7 @@ class RequestBuilderTest {
         }
 
         // Then
-        assertEquals(
-            actual = error.message,
-            expected = "POST must be combined with a RequestBody."
-        )
+        error.message!! mustBe "POST must be combined with a RequestBody."
     }
 
     @Test
@@ -415,10 +369,7 @@ class RequestBuilderTest {
         }
 
         // Then
-        assertEquals(
-            actual = error.message,
-            expected = "PUT must be combined with a RequestBody."
-        )
+        error.message!! mustBe "PUT must be combined with a RequestBody."
     }
 
     @Test
@@ -436,10 +387,7 @@ class RequestBuilderTest {
         }
 
         // Then
-        assertEquals(
-            actual = error.message,
-            expected = "DELETE must be combined with a RequestBody."
-        )
+        error.message!! mustBe "DELETE must be combined with a RequestBody."
     }
 
     @Test
@@ -447,10 +395,7 @@ class RequestBuilderTest {
         // Given
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.method,
-                expected = HttpMethod.Head
-            )
+            request.method mustBe HttpMethod.Head
         }
 
         // When
@@ -467,10 +412,7 @@ class RequestBuilderTest {
 
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.method,
-                expected = HttpMethod.Post
-            )
+            request.method mustBe HttpMethod.Post
         }
 
         // When
@@ -489,10 +431,7 @@ class RequestBuilderTest {
             engine {
                 addHandler { request ->
                     // Then
-                    assertEquals(
-                        actual = request.body.toByteReadPacket().readText(),
-                        expected = payload
-                    )
+                    request.body.toByteReadPacket().readText() mustBe payload
                     respond(fixture.fixture<String>())
                 }
             }
@@ -512,10 +451,7 @@ class RequestBuilderTest {
 
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.method,
-                expected = HttpMethod.Put
-            )
+            request.method mustBe HttpMethod.Put
         }
 
         // When
@@ -534,10 +470,7 @@ class RequestBuilderTest {
             engine {
                 addHandler { request ->
                     // Then
-                    assertEquals(
-                        actual = request.body.toByteReadPacket().readText(),
-                        expected = payload
-                    )
+                    request.body.toByteReadPacket().readText() mustBe payload
                     respond(fixture.fixture<String>())
                 }
             }
@@ -557,10 +490,7 @@ class RequestBuilderTest {
 
         val client = createMockClientWithAssertion { request ->
             // Then
-            assertEquals(
-                actual = request.method,
-                expected = HttpMethod.Delete
-            )
+            request.method mustBe HttpMethod.Delete
         }
 
         // When
@@ -579,10 +509,7 @@ class RequestBuilderTest {
             engine {
                 addHandler { request ->
                     // Then
-                    assertEquals(
-                        actual = request.body.toByteReadPacket().readText(),
-                        expected = payload
-                    )
+                    request.body.toByteReadPacket().readText() mustBe payload
 
                     respond(fixture.fixture<String>())
                 }

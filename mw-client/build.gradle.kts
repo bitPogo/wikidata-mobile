@@ -43,6 +43,7 @@ kotlin {
                 implementation(Dependency.multiplatform.coroutines.common)
                 implementation(Dependency.multiplatform.ktor.common.core)
                 implementation(Dependency.multiplatform.ktor.common.serialization)
+                implementation((Dependency.multiplatform.ktor.logger))
             }
         }
         val commonTest by getting {

@@ -6,6 +6,8 @@
 
 package tech.antibytes.mediawiki.networking
 
+import io.ktor.client.HttpClientConfig
+import io.ktor.client.features.HttpClientFeature
 import io.ktor.client.statement.HttpStatement
 
 internal typealias Header = Map<String, String>
@@ -13,6 +15,23 @@ internal typealias Parameter = Map<String, Any?>
 internal typealias Path = List<String>
 
 internal interface NetworkingContract {
+    fun interface PluginConfigurator<PluginConfiguration : Any, SubConfiguration> {
+        fun configure(pluginConfiguration: PluginConfiguration, subConfiguration: SubConfiguration)
+    }
+
+    data class Plugin<PluginConfiguration : Any, SubConfiguration>(
+        val feature: HttpClientFeature<*, *>,
+        val pluginConfigurator: PluginConfigurator<PluginConfiguration, SubConfiguration>,
+        val subConfiguration: SubConfiguration
+    )
+
+    interface ClientConfigurator {
+        fun configure(
+            httpConfig: HttpClientConfig<*>,
+            installers: Set<Plugin<in Any, in Any?>>? = null
+        )
+    }
+
     enum class Method(val value: String) {
         HEAD("head"),
         DELETE("delete"),

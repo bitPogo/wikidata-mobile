@@ -10,4 +10,10 @@ interface PublicApi {
     fun interface Connectivity {
         fun hasConnection(): Boolean
     }
+
+    interface Logger {
+        fun info(message: String)
+        fun warn(message: String)
+        fun error(message: String)
+    }
 }
