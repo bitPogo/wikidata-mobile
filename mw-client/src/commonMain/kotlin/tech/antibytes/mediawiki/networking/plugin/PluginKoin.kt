@@ -17,7 +17,7 @@ import tech.antibytes.mediawiki.networking.NetworkingContract
 internal fun resolveKtorPluginsModule(): Module {
     return module {
         factory {
-            listOf(
+            setOf(
                 NetworkingContract.Plugin(
                     JsonFeature,
                     SerializerConfigurator(),
