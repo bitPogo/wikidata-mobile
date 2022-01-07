@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 internal class SerializerConfigurator : KtorPluginsContract.SerializerConfigurator {
     override fun configure(
         pluginConfiguration: JsonFeature.Config,
-        subConfiguration: KtorPluginsContract.JsonConfiguratorContract
+        subConfiguration: KtorPluginsContract.JsonConfigurator
     ) {
         pluginConfiguration.serializer = KotlinxSerializer(
             Json { subConfiguration.configure(this) }

@@ -8,15 +8,12 @@ package tech.antibytes.mediawiki.networking.plugin
 
 import io.ktor.client.features.cookies.HttpCookies
 import tech.antibytes.mock.networking.plugin.CookieStorageStub
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
 import kotlin.test.Test
 
 class CookieStorageConfiguratorSpec {
-    private val fixture = kotlinFixture()
-
     @Test
     fun `It fulfils CookieStorageConfigurator`() {
         CookieStorageConfigurator() fulfils KtorPluginsContract.CookieStorageConfigurator::class

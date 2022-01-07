@@ -13,7 +13,7 @@ import tech.antibytes.util.test.MockError
 
 class JsonConfiguratorStub(
     var configure: ((JsonBuilder) -> JsonBuilder)? = null
-) : KtorPluginsContract.JsonConfiguratorContract, MockContract.Mock {
+) : KtorPluginsContract.JsonConfigurator, MockContract.Mock {
 
     override fun configure(jsonBuilder: JsonBuilder): JsonBuilder {
         return configure?.invoke(jsonBuilder) ?: throw MockError.MissingStub("Missing sideeffect configure")

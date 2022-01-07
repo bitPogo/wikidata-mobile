@@ -18,7 +18,6 @@ import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
-import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -28,31 +27,6 @@ class ResponseValidatorConfiguratorSpec {
     @Test
     fun `It fulfils ResponseValidatorConfigurator`() {
         ResponseValidatorConfigurator() fulfils KtorPluginsContract.ResponseValidatorConfigurator::class
-    }
-
-    @Test
-    fun `Given configure is called with a Pair of Validators, it ignores ResponseValidation if it is null`() = runBlockingTest {
-        // Given
-        val client = HttpClient(MockEngine) {
-            install(HttpCallValidator) {
-                ResponseValidatorConfigurator().configure(
-                    this,
-                    null
-                )
-            }
-
-            engine {
-                addHandler {
-                    respond(fixture.fixture<String>())
-                }
-            }
-        }
-
-        // When
-        val response = client.request<HttpResponse>(fixture.fixture<String>())
-
-        // Then
-        response.status mustBe HttpStatusCode.OK
     }
 
     @Test

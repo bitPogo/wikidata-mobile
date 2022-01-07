@@ -20,12 +20,12 @@ internal interface KtorPluginsContract {
         fun mapAndThrow(error: Throwable)
     }
 
-    interface JsonConfiguratorContract {
+    interface JsonConfigurator {
         fun configure(jsonBuilder: JsonBuilder): JsonBuilder
     }
 
     fun interface LoggingConfigurator : NetworkingContract.PluginConfigurator<Logging.Config, PublicApi.Logger>
-    fun interface SerializerConfigurator : NetworkingContract.PluginConfigurator<JsonFeature.Config, JsonConfiguratorContract>
-    fun interface ResponseValidatorConfigurator : NetworkingContract.PluginConfigurator<HttpCallValidator.Config, ErrorMapper?>
+    fun interface SerializerConfigurator : NetworkingContract.PluginConfigurator<JsonFeature.Config, JsonConfigurator>
+    fun interface ResponseValidatorConfigurator : NetworkingContract.PluginConfigurator<HttpCallValidator.Config, ErrorMapper>
     fun interface CookieStorageConfigurator : NetworkingContract.PluginConfigurator<HttpCookies.Config, CookiesStorage>
 }
