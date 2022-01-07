@@ -8,13 +8,13 @@ package tech.antibytes.mediawiki.networking.plugin
 
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logging
-import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mock.LoggerStub
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
+import tech.antibytes.util.test.sameAs
 import kotlin.test.Test
 
-class LoggingConfiguratorTest {
+class LoggingConfiguratorSpec {
     @Test
     fun `It fulfils LoggingConfigurator`() {
         LoggingConfigurator() fulfils KtorPluginsContract.LoggingConfigurator::class
@@ -24,22 +24,15 @@ class LoggingConfiguratorTest {
     fun `Given configure is called with a LoggingConfig, it sets it up and just runs`() {
         // Given
         val config = Logging.Config()
-        val internalLogger = LoggerStub()
-        var wasCalled = false
-
-        internalLogger.log = { _ ->
-            wasCalled = true
-        }
+        val logger = LoggerStub()
 
         // When
-        val result = LoggingConfigurator().configure(config, internalLogger)
-        config.logger.log("test")
+        val result = LoggingConfigurator().configure(config, logger)
 
         // Then
         result mustBe Unit
         config.level mustBe LogLevel.ALL
 
-        config.logger fulfils PublicApi.Logger::class
-        wasCalled mustBe true
+        config.logger sameAs logger
     }
 }

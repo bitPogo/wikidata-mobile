@@ -29,11 +29,9 @@ import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
 import kotlin.math.absoluteValue
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
-class RequestBuilderTest {
+class RequestBuilderSpec {
     private val fixture = kotlinFixture()
     private val host: String = fixture.fixture()
 

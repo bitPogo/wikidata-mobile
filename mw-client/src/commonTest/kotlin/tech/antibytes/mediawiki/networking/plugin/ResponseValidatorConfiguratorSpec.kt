@@ -13,7 +13,6 @@ import io.ktor.client.features.HttpCallValidator
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
-import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mock.networking.plugin.ErrorMapperStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -23,7 +22,7 @@ import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
-class ResponseValidatorConfiguratorTest {
+class ResponseValidatorConfiguratorSpec {
     private val fixture = kotlinFixture()
 
     @Test
@@ -50,7 +49,7 @@ class ResponseValidatorConfiguratorTest {
         }
 
         // When
-        val response = client.request<HttpResponse>("/not/important")
+        val response = client.request<HttpResponse>(fixture.fixture<String>())
 
         // Then
         response.status mustBe HttpStatusCode.OK
@@ -84,7 +83,7 @@ class ResponseValidatorConfiguratorTest {
         }
 
         // When
-        assertFailsWith<MwClientError> {
+        assertFailsWith<RuntimeException> {
             client.request<HttpResponse>(fixture.fixture<String>())
         }
     }

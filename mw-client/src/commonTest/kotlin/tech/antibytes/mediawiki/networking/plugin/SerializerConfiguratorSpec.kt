@@ -13,7 +13,7 @@ import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
 
-class SerializerConfiguratorTest {
+class SerializerConfiguratorSpec {
     @Test
     fun `It fulfils SerializerConfigurator`() {
         SerializerConfigurator() fulfils KtorPluginsContract.SerializerConfigurator::class
