@@ -37,10 +37,6 @@ internal class RequestBuilder constructor(
         return this.also { this.parameter = parameter }
     }
 
-    override fun useJsonContentType(): NetworkingContract.RequestBuilder {
-        return this.also { this.useJson = true }
-    }
-
     override fun setBody(body: Any): NetworkingContract.RequestBuilder {
         return this.also { this.body = body }
     }

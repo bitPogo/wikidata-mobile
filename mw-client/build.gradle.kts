@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021 Matthias Geisler (bitPogo) / All rights reserved.
+ * Copyright (c) 2022 Matthias Geisler (bitPogo) / All rights reserved.
  *
- * Use of this source code is governed by LGPL v2.1
+ * Use of this source code is governed by Apache v2.0
  */
 
 import tech.antibytes.gradle.dependency.Dependency
@@ -43,6 +43,7 @@ kotlin {
                 implementation(Dependency.multiplatform.coroutines.common)
                 implementation(Dependency.multiplatform.ktor.common.core)
                 implementation(Dependency.multiplatform.ktor.common.serialization)
+                implementation((Dependency.multiplatform.ktor.logger))
             }
         }
         val commonTest by getting {
