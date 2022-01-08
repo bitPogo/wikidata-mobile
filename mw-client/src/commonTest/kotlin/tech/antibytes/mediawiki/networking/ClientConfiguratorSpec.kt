@@ -9,12 +9,11 @@ package tech.antibytes.mediawiki.networking
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
-import io.ktor.client.features.HttpClientFeature
-import io.ktor.util.AttributeKey
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import tech.antibytes.mock.networking.PluginConfiguratorStub
+import tech.antibytes.mock.networking.FeatureStub
 import tech.antibytes.util.test.coroutine.runBlockingTestWithContext
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
@@ -55,7 +54,7 @@ class ClientConfiguratorSpec {
 
         val features = setOf(
             NetworkingContract.Plugin(
-                PluginStub,
+                FeatureStub,
                 pluginConfigurator,
                 subConfig,
             )
@@ -76,7 +75,7 @@ class ClientConfiguratorSpec {
         }
 
         // Then
-        capturedPluginConfig.receive() fulfils PluginStub.Config::class
+        capturedPluginConfig.receive() fulfils FeatureStub.Config::class
         capturedSubConfig.receive() mustBe subConfig
     }
 
@@ -92,17 +91,17 @@ class ClientConfiguratorSpec {
 
         val features = setOf(
             NetworkingContract.Plugin(
-                PluginStub,
+                FeatureStub,
                 pluginConfigurator,
                 subConfig,
             ),
             NetworkingContract.Plugin(
-                PluginStub,
+                FeatureStub,
                 pluginConfigurator,
                 subConfig,
             ),
             NetworkingContract.Plugin(
-                PluginStub,
+                FeatureStub,
                 pluginConfigurator,
                 subConfig,
             )
@@ -129,20 +128,5 @@ class ClientConfiguratorSpec {
     @ThreadLocal
     private object Counter {
         var amount = 0
-    }
-
-    private class PluginStub {
-        class Config
-
-        companion object Feature : HttpClientFeature<Config, PluginStub> {
-            override val key: AttributeKey<PluginStub> = AttributeKey("PluginStub")
-
-            override fun install(feature: PluginStub, scope: HttpClient) = Unit
-
-            override fun prepare(block: Config.() -> Unit): PluginStub {
-                Config().apply(block)
-                return PluginStub()
-            }
-        }
     }
 }

@@ -24,6 +24,6 @@ object Version {
     }
 
     object Antibytes {
-        val test = "ee7c3cf"
+        val test = "789d509"
     }
 }

@@ -40,6 +40,13 @@ internal interface NetworkingContract {
         PUT("put")
     }
 
+    enum class KoinIdentifier {
+        PLAIN_CLIENT,
+        CONFIGURED_CLIENT,
+        HOST,
+        PORT
+    }
+
     interface RequestBuilder {
         fun setHeaders(header: Header): RequestBuilder
         fun setParameter(parameter: Parameter): RequestBuilder
