@@ -50,7 +50,6 @@ internal interface NetworkingContract {
     interface RequestBuilder {
         fun setHeaders(header: Header): RequestBuilder
         fun setParameter(parameter: Parameter): RequestBuilder
-        fun useJsonContentType(): RequestBuilder
         fun setBody(body: Any): RequestBuilder
 
         fun prepare(

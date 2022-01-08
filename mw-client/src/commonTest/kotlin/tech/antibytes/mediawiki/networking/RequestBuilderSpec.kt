@@ -499,7 +499,7 @@ class RequestBuilderSpec {
     }
 
     @Test
-    fun `Given a instance was create with a Environment, setBody was called with a Payload and it was prepared and executed with DELETE it attaches the body to the request`() = runBlockingTestWithContext(GlobalScope.coroutineContext) {
+    fun `Given a Requests setBody was called with a Payload and it was prepared and executed with DELETE it attaches the body to the request`() = runBlockingTestWithContext(GlobalScope.coroutineContext) {
         // Given
         val payload: String = fixture.fixture()
 

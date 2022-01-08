@@ -12,8 +12,8 @@ import io.ktor.client.engine.mock.respond
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import tech.antibytes.mock.networking.PluginConfiguratorStub
 import tech.antibytes.mock.networking.FeatureStub
+import tech.antibytes.mock.networking.PluginConfiguratorStub
 import tech.antibytes.util.test.coroutine.runBlockingTestWithContext
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
@@ -37,7 +37,7 @@ class ClientConfiguratorSpec {
     }
 
     @Test
-    fun `Given configure is called with a HttpClientConfig and a Set of Plugin it installs a given Plugin`() = runBlockingTestWithContext(GlobalScope.coroutineContext) {
+    fun `Given configure is called with a ClientConfigurator and a Set of Plugin it installs a given Plugin`() = runBlockingTestWithContext(GlobalScope.coroutineContext) {
         // Given
         val capturedPluginConfig = Channel<Any>()
         val capturedSubConfig = Channel<Any>()
@@ -80,7 +80,7 @@ class ClientConfiguratorSpec {
     }
 
     @Test
-    fun `Given configure is called with a HttpClientConfig and a List of HttpFeatureInstaller it installs a arbitrary number of Plugins`() = runBlockingTestWithContext(GlobalScope.coroutineContext) {
+    fun `Given configure is called with a ClientConfigurator and a List of HttpFeatureInstaller it installs a arbitrary number of Plugins`() = runBlockingTestWithContext(GlobalScope.coroutineContext) {
         // Given
         val subConfig = object {}
         val pluginConfigurator = PluginConfiguratorStub<Any, Any?>()

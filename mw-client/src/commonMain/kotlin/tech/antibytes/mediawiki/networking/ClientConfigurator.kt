@@ -13,14 +13,12 @@ internal class ClientConfigurator : NetworkingContract.ClientConfigurator {
         httpConfig: HttpClientConfig<*>,
         installers: Set<NetworkingContract.Plugin<in Any, in Any?>>?
     ) {
-        if (installers is Set<*>) {
-            installers.forEach { (plugin, configurator, subConfig) ->
-                httpConfig.install(plugin) {
-                    configurator.configure(
-                        this,
-                        subConfig
-                    )
-                }
+        installers?.forEach { (plugin, configurator, subConfig) ->
+            httpConfig.install(plugin) {
+                configurator.configure(
+                    this,
+                    subConfig
+                )
             }
         }
     }
