@@ -6,8 +6,6 @@
 
 package tech.antibytes.mediawiki
 
-import io.ktor.client.features.logging.Logger
-
 interface PublicApi {
     fun interface Connectivity {
         fun hasConnection(): Boolean
