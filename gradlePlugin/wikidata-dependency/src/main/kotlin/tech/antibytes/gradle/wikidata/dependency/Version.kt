@@ -8,6 +8,7 @@ package tech.antibytes.gradle.wikidata.dependency
 
 object Version {
 
+    const val kotlin = "1.5.32"
     val gradle = Gradle
     val antibytes = Antibytes
 

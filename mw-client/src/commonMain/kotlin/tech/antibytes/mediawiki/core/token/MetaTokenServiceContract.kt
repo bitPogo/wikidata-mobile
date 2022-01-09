@@ -6,21 +6,25 @@
 
 package tech.antibytes.mediawiki.core.token
 
+import kotlinx.serialization.Serializable
 import tech.antibytes.mediawiki.core.token.model.MetaTokenResponse
+import tech.antibytes.mediawiki.core.token.model.MetaTokenTypesSerializer
 
 internal typealias MetaToken = String
 
 internal interface MetaTokenServiceContract {
+
+    @Serializable(with = MetaTokenTypesSerializer::class)
     enum class TokenTypes(val value: String) {
-        CREATE_ACCOUNT("createaccount"),
-        CSRF("csrf"),
-        DELETE_GLOBAL_ACCOUNT("deleteglobalaccount"),
-        LOGIN("login"),
-        PATROL("patrol"),
-        ROLLBACK("rollback"),
-        SET_GLOBAL_ACCOUNT_STATUS("setglobalaccountstatus"),
-        USER_RIGHTS("userrights"),
-        WATCH("watch")
+        CREATE_ACCOUNT("createaccounttoken"),
+        CSRF("csrftoken"),
+        DELETE_GLOBAL_ACCOUNT("deleteglobalaccounttoken"),
+        LOGIN("logintoken"),
+        PATROL("patroltoken"),
+        ROLLBACK("rollbacktoken"),
+        SET_GLOBAL_ACCOUNT_STATUS("setglobalaccountstatustoken"),
+        USER_RIGHTS("userrightstoken"),
+        WATCH("watchtoken")
     }
 
     interface ApiService {

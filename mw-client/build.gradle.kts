@@ -16,6 +16,10 @@ plugins {
 
     id("tech.antibytes.gradle.configuration")
     id("tech.antibytes.gradle.coverage")
+
+
+    // Serialization
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 kotlin {
@@ -27,6 +31,7 @@ kotlin {
         all {
             languageSettings.apply {
                 optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+                optIn("kotlinx.serialization.InternalSerializationApi")
                 optIn("kotlinx.serialization.ExperimentalSerializationApi")
                 optIn("kotlinx.coroutines.DelicateCoroutinesApi")
             }

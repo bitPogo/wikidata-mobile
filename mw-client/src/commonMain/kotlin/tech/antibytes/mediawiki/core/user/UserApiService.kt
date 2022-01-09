@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2022 Matthias Geisler (bitPogo) / All rights reserved.
+ *
+ * Use of this source code is governed by Apache v2.0
+ */
+
+package tech.antibytes.mediawiki.core.user
+
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.http.Parameters
+import tech.antibytes.mediawiki.core.token.MetaToken
+import tech.antibytes.mediawiki.core.user.model.LoginResponse
+import tech.antibytes.mediawiki.networking.NetworkingContract
+import tech.antibytes.mediawiki.networking.receive
+
+internal class UserApiService(
+    private val requestBuilder: NetworkingContract.RequestBuilder
+) : UserContract.ApiService {
+    private fun createPayload(
+        username: String,
+        password: String,
+        token: MetaToken
+    ): FormDataContent {
+        return FormDataContent(
+            Parameters.build {
+                append("logintoken", token)
+                append("username", username)
+                append("password", password)
+                append("loginreturnurl", "https://www.wikidata.org/wiki/Lexeme:L52317")
+            }
+        )
+    }
+
+    override suspend fun login(
+        username: String,
+        password: String,
+        token: MetaToken
+    ): LoginResponse {
+        val payload = createPayload(username, password, token)
+
+        val request = requestBuilder
+            .setParameter(PARAMETER)
+            .setBody(payload)
+            .prepare(
+                NetworkingContract.Method.POST,
+                listOf("w", "api.php")
+            )
+
+        return receive(request)
+    }
+
+    private companion object {
+        val PARAMETER = mapOf(
+            "action" to "clientlogin",
+            "rememberme" to "",
+            "format" to "json",
+        )
+    }
+}
