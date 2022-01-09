@@ -4,25 +4,38 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mediawiki.core.user
+package tech.antibytes.mediawiki.core.authentication
 
-import tech.antibytes.mediawiki.core.user.model.ClientLogin
-import tech.antibytes.mediawiki.core.user.model.LoginResponse
-import tech.antibytes.mediawiki.core.user.model.LoginStatus
-import tech.antibytes.mock.user.UserApiServiceStub
+import tech.antibytes.mediawiki.core.authentication.model.ClientLogin
+import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
+import tech.antibytes.mediawiki.core.authentication.model.LoginStatus
+import tech.antibytes.mock.user.AuthenticationApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
+import tech.antibytes.util.test.fixture.PublicApi
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
 
-class UserRepositorySpec {
+class AuthenticationRepositorySpec {
     private val fixture = kotlinFixture()
+
+    private val statuus = listOf(
+        LoginStatus.FAIL,
+        LoginStatus.REDIRECT,
+        LoginStatus.RESTART,
+        LoginStatus.UI
+    )
+
+    private fun PublicApi.Fixture.loginStatusFixture(): LoginStatus {
+        val choice: Int = random.nextInt(0, statuus.lastIndex)
+        return statuus[choice]
+    }
 
     @Test
     fun `It fulfils Repository`() {
-        UserRepository(UserApiServiceStub()) fulfils UserContract.Repository::class
+        AuthenticationRepository(AuthenticationApiServiceStub()) fulfils AuthenticationContract.Repository::class
     }
 
     @Test
@@ -38,7 +51,7 @@ class UserRepositorySpec {
             )
         )
 
-        val apiService = UserApiServiceStub()
+        val apiService = AuthenticationApiServiceStub()
 
         var capturedUsername: String? = null
         var capturedPassword: String? = null
@@ -52,7 +65,7 @@ class UserRepositorySpec {
         }
 
         // When
-        val result = UserRepository(apiService).login(username, password, token)
+        val result = AuthenticationRepository(apiService).login(username, password, token)
 
         // Then
         result mustBe true
@@ -70,11 +83,11 @@ class UserRepositorySpec {
 
         val response = LoginResponse(
             ClientLogin(
-                LoginStatus.RESTART
+                fixture.loginStatusFixture()
             )
         )
 
-        val apiService = UserApiServiceStub()
+        val apiService = AuthenticationApiServiceStub()
 
         var capturedUsername: String? = null
         var capturedPassword: String? = null
@@ -88,7 +101,7 @@ class UserRepositorySpec {
         }
 
         // When
-        val result = UserRepository(apiService).login(username, password, token)
+        val result = AuthenticationRepository(apiService).login(username, password, token)
 
         // Then
         result mustBe false

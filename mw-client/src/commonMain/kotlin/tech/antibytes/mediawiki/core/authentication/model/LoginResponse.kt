@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mediawiki.core.user.model
+package tech.antibytes.mediawiki.core.authentication.model
 
 import kotlinx.serialization.Serializable
 

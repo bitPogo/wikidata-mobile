@@ -7,7 +7,6 @@
 package tech.antibytes.mediawiki.core.token
 
 import kotlinx.serialization.Serializable
-import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.core.token.model.MetaTokenResponse
 import tech.antibytes.mediawiki.core.token.model.MetaTokenTypesSerializer
 import tech.antibytes.mediawiki.error.MwClientError

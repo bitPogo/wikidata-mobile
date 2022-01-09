@@ -4,13 +4,13 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mediawiki.core.user
+package tech.antibytes.mediawiki.core.authentication
 
+import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
 import tech.antibytes.mediawiki.core.token.MetaToken
-import tech.antibytes.mediawiki.core.user.model.LoginResponse
 import tech.antibytes.mediawiki.error.MwClientError
 
-internal interface UserContract {
+internal interface AuthenticationContract {
     interface ApiService {
         @Throws(
             MwClientError.ResponseTransformFailure::class,
@@ -37,7 +37,7 @@ internal interface UserContract {
         ): Boolean
     }
 
-    interface Controller {
+    interface Service {
         @Throws(
             MwClientError.ResponseTransformFailure::class,
             MwClientError.RequestValidationFailure::class,

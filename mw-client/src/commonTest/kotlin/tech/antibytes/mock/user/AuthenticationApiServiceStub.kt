@@ -6,15 +6,15 @@
 
 package tech.antibytes.mock.user
 
+import tech.antibytes.mediawiki.core.authentication.AuthenticationContract
+import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
 import tech.antibytes.mediawiki.core.token.MetaToken
-import tech.antibytes.mediawiki.core.user.UserContract
-import tech.antibytes.mediawiki.core.user.model.LoginResponse
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
-internal class UserApiServiceStub(
+internal class AuthenticationApiServiceStub(
     var login: ((String, String, MetaToken) -> LoginResponse)? = null
-) : UserContract.ApiService, MockContract.Mock {
+) : AuthenticationContract.ApiService, MockContract.Mock {
     override suspend fun login(username: String, password: String, token: MetaToken): LoginResponse {
         return login?.invoke(username, password, token)
             ?: throw MockError.MissingStub("Missing Sideeffect login")

@@ -4,18 +4,18 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mediawiki.core.user
+package tech.antibytes.mediawiki.core.authentication
 
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.http.Parameters
+import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
 import tech.antibytes.mediawiki.core.token.MetaToken
-import tech.antibytes.mediawiki.core.user.model.LoginResponse
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.receive
 
-internal class UserApiService(
+internal class AuthenticationApiService(
     private val requestBuilder: NetworkingContract.RequestBuilder
-) : UserContract.ApiService {
+) : AuthenticationContract.ApiService {
     private fun createPayload(
         username: String,
         password: String,

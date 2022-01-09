@@ -4,15 +4,15 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mediawiki.core.user
+package tech.antibytes.mediawiki.core.authentication
 
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.statement.HttpStatement
-import tech.antibytes.mediawiki.core.user.model.ClientLogin
-import tech.antibytes.mediawiki.core.user.model.LoginResponse
-import tech.antibytes.mediawiki.core.user.model.LoginStatus
+import tech.antibytes.mediawiki.core.authentication.model.ClientLogin
+import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
+import tech.antibytes.mediawiki.core.authentication.model.LoginStatus
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
@@ -28,13 +28,13 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class UserApiServiceSpec {
+class AuthenticationApiServiceSpec {
     private val fixture = kotlinFixture()
     private val ktorDummy = HttpRequestBuilder()
 
     @Test
     fun `It fulfils ApiService`() {
-        UserApiService(RequestBuilderStub()) fulfils UserContract.ApiService::class
+        AuthenticationApiService(RequestBuilderStub()) fulfils AuthenticationContract.ApiService::class
     }
 
     @Test
@@ -61,7 +61,7 @@ class UserApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            UserApiService(requestBuilder).login(username, password, token)
+            AuthenticationApiService(requestBuilder).login(username, password, token)
         }
 
         assertEquals(
@@ -102,7 +102,7 @@ class UserApiServiceSpec {
         }
 
         // When
-        val response: LoginResponse = UserApiService(requestBuilder).login(username, password, token)
+        val response: LoginResponse = AuthenticationApiService(requestBuilder).login(username, password, token)
 
         // Then
         response sameAs expectedResponse
