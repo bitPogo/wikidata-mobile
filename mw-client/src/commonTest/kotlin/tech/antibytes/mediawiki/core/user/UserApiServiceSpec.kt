@@ -82,8 +82,7 @@ class UserApiServiceSpec {
 
         val expectedResponse = LoginResponse(
             ClientLogin(
-                status = status,
-                username = username
+                status = status
             )
         )
 

@@ -7,8 +7,10 @@
 package tech.antibytes.mediawiki.core.token
 
 import kotlinx.serialization.Serializable
+import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.core.token.model.MetaTokenResponse
 import tech.antibytes.mediawiki.core.token.model.MetaTokenTypesSerializer
+import tech.antibytes.mediawiki.error.MwClientError
 
 internal typealias MetaToken = String
 
@@ -28,10 +30,20 @@ internal interface MetaTokenServiceContract {
     }
 
     interface ApiService {
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
         suspend fun fetchToken(type: TokenTypes): MetaTokenResponse
     }
 
     interface Repository {
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
         suspend fun fetchToken(type: TokenTypes): MetaToken
     }
 }

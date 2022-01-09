@@ -15,8 +15,7 @@ internal class LoginResponse(
 
 @Serializable
 internal class ClientLogin(
-    val status: LoginStatus,
-    val username: String
+    val status: LoginStatus
 )
 
 @Serializable
