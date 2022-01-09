@@ -15,7 +15,7 @@ import kotlinx.serialization.encoding.Encoder
 import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
 import tech.antibytes.mediawiki.error.MwClientError
 
-internal class MetaTokenTypesSerializer: KSerializer<MetaTokenServiceContract.TokenTypes> {
+internal class MetaTokenTypesSerializer : KSerializer<MetaTokenServiceContract.TokenTypes> {
     private val mapping = MetaTokenServiceContract.TokenTypes.values().associateBy { it.value }
 
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(

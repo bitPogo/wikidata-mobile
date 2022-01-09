@@ -6,10 +6,15 @@
 
 package tech.antibytes.mediawiki.core.token
 
+import tech.antibytes.mediawiki.error.MwClientError
+
 internal class MetaTokenRepository(
     private val apiService: MetaTokenServiceContract.ApiService
 ) : MetaTokenServiceContract.Repository {
     override suspend fun fetchToken(type: MetaTokenServiceContract.TokenTypes): MetaToken {
-        TODO("Not yet implemented")
+        val response = apiService.fetchToken(type)
+
+        return response.query[type]
+            ?: throw MwClientError.InternalFailure("Missing Token (${type.value})")
     }
 }
