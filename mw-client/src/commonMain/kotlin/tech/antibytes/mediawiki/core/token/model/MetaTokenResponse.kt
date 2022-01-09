@@ -11,5 +11,10 @@ import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
 
 @Serializable
 internal data class MetaTokenResponse(
-    val query: Map<MetaTokenServiceContract.TokenTypes, String>
+    val query: Query
+)
+
+@Serializable
+internal data class Query(
+    val tokens: Map<MetaTokenServiceContract.TokenTypes, String>
 )

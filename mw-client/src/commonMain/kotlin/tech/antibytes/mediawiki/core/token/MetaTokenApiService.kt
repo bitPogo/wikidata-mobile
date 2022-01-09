@@ -20,7 +20,8 @@ internal class MetaTokenApiService(
             mapOf(
                 "action" to "query",
                 "meta" to "tokens",
-                "type" to type.value
+                "format" to "json",
+                "type" to type.value.removeSuffix("token")
             )
         ).prepare(
             NetworkingContract.Method.GET,

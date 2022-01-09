@@ -7,6 +7,7 @@
 package tech.antibytes.mediawiki.core.token
 
 import tech.antibytes.mediawiki.core.token.model.MetaTokenResponse
+import tech.antibytes.mediawiki.core.token.model.Query
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mock.token.MetaTokenApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
@@ -30,7 +31,7 @@ class MetaTokenRepositorySpec {
         // Given
         val type = MetaTokenServiceContract.TokenTypes.CSRF
         val response = MetaTokenResponse(
-            query = emptyMap()
+            query = Query(emptyMap())
         )
 
         val apiService = MetaTokenApiServiceStub { response }
@@ -49,8 +50,10 @@ class MetaTokenRepositorySpec {
         val type = MetaTokenServiceContract.TokenTypes.CSRF
         val expected: String = fixture.fixture()
         val response = MetaTokenResponse(
-            query = mapOf(
-                type to expected
+            query = Query(
+                mapOf(
+                    type to expected
+                )
             )
         )
 

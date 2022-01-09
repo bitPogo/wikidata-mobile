@@ -4,13 +4,15 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mediawiki.core.token
+package tech.antibytes.mediawiki.core.authentication
 
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.statement.HttpStatement
-import tech.antibytes.mediawiki.core.token.model.MetaTokenResponse
-import tech.antibytes.mediawiki.core.token.model.Query
+import tech.antibytes.mediawiki.core.authentication.model.ClientLogin
+import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
+import tech.antibytes.mediawiki.core.authentication.model.LoginStatus
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
@@ -19,27 +21,31 @@ import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
-import tech.antibytes.util.test.ktor.KtorMockClientFactory.createObjectMockClient
+import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class MetaTokenApiServiceSpec {
+class AuthenticationApiServiceSpec {
     private val fixture = kotlinFixture()
     private val ktorDummy = HttpRequestBuilder()
 
     @Test
     fun `It fulfils ApiService`() {
-        MetaTokenApiService(RequestBuilderStub()) fulfils MetaTokenServiceContract.ApiService::class
+        AuthenticationApiService(RequestBuilderStub()) fulfils AuthenticationContract.ApiService::class
     }
 
     @Test
-    fun `Given fetchToken was called with a TokenType it fails due to unexpected response`() = runBlockingTest {
+    fun `Given login is called with a UserName, Password and a Token it fails due to unexpected response`() = runBlockingTest {
         // Given
         val requestBuilder = RequestBuilderStub()
-        val client = createObjectMockClient { scope, _ ->
+        val username: String = fixture.fixture()
+        val password: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
             return@createObjectMockClient scope.respond(
                 content = fixture.fixture<String>()
             )
@@ -55,7 +61,7 @@ class MetaTokenApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            MetaTokenApiService(requestBuilder).fetchToken(MetaTokenServiceContract.TokenTypes.CSRF)
+            AuthenticationApiService(requestBuilder).login(username, password, token)
         }
 
         assertEquals(
@@ -65,18 +71,22 @@ class MetaTokenApiServiceSpec {
     }
 
     @Test
-    fun `Given fetchToken is called with a TokenType, it returns a TokenResponse`() = runBlockingTest {
+    fun `Given login is called with a UserName, Password and a Token, it returns a LoginResponse`() = runBlockingTest {
         // Given
-        val type = MetaTokenServiceContract.TokenTypes.CSRF
         val requestBuilder = RequestBuilderStub()
-        val tokenResponse = MetaTokenResponse(
-            query = Query(
-                mapOf(
-                    type to fixture.fixture()
-                )
+        val username: String = fixture.fixture()
+        val password: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val status = LoginStatus.PASS
+
+        val expectedResponse = LoginResponse(
+            ClientLogin(
+                status = status
             )
         )
-        val client = createObjectMockClient(listOf(tokenResponse)) { scope, _ ->
+
+        val client = KtorMockClientFactory.createObjectMockClient(listOf(expectedResponse)) { scope, _ ->
             return@createObjectMockClient scope.respond(
                 content = fixture.fixture<String>()
             )
@@ -92,17 +102,21 @@ class MetaTokenApiServiceSpec {
         }
 
         // When
-        val response = MetaTokenApiService(requestBuilder).fetchToken(type)
+        val response: LoginResponse = AuthenticationApiService(requestBuilder).login(username, password, token)
 
         // Then
-        response sameAs tokenResponse
-        capturedMethod mustBe NetworkingContract.Method.GET
+        response sameAs expectedResponse
+        capturedMethod mustBe NetworkingContract.Method.POST
         capturedPath mustBe listOf("w", "api.php")
         requestBuilder.delegatedParameter mustBe mapOf(
-            "action" to "query",
-            "meta" to "tokens",
+            "action" to "clientlogin",
+            "rememberme" to "",
             "format" to "json",
-            "type" to type.value.removeSuffix("token")
         )
+        requestBuilder.delegatedBody!! fulfils FormDataContent::class
+        (requestBuilder.delegatedBody as FormDataContent).formData["logintoken"] mustBe token
+        (requestBuilder.delegatedBody as FormDataContent).formData["username"] mustBe username
+        (requestBuilder.delegatedBody as FormDataContent).formData["password"] mustBe password
+        (requestBuilder.delegatedBody as FormDataContent).formData["loginreturnurl"] mustBe "https://www.wikidata.org/wiki/Lexeme:L52317"
     }
 }

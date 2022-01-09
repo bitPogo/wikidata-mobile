@@ -16,7 +16,8 @@ repositories {
 
 dependencies {
     implementation(Dependency.gradle.dependency)
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
+    implementation(Dependency.gradle.reflection)
+    implementation(Dependency.gradle.serialization)
     implementation(Dependency.gradle.coverage)
     implementation(Dependency.gradle.spotless)
     implementation(Dependency.gradle.projectConfig)

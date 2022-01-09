@@ -14,7 +14,7 @@ internal class MetaTokenRepository(
     override suspend fun fetchToken(type: MetaTokenServiceContract.TokenTypes): MetaToken {
         val response = apiService.fetchToken(type)
 
-        return response.query[type]
+        return response.query.tokens[type]
             ?: throw MwClientError.InternalFailure("Missing Token (${type.value})")
     }
 }
