@@ -9,7 +9,7 @@ package tech.antibytes.mediawiki.core.token.model
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.json.Json
-import tech.antibytes.mediawiki.core.token.TokenServiceContract
+import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
@@ -19,19 +19,18 @@ import tech.antibytes.util.test.sameAs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
 
-class TokenTypesSerializerSpec {
+class MetaTokenTypesSerializerSpec {
     private val fixture = kotlinFixture()
 
     @Test
     fun `It fulfils KSerializer`() {
-        TokenTypesSerializer() fulfils KSerializer::class
+        MetaTokenTypesSerializer() fulfils KSerializer::class
     }
 
     @Test
     fun `It has a descriptor`() {
-        val descriptor = TokenTypesSerializer().descriptor
+        val descriptor = MetaTokenTypesSerializer().descriptor
 
         descriptor.serialName mustBe "TokenTypes"
         descriptor.kind mustBe PrimitiveKind.STRING
@@ -42,10 +41,10 @@ class TokenTypesSerializerSpec {
         // Given
         val serializer = Json
 
-        for (field in TokenServiceContract.TokenTypes.values()) {
+        for (field in MetaTokenServiceContract.TokenTypes.values()) {
             // When
             val result = serializer.encodeToString(
-                TokenTypesSerializer(),
+                MetaTokenTypesSerializer(),
                 field
             )
 
@@ -64,7 +63,7 @@ class TokenTypesSerializerSpec {
         val error = assertFailsWith<MwClientError.InternalFailure> {
             // When
             serializer.decodeFromString(
-                TokenTypesSerializer(),
+                MetaTokenTypesSerializer(),
                 "\"$type\""
             )
         }
@@ -80,10 +79,10 @@ class TokenTypesSerializerSpec {
         // Given
         val serializer = Json
 
-        for (field in TokenServiceContract.TokenTypes.values()) {
+        for (field in MetaTokenServiceContract.TokenTypes.values()) {
             // When
             val result = serializer.decodeFromString(
-                TokenTypesSerializer(),
+                MetaTokenTypesSerializer(),
                 "\"${field.value}\""
             )
 

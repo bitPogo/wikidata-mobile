@@ -6,11 +6,11 @@
 
 package tech.antibytes.mediawiki.core.token
 
-import tech.antibytes.mediawiki.core.token.model.TokenResponse
+import tech.antibytes.mediawiki.core.token.model.MetaTokenResponse
 
-internal typealias Token = String
+internal typealias MetaToken = String
 
-internal interface TokenServiceContract {
+internal interface MetaTokenServiceContract {
     enum class TokenTypes(val value: String) {
         CREATE_ACCOUNT("createaccount"),
         CSRF("csrf"),
@@ -24,10 +24,10 @@ internal interface TokenServiceContract {
     }
 
     interface ApiService {
-        fun fetchToken(type: TokenTypes): TokenResponse
+        suspend fun fetchToken(type: TokenTypes): MetaTokenResponse
     }
 
     interface Repository {
-        fun fetchToken(type: TokenTypes): Token
+        suspend fun fetchToken(type: TokenTypes): MetaToken
     }
 }

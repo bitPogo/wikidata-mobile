@@ -15,6 +15,6 @@ sealed class MwClientError(
     class NoConnection : MwClientError()
     class RequestError(val status: HttpStatusCode) : MwClientError()
     class RequestValidationFailure(message: String) : MwClientError(message)
-    class ResponseTransformFailure : MwClientError(message = "Unexpected ResponseType")
+    class ResponseTransformFailure : MwClientError(message = "Unexpected Response")
     class InternalFailure(message: String) : MwClientError(message)
 }

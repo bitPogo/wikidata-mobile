@@ -7,9 +7,9 @@
 package tech.antibytes.mediawiki.core.token.model
 
 import kotlinx.serialization.Serializable
-import tech.antibytes.mediawiki.core.token.TokenServiceContract
+import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
 
 @Serializable
-internal data class TokenResponse(
-    val query: Map<TokenServiceContract.TokenTypes, String>
+internal data class MetaTokenResponse(
+    val query: Map<MetaTokenServiceContract.TokenTypes, String>
 )
