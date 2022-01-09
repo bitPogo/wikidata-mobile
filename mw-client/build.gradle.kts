@@ -27,6 +27,8 @@ kotlin {
         all {
             languageSettings.apply {
                 optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+                optIn("kotlinx.serialization.ExperimentalSerializationApi")
+                optIn("kotlinx.coroutines.DelicateCoroutinesApi")
             }
         }
 
@@ -44,6 +46,8 @@ kotlin {
                 implementation(Dependency.multiplatform.ktor.common.core)
                 implementation(Dependency.multiplatform.ktor.common.serialization)
                 implementation((Dependency.multiplatform.ktor.logger))
+
+                implementation(Dependency.multiplatform.serialization.common)
             }
         }
         val commonTest by getting {
