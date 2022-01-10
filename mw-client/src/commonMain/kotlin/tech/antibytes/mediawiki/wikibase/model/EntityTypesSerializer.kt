@@ -27,5 +27,4 @@ internal class EntityTypesSerializer : KSerializer<EntityTypes> {
         val key = decoder.decodeString()
         return EntityTypes.valueOf(key.uppercase())
     }
-
 }

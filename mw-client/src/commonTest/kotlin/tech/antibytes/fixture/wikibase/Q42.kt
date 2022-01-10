@@ -6,10 +6,10 @@
 
 package tech.antibytes.fixture.wikibase
 
-import tech.antibytes.mediawiki.wikibase.model.Entity
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.wikibase.model.Alias
 import tech.antibytes.mediawiki.wikibase.model.Description
+import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntityTypes
 import tech.antibytes.mediawiki.wikibase.model.Label
 
@@ -473,5 +473,3 @@ val q42 = Entity(
         )
     )
 )
-
-
