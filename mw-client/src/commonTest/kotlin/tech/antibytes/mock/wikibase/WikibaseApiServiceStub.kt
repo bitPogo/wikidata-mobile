@@ -20,7 +20,8 @@ import tech.antibytes.util.test.MockError
 internal class WikibaseApiServiceStub(
     var fetch: ((Set<EntityId>) -> EntitiesResponse)? = null,
     var search: ((String, LanguageTag, DataModelContract.EntityTypes, Int) -> SearchEntityResponse)? = null,
-    var update: ((EntityId, String, MetaToken) -> EntityResponse)? = null
+    var update: ((EntityId, Long, String, MetaToken) -> EntityResponse)? = null,
+    var create: ((DataModelContract.EntityTypes, String, MetaToken) -> EntityResponse)? = null
 ) : WikibaseContract.ApiService, MockContract.Mock {
     override suspend fun fetch(ids: Set<EntityId>): EntitiesResponse {
         return fetch?.invoke(ids) ?: throw MockError.MissingStub("Missing Sideeffect fetch")
@@ -36,13 +37,29 @@ internal class WikibaseApiServiceStub(
             ?: throw MockError.MissingStub("Missing Sideeffect search")
     }
 
-    override suspend fun update(id: EntityId, entity: String, token: MetaToken): EntityResponse {
-        return update?.invoke(id, entity, token)
+    override suspend fun update(
+        id: EntityId,
+        revisionId: Long,
+        entity: String,
+        token: MetaToken
+    ): EntityResponse {
+        return update?.invoke(id, revisionId, entity, token)
             ?: throw MockError.MissingStub("Missing Sideeffect update")
+    }
+
+    override suspend fun create(
+        type: DataModelContract.EntityTypes,
+        entity: String,
+        token: MetaToken
+    ): EntityResponse {
+        return create?.invoke(type, entity, token)
+            ?: throw MockError.MissingStub("Missing Sideeffect create")
     }
 
     override fun clear() {
         fetch = null
+        search = null
         update = null
+        create = null
     }
 }

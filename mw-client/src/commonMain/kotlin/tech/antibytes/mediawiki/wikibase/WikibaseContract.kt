@@ -54,6 +54,18 @@ internal interface WikibaseContract {
         )
         suspend fun update(
             id: EntityId,
+            revisionId: Long,
+            entity: String,
+            token: MetaToken
+        ): EntityResponse
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun create(
+            type: DataModelContract.EntityTypes,
             entity: String,
             token: MetaToken
         ): EntityResponse

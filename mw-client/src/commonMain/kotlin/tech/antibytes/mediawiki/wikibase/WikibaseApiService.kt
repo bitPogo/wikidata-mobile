@@ -69,13 +69,41 @@ internal class WikibaseApiService(
         )
     }
 
-    override suspend fun update(id: EntityId, entity: String, token: MetaToken): EntityResponse {
+    override suspend fun update(
+        id: EntityId,
+        revisionId: Long,
+        entity: String,
+        token: MetaToken
+    ): EntityResponse {
+        val request = requestBuilder
+            .setParameter(
+                mapOf(
+                    "action" to "wbeditentity",
+                    "baserevid" to revisionId,
+                    "format" to "json",
+                    "id" to id
+                )
+            )
+            .setBody(createEditingPayload(entity, token))
+            .prepare(
+                NetworkingContract.Method.POST,
+                ENDPOINT
+            )
+
+        return receive(request)
+    }
+
+    override suspend fun create(
+        type: DataModelContract.EntityTypes,
+        entity: String,
+        token: MetaToken
+    ): EntityResponse {
         val request = requestBuilder
             .setParameter(
                 mapOf(
                     "action" to "wbeditentity",
                     "format" to "json",
-                    "id" to id
+                    "new" to type.name.lowercase()
                 )
             )
             .setBody(createEditingPayload(entity, token))
