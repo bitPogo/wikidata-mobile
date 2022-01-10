@@ -11,6 +11,7 @@ import tech.antibytes.mock.core.page.PageRepositoryStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
@@ -65,5 +66,28 @@ class PageServiceSpec {
         result sameAs response
         capturedLimit mustBe limit
         capturedNamespace mustBe namespace
+    }
+
+    @Test
+    fun `Given fetchRestrictions is called with a PageTitle it delegates the call to its repository and returns its result`() = runBlockingTest {
+        // Given
+        val title: String = fixture.fixture()
+
+        val response = fixture.listFixture<String>()
+
+        var capturedTitle: String? = null
+
+        repository.fetchRestrictions = { givenTitle ->
+            capturedTitle = givenTitle
+
+            response
+        }
+
+        // When
+        val result = PageService(repository).fetchRestrictions(title)
+
+        // Then
+        result sameAs response
+        capturedTitle mustBe title
     }
 }
