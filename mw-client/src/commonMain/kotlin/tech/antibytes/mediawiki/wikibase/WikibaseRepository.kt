@@ -6,7 +6,7 @@
 
 package tech.antibytes.mediawiki.wikibase
 
-import tech.antibytes.mediawiki.EntityContract
+import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.model.Alias
@@ -18,7 +18,7 @@ import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 internal class WikibaseRepository(
     private val apiService: WikibaseContract.ApiService
 ) : WikibaseContract.Repository {
-    private fun <T : EntityContract.Entity> WikibaseContract.Response.applyOnSuccess(
+    private fun <T : DataModelContract.Entity> WikibaseContract.Response.applyOnSuccess(
         onSuccess: () -> List<T>
     ): List<T> {
         return if (this.success == 1) {
@@ -28,7 +28,7 @@ internal class WikibaseRepository(
         }
     }
 
-    override suspend fun fetch(ids: Set<EntityId>): List<EntityContract.RevisionedEntity> {
+    override suspend fun fetch(ids: Set<EntityId>): List<DataModelContract.RevisionedEntity> {
         val response = apiService.fetch(ids)
 
         return response.applyOnSuccess {
@@ -48,8 +48,8 @@ internal class WikibaseRepository(
     private fun mapSearchEntities(
         entities: List<SearchEntity>,
         language: LanguageTag,
-        type: EntityContract.EntityTypes
-    ): List<EntityContract.Entity> {
+        type: DataModelContract.EntityTypes
+    ): List<DataModelContract.Entity> {
         return entities.map { search ->
             Entity(
                 id = search.id,
@@ -70,9 +70,9 @@ internal class WikibaseRepository(
     override suspend fun search(
         term: String,
         language: LanguageTag,
-        type: EntityContract.EntityTypes,
+        type: DataModelContract.EntityTypes,
         limit: Int
-    ): List<EntityContract.Entity> {
+    ): List<DataModelContract.Entity> {
         val response = apiService.search(term, language, type, limit)
 
         return response.applyOnSuccess {

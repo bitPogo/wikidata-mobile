@@ -6,7 +6,7 @@
 
 package tech.antibytes.mediawiki.wikibase
 
-import tech.antibytes.mediawiki.EntityContract
+import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 
@@ -15,12 +15,12 @@ internal class WikibaseService(
 ) : WikibaseContract.Service {
     override suspend fun fetch(
         ids: Set<EntityId>
-    ): List<EntityContract.RevisionedEntity> = wikibaseRepository.fetch(ids)
+    ): List<DataModelContract.RevisionedEntity> = wikibaseRepository.fetch(ids)
 
     override suspend fun search(
         term: String,
         language: LanguageTag,
-        type: EntityContract.EntityTypes,
+        type: DataModelContract.EntityTypes,
         limit: Int
-    ): List<EntityContract.Entity> = wikibaseRepository.search(term, language, type, limit)
+    ): List<DataModelContract.Entity> = wikibaseRepository.search(term, language, type, limit)
 }

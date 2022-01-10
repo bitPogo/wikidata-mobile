@@ -7,7 +7,7 @@
 package tech.antibytes.mediawiki.wikibase
 
 import tech.antibytes.fixture.wikibase.q42
-import tech.antibytes.mediawiki.EntityContract
+import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.model.Alias
@@ -102,7 +102,7 @@ class WikibaseRepositorySpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = EntityContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityTypes.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = SearchEntityResponse(
@@ -122,7 +122,7 @@ class WikibaseRepositorySpec {
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: EntityContract.EntityTypes? = null
+        var capturedEntityType: DataModelContract.EntityTypes? = null
         var capturedLimit: Int? = null
 
         apiService.search = { givenTerm, givenTag, givenType, givenLimit ->
@@ -150,7 +150,7 @@ class WikibaseRepositorySpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = EntityContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityTypes.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = SearchEntityResponse(
@@ -170,7 +170,7 @@ class WikibaseRepositorySpec {
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: EntityContract.EntityTypes? = null
+        var capturedEntityType: DataModelContract.EntityTypes? = null
         var capturedLimit: Int? = null
 
         apiService.search = { givenTerm, givenTag, givenType, givenLimit ->

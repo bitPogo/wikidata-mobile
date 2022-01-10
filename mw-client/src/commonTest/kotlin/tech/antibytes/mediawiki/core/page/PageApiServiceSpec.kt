@@ -4,26 +4,21 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mediawiki.wikibase
+package tech.antibytes.mediawiki.core.page
 
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpStatement
-import tech.antibytes.fixture.wikibase.q42
-import tech.antibytes.mediawiki.DataModelContract
+import tech.antibytes.mediawiki.core.page.model.Page
+import tech.antibytes.mediawiki.core.page.model.Query
+import tech.antibytes.mediawiki.core.page.model.RandomPageResponse
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
-import tech.antibytes.mediawiki.wikibase.model.EntityResponse
-import tech.antibytes.mediawiki.wikibase.model.Match
-import tech.antibytes.mediawiki.wikibase.model.MatchTypes
-import tech.antibytes.mediawiki.wikibase.model.SearchEntity
-import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 import tech.antibytes.mock.networking.RequestBuilderStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
@@ -33,7 +28,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class WikibaseApiServiceSpec {
+class PageApiServiceSpec {
     private val fixture = kotlinFixture()
     private val ktorDummy = HttpRequestBuilder()
     private val requestBuilder = RequestBuilderStub()
@@ -44,14 +39,15 @@ class WikibaseApiServiceSpec {
     }
 
     @Test
-    fun `It fuflfils ApiService`() {
-        WikibaseApiService(requestBuilder) fulfils WikibaseContract.ApiService::class
+    fun `It fulfils ApiService`() {
+        PageApiService(requestBuilder) fulfils PageContract.ApiService::class
     }
 
     @Test
-    fun `Given fetch is called with a Set of Ids it fails due to a unexpected response`() = runBlockingTest {
+    fun `Given is randomPage called with a Limit it fals due to a unexpected response`() = runBlockingTest {
         // Given
-        val ids = fixture.listFixture<String>().toSet()
+        val requestBuilder = RequestBuilderStub()
+        val limit: Int = fixture.fixture()
 
         val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
             return@createObjectMockClient scope.respond(
@@ -69,7 +65,7 @@ class WikibaseApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            WikibaseApiService(requestBuilder).fetch(ids)
+            PageApiService(requestBuilder).randomPage(limit)
         }
 
         assertEquals(
@@ -79,15 +75,20 @@ class WikibaseApiServiceSpec {
     }
 
     @Test
-    fun `Given fetch is called with a Set of Ids, it returns a EntityResponse`() = runBlockingTest {
+    fun `Given is randomPage called with a Limit it returns a RandomPageResponse`() = runBlockingTest {
         // Given
-        val ids = fixture.listFixture<String>(size = 2).toSet()
+        val requestBuilder = RequestBuilderStub()
+        val limit: Int = fixture.fixture()
 
-        val expectedResponse = EntityResponse(
-            entities = mapOf(
-                fixture.fixture<String>() to q42
-            ),
-            success = fixture.fixture()
+        val expectedResponse = RandomPageResponse(
+            query = Query(
+                random = mapOf(
+                    fixture.fixture<String>() to Page(
+                        title = fixture.fixture(),
+                        revisionId = fixture.fixture()
+                    )
+                )
+            )
         )
 
         val client = KtorMockClientFactory.createObjectMockClient(listOf(expectedResponse)) { scope, _ ->
@@ -106,73 +107,37 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val response: EntityResponse = WikibaseApiService(requestBuilder).fetch(ids)
+        val response: RandomPageResponse = PageApiService(requestBuilder).randomPage(limit)
 
         // Then
         response sameAs expectedResponse
         capturedMethod mustBe NetworkingContract.Method.GET
         capturedPath mustBe listOf("w", "api.php")
         requestBuilder.delegatedParameter mustBe mapOf(
-            "action" to "wbgetentities",
+            "action" to "query",
             "format" to "json",
-            "ids" to ids.joinToString("|")
+            "generator" to "random",
+            "prop" to "info",
+            "grnlimit" to limit
         )
     }
 
     @Test
-    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit it fails due to a unexpected response`() = runBlockingTest {
+    fun `Given is randomPage called with a Limit and a Namespace it returns a RandomPageResponse`() = runBlockingTest {
         // Given
-        val searchTerm: String = fixture.fixture()
-        val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val requestBuilder = RequestBuilderStub()
         val limit: Int = fixture.fixture()
+        val namespace: Int = fixture.fixture()
 
-        val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
-            return@createObjectMockClient scope.respond(
-                content = fixture.fixture<String>()
-            )
-        }
-
-        requestBuilder.prepare = { _, _ ->
-            HttpStatement(
-                ktorDummy,
-                client
-            )
-        }
-
-        // Then
-        val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
-            // When
-            WikibaseApiService(requestBuilder).search(searchTerm, languageTag, type, limit)
-        }
-
-        assertEquals(
-            actual = error.message,
-            expected = "Unexpected Response"
-        )
-    }
-
-    @Test
-    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit it returns a EntitySearchResponse`() = runBlockingTest {
-        // Given
-        val searchTerm: String = fixture.fixture()
-        val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
-        val limit: Int = fixture.fixture()
-
-        val expectedResponse = SearchEntityResponse(
-            search = listOf(
-                SearchEntity(
-                    id = fixture.fixture(),
-                    label = fixture.fixture(),
-                    description = fixture.fixture(),
-                    aliases = fixture.listFixture(),
-                    match = Match(
-                        type = MatchTypes.ALIAS
+        val expectedResponse = RandomPageResponse(
+            query = Query(
+                random = mapOf(
+                    fixture.fixture<String>() to Page(
+                        title = fixture.fixture(),
+                        revisionId = fixture.fixture()
                     )
                 )
-            ),
-            success = fixture.fixture()
+            )
         )
 
         val client = KtorMockClientFactory.createObjectMockClient(listOf(expectedResponse)) { scope, _ ->
@@ -191,19 +156,19 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val result = WikibaseApiService(requestBuilder).search(searchTerm, languageTag, type, limit)
+        val response: RandomPageResponse = PageApiService(requestBuilder).randomPage(limit, namespace)
 
         // Then
-        result mustBe expectedResponse
+        response sameAs expectedResponse
         capturedMethod mustBe NetworkingContract.Method.GET
         capturedPath mustBe listOf("w", "api.php")
         requestBuilder.delegatedParameter mustBe mapOf(
-            "action" to "wbsearchentities",
+            "action" to "query",
             "format" to "json",
-            "search" to searchTerm,
-            "language" to languageTag,
-            "type" to type.name.lowercase(),
-            "limit" to limit
+            "generator" to "random",
+            "prop" to "info",
+            "grnlimit" to limit,
+            "grnnamespace" to namespace
         )
     }
 }

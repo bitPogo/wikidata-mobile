@@ -6,7 +6,7 @@
 
 package tech.antibytes.mock.wikibase
 
-import tech.antibytes.mediawiki.EntityContract
+import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.WikibaseContract
@@ -17,7 +17,7 @@ import tech.antibytes.util.test.MockError
 
 internal class WikibaseApiServiceStub(
     var fetch: ((Set<EntityId>) -> EntityResponse)? = null,
-    var search: ((String, LanguageTag, EntityContract.EntityTypes, Int) -> SearchEntityResponse)? = null
+    var search: ((String, LanguageTag, DataModelContract.EntityTypes, Int) -> SearchEntityResponse)? = null
 ) : WikibaseContract.ApiService, MockContract.Mock {
     override suspend fun fetch(ids: Set<EntityId>): EntityResponse {
         return fetch?.invoke(ids) ?: throw MockError.MissingStub("Missing Sideeffect fetch")
@@ -26,7 +26,7 @@ internal class WikibaseApiServiceStub(
     override suspend fun search(
         term: String,
         language: LanguageTag,
-        type: EntityContract.EntityTypes,
+        type: DataModelContract.EntityTypes,
         limit: Int
     ): SearchEntityResponse {
         return search?.invoke(term, language, type, limit)
