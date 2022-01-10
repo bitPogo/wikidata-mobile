@@ -15,4 +15,8 @@ internal class PageService(
         limit: Int,
         namespace: Int?
     ): List<DataModelContract.RevisionedPagePointer> = repository.randomPage(limit, namespace)
+
+    override suspend fun fetchRestrictions(
+        pageTitle: String
+    ): List<String> = repository.fetchRestrictions(pageTitle)
 }

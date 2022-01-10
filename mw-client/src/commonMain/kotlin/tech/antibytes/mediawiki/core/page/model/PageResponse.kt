@@ -18,11 +18,18 @@ internal data class Page(
 ) : DataModelContract.RevisionedPagePointer
 
 @Serializable
-internal data class Query(
-    val random: Map<String, Page>
+internal data class Restrictions(
+    @SerialName("restrictiontypes")
+    val restrictions: List<String>
 )
 
 @Serializable
-internal data class RandomPageResponse(
+internal data class Query(
+    val random: Map<String, Page> = emptyMap(),
+    val pages: Map<String, Restrictions> = emptyMap()
+)
+
+@Serializable
+internal data class PageResponse(
     val query: Query
 )

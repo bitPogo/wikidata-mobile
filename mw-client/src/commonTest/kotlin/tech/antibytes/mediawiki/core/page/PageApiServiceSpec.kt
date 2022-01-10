@@ -10,8 +10,9 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpStatement
 import tech.antibytes.mediawiki.core.page.model.Page
+import tech.antibytes.mediawiki.core.page.model.PageResponse
 import tech.antibytes.mediawiki.core.page.model.Query
-import tech.antibytes.mediawiki.core.page.model.RandomPageResponse
+import tech.antibytes.mediawiki.core.page.model.Restrictions
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
@@ -19,6 +20,7 @@ import tech.antibytes.mock.networking.RequestBuilderStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
@@ -46,7 +48,6 @@ class PageApiServiceSpec {
     @Test
     fun `Given is randomPage called with a Limit it fals due to a unexpected response`() = runBlockingTest {
         // Given
-        val requestBuilder = RequestBuilderStub()
         val limit: Int = fixture.fixture()
 
         val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
@@ -75,12 +76,11 @@ class PageApiServiceSpec {
     }
 
     @Test
-    fun `Given is randomPage called with a Limit it returns a RandomPageResponse`() = runBlockingTest {
+    fun `Given is randomPage called with a Limit it returns a PageResponse`() = runBlockingTest {
         // Given
-        val requestBuilder = RequestBuilderStub()
         val limit: Int = fixture.fixture()
 
-        val expectedResponse = RandomPageResponse(
+        val expectedResponse = PageResponse(
             query = Query(
                 random = mapOf(
                     fixture.fixture<String>() to Page(
@@ -107,7 +107,7 @@ class PageApiServiceSpec {
         }
 
         // When
-        val response: RandomPageResponse = PageApiService(requestBuilder).randomPage(limit)
+        val response: PageResponse = PageApiService(requestBuilder).randomPage(limit)
 
         // Then
         response sameAs expectedResponse
@@ -123,13 +123,12 @@ class PageApiServiceSpec {
     }
 
     @Test
-    fun `Given is randomPage called with a Limit and a Namespace it returns a RandomPageResponse`() = runBlockingTest {
+    fun `Given is randomPage called with a Limit and a Namespace it returns a PageResponse`() = runBlockingTest {
         // Given
-        val requestBuilder = RequestBuilderStub()
         val limit: Int = fixture.fixture()
         val namespace: Int = fixture.fixture()
 
-        val expectedResponse = RandomPageResponse(
+        val expectedResponse = PageResponse(
             query = Query(
                 random = mapOf(
                     fixture.fixture<String>() to Page(
@@ -156,7 +155,7 @@ class PageApiServiceSpec {
         }
 
         // When
-        val response: RandomPageResponse = PageApiService(requestBuilder).randomPage(limit, namespace)
+        val response: PageResponse = PageApiService(requestBuilder).randomPage(limit, namespace)
 
         // Then
         response sameAs expectedResponse
@@ -169,6 +168,80 @@ class PageApiServiceSpec {
             "prop" to "info",
             "grnlimit" to limit,
             "grnnamespace" to namespace
+        )
+    }
+
+    @Test
+    fun `Given is fetchRestrictions called with a PageTitle it fals due to a unexpected response`() = runBlockingTest {
+        // Given
+        val title: String = fixture.fixture()
+
+        val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
+            return@createObjectMockClient scope.respond(
+                content = fixture.fixture<String>()
+            )
+        }
+
+        requestBuilder.prepare = { _, _ ->
+            HttpStatement(
+                ktorDummy,
+                client
+            )
+        }
+
+        // Then
+        val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
+            // When
+            PageApiService(requestBuilder).fetchRestrictions(title)
+        }
+
+        assertEquals(
+            actual = error.message,
+            expected = "Unexpected Response"
+        )
+    }
+
+    @Test
+    fun `Given is fetchRestrictions called with a PageTitle it returns a PageRestrictionResponse`() = runBlockingTest {
+        // Given
+        val title: String = fixture.fixture()
+
+        val expectedResponse = PageResponse(
+            query = Query(
+                pages = mapOf(
+                    fixture.fixture<String>() to Restrictions(fixture.listFixture())
+                )
+            )
+        )
+
+        val client = KtorMockClientFactory.createObjectMockClient(listOf(expectedResponse)) { scope, _ ->
+            return@createObjectMockClient scope.respond(
+                content = fixture.fixture<String>()
+            )
+        }
+
+        var capturedMethod: NetworkingContract.Method? = null
+        var capturedPath: Path? = null
+
+        requestBuilder.prepare = { method, path ->
+            capturedMethod = method
+            capturedPath = path
+            HttpStatement(ktorDummy, client)
+        }
+
+        // When
+        val response: PageResponse = PageApiService(requestBuilder).fetchRestrictions(title)
+
+        // Then
+        response sameAs expectedResponse
+        capturedMethod mustBe NetworkingContract.Method.GET
+        capturedPath mustBe listOf("w", "api.php")
+        requestBuilder.delegatedParameter mustBe mapOf(
+            "action" to "query",
+            "format" to "json",
+            "prop" to "info",
+            "inprop" to "protection",
+            "titles" to title
         )
     }
 }

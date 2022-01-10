@@ -7,7 +7,7 @@
 package tech.antibytes.mediawiki.core.page
 
 import tech.antibytes.mediawiki.MwClientContract
-import tech.antibytes.mediawiki.core.page.model.RandomPageResponse
+import tech.antibytes.mediawiki.core.page.model.PageResponse
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.receive
 
@@ -32,9 +32,26 @@ internal class PageApiService(
         }
     }
 
-    override suspend fun randomPage(limit: Int, namespace: Int?): RandomPageResponse {
+    override suspend fun randomPage(limit: Int, namespace: Int?): PageResponse {
         val request = requestBuilder.setParameter(
             createRandomPageParameter(limit, namespace)
+        ).prepare(
+            NetworkingContract.Method.GET,
+            MwClientContract.ENDPOINT
+        )
+
+        return receive(request)
+    }
+
+    override suspend fun fetchRestrictions(pageTitle: String): PageResponse {
+        val request = requestBuilder.setParameter(
+            mapOf(
+                "action" to "query",
+                "format" to "json",
+                "prop" to "info",
+                "inprop" to "protection",
+                "titles" to pageTitle
+            )
         ).prepare(
             NetworkingContract.Method.GET,
             MwClientContract.ENDPOINT
