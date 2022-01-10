@@ -7,19 +7,28 @@
 package tech.antibytes.mock.wikibase
 
 import tech.antibytes.mediawiki.EntityId
+import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.WikibaseContract
 import tech.antibytes.mediawiki.wikibase.model.Entity
+import tech.antibytes.mediawiki.wikibase.model.EntityTypes
+import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
 internal class WikibaseRepositoryStub(
-    var fetchEntities: ((Set<EntityId>) -> List<Entity>)? = null
+    var fetch: ((Set<EntityId>) -> List<Entity>)? = null,
+    var search: ((String, LanguageTag, EntityTypes, Int) -> List<Entity>)? = null
 ) : WikibaseContract.Repository, MockContract.Mock {
     override suspend fun fetch(ids: Set<EntityId>): List<Entity> {
-        return fetchEntities?.invoke(ids) ?: throw MockError.MissingStub("Missing Sideeffect fetchEntities")
+        return fetch?.invoke(ids) ?: throw MockError.MissingStub("Missing Sideeffect fetchEntities")
+    }
+
+    override suspend fun search(term: String, language: LanguageTag, type: EntityTypes, limit: Int): List<Entity> {
+        return search?.invoke(term, language, type, limit)
+            ?: throw MockError.MissingStub("Missing Sideeffect search")
     }
 
     override fun clear() {
-        fetchEntities = null
+        fetch = null
     }
 }

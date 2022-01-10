@@ -15,6 +15,10 @@ import tech.antibytes.mediawiki.wikibase.model.EntityTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 
 internal interface WikibaseContract {
+    interface Response {
+        val success: Int
+    }
+
     interface ApiService {
         @Throws(
             MwClientError.ResponseTransformFailure::class,
@@ -33,7 +37,7 @@ internal interface WikibaseContract {
             language: LanguageTag,
             type: EntityTypes,
             limit: Int
-        ) : SearchEntityResponse
+        ): SearchEntityResponse
     }
 
     interface Repository {
@@ -43,6 +47,18 @@ internal interface WikibaseContract {
             MwClientError.InternalFailure::class
         )
         suspend fun fetch(ids: Set<EntityId>): List<Entity>
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun search(
+            term: String,
+            language: LanguageTag,
+            type: EntityTypes,
+            limit: Int
+        ): List<Entity>
     }
 
     interface Service {

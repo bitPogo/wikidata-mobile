@@ -38,7 +38,7 @@ class WikibaseServiceSpec {
         val response = listOf(q42)
 
         var capturedIds: Set<EntityId>? = null
-        repository.fetchEntities = { givenIds ->
+        repository.fetch = { givenIds ->
             capturedIds = givenIds
             response
         }
