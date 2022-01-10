@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mock.user
+package tech.antibytes.mock.core.authentication
 
 import tech.antibytes.mediawiki.core.authentication.AuthenticationContract
 import tech.antibytes.mediawiki.core.authentication.model.LoginResponse

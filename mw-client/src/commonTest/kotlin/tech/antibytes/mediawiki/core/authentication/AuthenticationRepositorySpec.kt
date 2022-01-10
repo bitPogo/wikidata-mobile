@@ -9,7 +9,7 @@ package tech.antibytes.mediawiki.core.authentication
 import tech.antibytes.mediawiki.core.authentication.model.ClientLogin
 import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
 import tech.antibytes.mediawiki.core.authentication.model.LoginStatus
-import tech.antibytes.mock.user.AuthenticationApiServiceStub
+import tech.antibytes.mock.core.authentication.AuthenticationApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.PublicApi
 import tech.antibytes.util.test.fixture.fixture

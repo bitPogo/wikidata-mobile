@@ -8,17 +8,33 @@ package tech.antibytes.mediawiki.core.page
 
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.core.page.model.RandomPageResponse
+import tech.antibytes.mediawiki.error.MwClientError
 
 internal interface PageContract {
     interface ApiService {
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
         suspend fun randomPage(limit: Int, namespace: Int? = null): RandomPageResponse
     }
 
     interface Repository {
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
         suspend fun randomPage(limit: Int, namespace: Int? = null): List<DataModelContract.RevisionedPagePointer>
     }
 
     interface Service {
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
         suspend fun randomPage(limit: Int, namespace: Int? = null): List<DataModelContract.RevisionedPagePointer>
     }
 }

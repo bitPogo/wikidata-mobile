@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mock.token
+package tech.antibytes.mock.core.token
 
 import tech.antibytes.mediawiki.core.token.MetaToken
 import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
