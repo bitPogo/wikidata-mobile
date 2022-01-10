@@ -6,6 +6,8 @@
 
 package tech.antibytes.mediawiki
 
+typealias EntityId = String
+
 interface PublicApi {
     fun interface Connectivity {
         fun hasConnection(): Boolean

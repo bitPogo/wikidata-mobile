@@ -37,7 +37,7 @@ class MetaTokenTypesSerializerSpec {
     }
 
     @Test
-    fun `Given a Serializer is called with a ConsentSignatureType, it encodes it`() {
+    fun `Given a Serializer is called with a MetaTokenType, it encodes it`() {
         // Given
         val serializer = Json
 

@@ -8,6 +8,7 @@ package tech.antibytes.mediawiki.core.authentication
 
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.http.Parameters
+import tech.antibytes.mediawiki.MwClientContract.Companion.ENDPOINT
 import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
 import tech.antibytes.mediawiki.core.token.MetaToken
 import tech.antibytes.mediawiki.networking.NetworkingContract
@@ -43,7 +44,7 @@ internal class AuthenticationApiService(
             .setBody(payload)
             .prepare(
                 NetworkingContract.Method.POST,
-                listOf("w", "api.php")
+                ENDPOINT
             )
 
         return receive(request)
