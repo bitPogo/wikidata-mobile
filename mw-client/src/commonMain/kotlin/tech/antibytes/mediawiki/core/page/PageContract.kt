@@ -24,7 +24,7 @@ internal interface PageContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchRestriction(pageTitle: String): PageResponse
+        suspend fun fetchRestrictions(pageTitle: String): PageResponse
     }
 
     interface Repository {
@@ -34,6 +34,13 @@ internal interface PageContract {
             MwClientError.InternalFailure::class
         )
         suspend fun randomPage(limit: Int, namespace: Int? = null): List<DataModelContract.RevisionedPagePointer>
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun fetchRestrictions(pageTitle: String): List<String>
     }
 
     interface Service {

@@ -13,20 +13,20 @@ import tech.antibytes.util.test.MockError
 
 internal class PageApiServiceStub(
     var randomPage: ((Int, Int?) -> PageResponse)? = null,
-    var fetchRestriction: ((String) -> PageResponse)? = null
+    var fetchRestrictions: ((String) -> PageResponse)? = null
 ) : PageContract.ApiService, MockContract.Mock {
     override suspend fun randomPage(limit: Int, namespace: Int?): PageResponse {
         return randomPage?.invoke(limit, namespace)
             ?: throw MockError.MissingStub("Missing Sideeffect randomPage")
     }
 
-    override suspend fun fetchRestriction(pageTitle: String): PageResponse {
-        return fetchRestriction?.invoke(pageTitle)
-            ?: throw MockError.MissingStub("Missing Sideeffect fetchRestriction")
+    override suspend fun fetchRestrictions(pageTitle: String): PageResponse {
+        return fetchRestrictions?.invoke(pageTitle)
+            ?: throw MockError.MissingStub("Missing Sideeffect fetchRestrictions")
     }
 
     override fun clear() {
         randomPage = null
-        fetchRestriction = null
+        fetchRestrictions = null
     }
 }

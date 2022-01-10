@@ -43,7 +43,7 @@ internal class PageApiService(
         return receive(request)
     }
 
-    override suspend fun fetchRestriction(pageTitle: String): PageResponse {
+    override suspend fun fetchRestrictions(pageTitle: String): PageResponse {
         val request = requestBuilder.setParameter(
             mapOf(
                 "action" to "query",

@@ -172,7 +172,7 @@ class PageApiServiceSpec {
     }
 
     @Test
-    fun `Given is fetchRestriction called with a PageTitle it fals due to a unexpected response`() = runBlockingTest {
+    fun `Given is fetchRestrictions called with a PageTitle it fals due to a unexpected response`() = runBlockingTest {
         // Given
         val title: String = fixture.fixture()
 
@@ -192,7 +192,7 @@ class PageApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            PageApiService(requestBuilder).fetchRestriction(title)
+            PageApiService(requestBuilder).fetchRestrictions(title)
         }
 
         assertEquals(
@@ -202,7 +202,7 @@ class PageApiServiceSpec {
     }
 
     @Test
-    fun `Given is fetchRestriction called with a PageTitle it returns a PageRestrictionResponse`() = runBlockingTest {
+    fun `Given is fetchRestrictions called with a PageTitle it returns a PageRestrictionResponse`() = runBlockingTest {
         // Given
         val title: String = fixture.fixture()
 
@@ -230,7 +230,7 @@ class PageApiServiceSpec {
         }
 
         // When
-        val response: PageResponse = PageApiService(requestBuilder).fetchRestriction(title)
+        val response: PageResponse = PageApiService(requestBuilder).fetchRestrictions(title)
 
         // Then
         response sameAs expectedResponse

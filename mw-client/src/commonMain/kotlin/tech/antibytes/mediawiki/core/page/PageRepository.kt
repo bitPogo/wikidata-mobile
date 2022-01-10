@@ -16,4 +16,12 @@ internal class PageRepository(
 
         return response.query.random.values.toList()
     }
+
+    override suspend fun fetchRestrictions(pageTitle: String): List<String> {
+        val response = apiService.fetchRestrictions(
+            pageTitle.replace("|", "")
+        )
+
+        return response.query.pages.values.first().restrictions
+    }
 }
