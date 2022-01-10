@@ -7,7 +7,7 @@
 package tech.antibytes.mediawiki.core.page
 
 import tech.antibytes.mediawiki.DataModelContract
-import tech.antibytes.mediawiki.core.page.model.RandomPageResponse
+import tech.antibytes.mediawiki.core.page.model.PageResponse
 import tech.antibytes.mediawiki.error.MwClientError
 
 internal interface PageContract {
@@ -17,7 +17,14 @@ internal interface PageContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun randomPage(limit: Int, namespace: Int? = null): RandomPageResponse
+        suspend fun randomPage(limit: Int, namespace: Int? = null): PageResponse
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun fetchRestriction(pageTitle: String): PageResponse
     }
 
     interface Repository {

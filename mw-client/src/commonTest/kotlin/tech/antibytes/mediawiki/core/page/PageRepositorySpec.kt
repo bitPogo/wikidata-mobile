@@ -7,8 +7,8 @@
 package tech.antibytes.mediawiki.core.page
 
 import tech.antibytes.mediawiki.core.page.model.Page
+import tech.antibytes.mediawiki.core.page.model.PageResponse
 import tech.antibytes.mediawiki.core.page.model.Query
-import tech.antibytes.mediawiki.core.page.model.RandomPageResponse
 import tech.antibytes.mock.core.page.PageApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -41,7 +41,7 @@ class PageRepositorySpec {
         var capturedLimit: Int? = null
         var capturedNamespace: Int? = null
 
-        val response = RandomPageResponse(
+        val response = PageResponse(
             query = Query(
                 random = mapOf(
                     fixture.fixture<String>() to Page(
