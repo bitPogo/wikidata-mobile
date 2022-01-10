@@ -11,7 +11,6 @@ import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.WikibaseContract
 import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntityTypes
-import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 

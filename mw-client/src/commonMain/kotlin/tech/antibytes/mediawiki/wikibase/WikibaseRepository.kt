@@ -11,11 +11,9 @@ import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.model.Alias
 import tech.antibytes.mediawiki.wikibase.model.Description
 import tech.antibytes.mediawiki.wikibase.model.Entity
-import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 import tech.antibytes.mediawiki.wikibase.model.EntityTypes
 import tech.antibytes.mediawiki.wikibase.model.Label
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
-import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 
 internal class WikibaseRepository(
     private val apiService: WikibaseContract.ApiService

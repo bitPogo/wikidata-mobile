@@ -68,5 +68,17 @@ internal interface WikibaseContract {
             MwClientError.InternalFailure::class
         )
         suspend fun fetch(ids: Set<EntityId>): List<Entity>
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun search(
+            term: String,
+            language: LanguageTag,
+            type: EntityTypes,
+            limit: Int
+        ): List<Entity>
     }
 }
