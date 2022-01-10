@@ -7,7 +7,7 @@
 package tech.antibytes.fixture.wikibase
 
 import kotlinx.datetime.Instant
-import tech.antibytes.mediawiki.EntityContract
+import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.wikibase.model.Alias
 import tech.antibytes.mediawiki.wikibase.model.Description
 import tech.antibytes.mediawiki.wikibase.model.Entity
@@ -17,7 +17,7 @@ internal val q42 = Entity(
     id = "Q42",
     revisionId = 1558961212,
     lastModification = Instant.parse("2022-01-09T05:52:11Z"),
-    type = EntityContract.EntityTypes.ITEM,
+    type = DataModelContract.EntityTypes.ITEM,
     labels = mapOf(
         "en" to Label(language = "en", value = "Douglas Adams"),
         "fr" to Label(language = "fr", value = "Douglas Adams"),

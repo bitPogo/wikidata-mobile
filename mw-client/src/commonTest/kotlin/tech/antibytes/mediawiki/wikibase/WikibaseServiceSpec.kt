@@ -7,7 +7,7 @@
 package tech.antibytes.mediawiki.wikibase
 
 import tech.antibytes.fixture.wikibase.q42
-import tech.antibytes.mediawiki.EntityContract
+import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mock.wikibase.WikibaseRepositoryStub
@@ -59,14 +59,14 @@ class WikibaseServiceSpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = EntityContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityTypes.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = listOf(q42)
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: EntityContract.EntityTypes? = null
+        var capturedEntityType: DataModelContract.EntityTypes? = null
         var capturedLimit: Int? = null
 
         repository.search = { givenTerm, givenTag, givenType, givenLimit ->

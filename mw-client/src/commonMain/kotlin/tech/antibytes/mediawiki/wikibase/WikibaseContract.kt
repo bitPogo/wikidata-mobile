@@ -6,11 +6,10 @@
 
 package tech.antibytes.mediawiki.wikibase
 
-import tech.antibytes.mediawiki.EntityContract
+import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.error.MwClientError
-import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 
@@ -35,7 +34,7 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: EntityContract.EntityTypes,
+            type: DataModelContract.EntityTypes,
             limit: Int
         ): SearchEntityResponse
     }
@@ -46,7 +45,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetch(ids: Set<EntityId>): List<EntityContract.RevisionedEntity>
+        suspend fun fetch(ids: Set<EntityId>): List<DataModelContract.RevisionedEntity>
 
         @Throws(
             MwClientError.ResponseTransformFailure::class,
@@ -56,9 +55,9 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: EntityContract.EntityTypes,
+            type: DataModelContract.EntityTypes,
             limit: Int
-        ): List<EntityContract.Entity>
+        ): List<DataModelContract.Entity>
     }
 
     interface Service {
@@ -67,7 +66,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetch(ids: Set<EntityId>): List<EntityContract.RevisionedEntity>
+        suspend fun fetch(ids: Set<EntityId>): List<DataModelContract.RevisionedEntity>
 
         @Throws(
             MwClientError.ResponseTransformFailure::class,
@@ -77,8 +76,8 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: EntityContract.EntityTypes,
+            type: DataModelContract.EntityTypes,
             limit: Int
-        ): List<EntityContract.Entity>
+        ): List<DataModelContract.Entity>
     }
 }

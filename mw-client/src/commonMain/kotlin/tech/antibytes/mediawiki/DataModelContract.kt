@@ -10,7 +10,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import tech.antibytes.mediawiki.wikibase.model.EntityTypesSerializer
 
-interface EntityContract {
+interface DataModelContract {
     @Serializable(with = EntityTypesSerializer::class)
     enum class EntityTypes {
         ITEM,
@@ -34,5 +34,10 @@ interface EntityContract {
     interface RevisionedEntity : Entity {
         val revisionId: Long
         val lastModification: Instant
+    }
+
+    interface RevisionedPagePointer {
+        val revisionId: Long
+        val title: String
     }
 }
