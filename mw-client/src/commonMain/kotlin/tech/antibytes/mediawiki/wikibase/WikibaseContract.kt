@@ -7,19 +7,35 @@
 package tech.antibytes.mediawiki.wikibase
 
 import tech.antibytes.mediawiki.EntityId
+import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 
 internal interface WikibaseContract {
     interface ApiService {
-        fun fetchEntity(ids: Set<EntityId>): EntityResponse
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun fetchEntity(ids: Set<EntityId>): EntityResponse
     }
 
     interface Repository {
-        fun fetchEntity(ids: Set<EntityId>): Set<Entity>
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun fetchEntity(ids: Set<EntityId>): Set<Entity>
     }
 
     interface Service {
-        fun fetchEntity(ids: Set<EntityId>): Set<Entity>
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun fetchEntity(ids: Set<EntityId>): Set<Entity>
     }
 }
