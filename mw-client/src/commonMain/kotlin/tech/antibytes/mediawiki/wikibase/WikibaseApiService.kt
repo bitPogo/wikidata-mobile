@@ -15,7 +15,7 @@ import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 internal class WikibaseApiService(
     private val requestBuilder: NetworkingContract.RequestBuilder
 ) : WikibaseContract.ApiService {
-    override suspend fun fetchEntity(ids: Set<EntityId>): EntityResponse {
+    override suspend fun fetchEntities(ids: Set<EntityId>): EntityResponse {
         val request = requestBuilder.setParameter(
             mapOf(
                 "action" to "wbgetentities",

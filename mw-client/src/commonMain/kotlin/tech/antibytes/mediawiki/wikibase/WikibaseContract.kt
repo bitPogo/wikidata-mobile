@@ -18,7 +18,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchEntity(ids: Set<EntityId>): EntityResponse
+        suspend fun fetchEntities(ids: Set<EntityId>): EntityResponse
     }
 
     interface Repository {
@@ -27,7 +27,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchEntity(ids: Set<EntityId>): Set<Entity>
+        suspend fun fetchEntities(ids: Set<EntityId>): List<Entity>
     }
 
     interface Service {
@@ -36,6 +36,6 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchEntity(ids: Set<EntityId>): Set<Entity>
+        suspend fun fetchEntities(ids: Set<EntityId>): List<Entity>
     }
 }

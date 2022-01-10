@@ -37,7 +37,7 @@ class WikibaseApiServiceSpec {
     }
 
     @Test
-    fun `Given fetchEntity is called with a Set of Ids it fails due to a unexpected response`() = runBlockingTest {
+    fun `Given fetchEntities is called with a Set of Ids it fails due to a unexpected response`() = runBlockingTest {
         // Given
         val requestBuilder = RequestBuilderStub()
         val ids = fixture.listFixture<String>().toSet()
@@ -58,7 +58,7 @@ class WikibaseApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            WikibaseApiService(requestBuilder).fetchEntity(ids)
+            WikibaseApiService(requestBuilder).fetchEntities(ids)
         }
 
         assertEquals(
@@ -68,7 +68,7 @@ class WikibaseApiServiceSpec {
     }
 
     @Test
-    fun `Given fetchEntity is called with a Set of Ids, it returns a EntityResponse`() = runBlockingTest {
+    fun `Given fetchEntities is called with a Set of Ids, it returns a EntityResponse`() = runBlockingTest {
         // Given
         val requestBuilder = RequestBuilderStub()
         val ids = fixture.listFixture<String>(size = 2).toSet()
@@ -96,7 +96,7 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val response: EntityResponse = WikibaseApiService(requestBuilder).fetchEntity(ids)
+        val response: EntityResponse = WikibaseApiService(requestBuilder).fetchEntities(ids)
 
         // Then
         response sameAs expectedResponse

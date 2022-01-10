@@ -12,5 +12,5 @@ import tech.antibytes.mediawiki.EntityId
 @Serializable
 internal data class EntityResponse(
     val entities: Map<EntityId, Entity> = emptyMap(),
-    val success: Short = 0
+    val success: Int = 0
 )
