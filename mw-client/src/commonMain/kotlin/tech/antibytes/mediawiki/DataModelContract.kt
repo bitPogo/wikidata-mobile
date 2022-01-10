@@ -23,12 +23,15 @@ interface DataModelContract {
         val value: String
     }
 
-    interface Entity {
-        val id: EntityId
-        val type: EntityTypes
+    interface BoxedTerms {
         val labels: Map<String, LanguagePair>
         val descriptions: Map<String, LanguagePair>
         val aliases: Map<String, List<LanguagePair>>
+    }
+
+    interface Entity : BoxedTerms {
+        val id: EntityId
+        val type: EntityTypes
     }
 
     interface RevisionedEntity : Entity {

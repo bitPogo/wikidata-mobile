@@ -8,6 +8,7 @@ package tech.antibytes.mediawiki.wikibase.model
 
 import kotlinx.serialization.Serializable
 import tech.antibytes.mediawiki.EntityId
+import tech.antibytes.mediawiki.wikibase.WikibaseContract
 
 internal enum class MatchTypes {
     LABEL,
@@ -17,12 +18,12 @@ internal enum class MatchTypes {
 
 @Serializable
 internal data class SearchEntity(
-    val id: EntityId,
-    val label: String = "",
-    val description: String = "",
-    val aliases: List<String> = emptyList(),
+    override val id: EntityId,
+    override val label: String = "",
+    override val description: String = "",
+    override val aliases: List<String> = emptyList(),
     val match: Match
-)
+) : WikibaseContract.MonolingualEntity
 
 @Serializable
 internal data class Match(

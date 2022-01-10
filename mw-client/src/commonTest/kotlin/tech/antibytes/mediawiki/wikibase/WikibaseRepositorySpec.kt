@@ -13,7 +13,7 @@ import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.model.Alias
 import tech.antibytes.mediawiki.wikibase.model.Description
 import tech.antibytes.mediawiki.wikibase.model.Entity
-import tech.antibytes.mediawiki.wikibase.model.EntityResponse
+import tech.antibytes.mediawiki.wikibase.model.EntitiesResponse
 import tech.antibytes.mediawiki.wikibase.model.Label
 import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
@@ -47,7 +47,7 @@ class WikibaseRepositorySpec {
     fun `Given fetch is called with a Set of Ids, it delegates the Ids to the ApiService returns a EmptyList if the call was not a Success`() = runBlockingTest {
         // Given
         val ids = fixture.listFixture<EntityId>()
-        val response = EntityResponse(
+        val response = EntitiesResponse(
             entities = mapOf(
                 ids[0] to q42,
                 ids[1] to q42
@@ -74,7 +74,7 @@ class WikibaseRepositorySpec {
     fun `Given fetch is called with a Set of Ids, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
         // Given
         val ids = fixture.listFixture<EntityId>(size = 2)
-        val response = EntityResponse(
+        val response = EntitiesResponse(
             entities = mapOf(
                 ids[0] to q42,
                 ids[1] to q42
