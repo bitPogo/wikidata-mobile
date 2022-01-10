@@ -9,42 +9,36 @@ package tech.antibytes.mediawiki.wikibase.model
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import tech.antibytes.mediawiki.EntityContract
 import tech.antibytes.mediawiki.EntityId
 
-@Serializable(with = EntityTypesSerializer::class)
-enum class EntityTypes {
-    ITEM,
-    LEXEME,
-    PROPERTY
-}
-
 @Serializable
-data class Entity(
-    val id: EntityId,
+internal data class Entity(
+    override val id: EntityId,
     @SerialName("lastrevid")
-    val revisionId: Long? = null,
+    override val revisionId: Long = -1,
     @SerialName("modified")
-    val lastModification: Instant? = null,
-    val type: EntityTypes,
-    val labels: Map<String, Label>,
-    val descriptions: Map<String, Description>,
-    val aliases: Map<String, List<Alias>>
-)
+    override val lastModification: Instant = Instant.DISTANT_PAST,
+    override val type: EntityContract.EntityTypes,
+    override val labels: Map<String, Label>,
+    override val descriptions: Map<String, Description>,
+    override val aliases: Map<String, List<Alias>>
+) : EntityContract.RevisionedEntity
 
 @Serializable
-data class Label(
-    val language: String,
-    val value: String
-)
+internal data class Label(
+    override val language: String,
+    override val value: String
+) : EntityContract.LanguagePair
 
 @Serializable
-data class Description(
-    val language: String,
-    val value: String
-)
+internal data class Description(
+    override val language: String,
+    override val value: String
+) : EntityContract.LanguagePair
 
 @Serializable
-data class Alias(
-    val language: String,
-    val value: String
-)
+internal data class Alias(
+    override val language: String,
+    override val value: String
+) : EntityContract.LanguagePair

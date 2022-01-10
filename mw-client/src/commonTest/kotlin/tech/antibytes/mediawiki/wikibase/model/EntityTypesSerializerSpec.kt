@@ -9,6 +9,7 @@ package tech.antibytes.mediawiki.wikibase.model
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.json.Json
+import tech.antibytes.mediawiki.EntityContract
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
@@ -32,7 +33,7 @@ class EntityTypesSerializerSpec {
         // Given
         val serializer = Json
 
-        for (field in EntityTypes.values()) {
+        for (field in EntityContract.EntityTypes.values()) {
             // When
             val result = serializer.encodeToString(
                 EntityTypesSerializer(),
@@ -50,9 +51,9 @@ class EntityTypesSerializerSpec {
         val serializer = Json
 
         val types = listOf(
-            EntityTypes.ITEM.name.lowercase() to EntityTypes.ITEM,
-            EntityTypes.LEXEME.name.lowercase() to EntityTypes.LEXEME,
-            EntityTypes.PROPERTY.name.lowercase() to EntityTypes.PROPERTY
+            EntityContract.EntityTypes.ITEM.name.lowercase() to EntityContract.EntityTypes.ITEM,
+            EntityContract.EntityTypes.LEXEME.name.lowercase() to EntityContract.EntityTypes.LEXEME,
+            EntityContract.EntityTypes.PROPERTY.name.lowercase() to EntityContract.EntityTypes.PROPERTY
         )
 
         for (field in types) {

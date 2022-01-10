@@ -6,19 +6,21 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import tech.antibytes.mediawiki.EntityContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.model.Alias
 import tech.antibytes.mediawiki.wikibase.model.Description
 import tech.antibytes.mediawiki.wikibase.model.Entity
-import tech.antibytes.mediawiki.wikibase.model.EntityTypes
 import tech.antibytes.mediawiki.wikibase.model.Label
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 
 internal class WikibaseRepository(
     private val apiService: WikibaseContract.ApiService
 ) : WikibaseContract.Repository {
-    private fun WikibaseContract.Response.applyOnSuccess(onSuccess: () -> List<Entity>): List<Entity> {
+    private fun <T : EntityContract.Entity> WikibaseContract.Response.applyOnSuccess(
+        onSuccess: () -> List<T>
+    ): List<T> {
         return if (this.success == 1) {
             onSuccess()
         } else {
@@ -26,7 +28,7 @@ internal class WikibaseRepository(
         }
     }
 
-    override suspend fun fetch(ids: Set<EntityId>): List<Entity> {
+    override suspend fun fetch(ids: Set<EntityId>): List<EntityContract.RevisionedEntity> {
         val response = apiService.fetch(ids)
 
         return response.applyOnSuccess {
@@ -46,8 +48,8 @@ internal class WikibaseRepository(
     private fun mapSearchEntities(
         entities: List<SearchEntity>,
         language: LanguageTag,
-        type: EntityTypes
-    ): List<Entity> {
+        type: EntityContract.EntityTypes
+    ): List<EntityContract.Entity> {
         return entities.map { search ->
             Entity(
                 id = search.id,
@@ -68,9 +70,9 @@ internal class WikibaseRepository(
     override suspend fun search(
         term: String,
         language: LanguageTag,
-        type: EntityTypes,
+        type: EntityContract.EntityTypes,
         limit: Int
-    ): List<Entity> {
+    ): List<EntityContract.Entity> {
         val response = apiService.search(term, language, type, limit)
 
         return response.applyOnSuccess {
