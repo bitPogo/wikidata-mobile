@@ -133,3 +133,9 @@ val provideTestConfig: Task by tasks.creating {
         File(configPath, "TestConfig.kt").writeText(config)
     }
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile::class.java) {
+    if (this.name.contains("Test")) {
+        this.dependsOn(provideTestConfig)
+    }
+}
