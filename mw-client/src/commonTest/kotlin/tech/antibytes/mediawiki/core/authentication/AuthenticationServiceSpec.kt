@@ -7,8 +7,8 @@
 package tech.antibytes.mediawiki.core.authentication
 
 import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
-import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
 import tech.antibytes.mock.core.authentication.AuthenticationRepositoryStub
+import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture

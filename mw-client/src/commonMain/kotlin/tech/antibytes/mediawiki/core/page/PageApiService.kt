@@ -14,7 +14,7 @@ import tech.antibytes.mediawiki.networking.receive
 internal class PageApiService(
     private val requestBuilder: NetworkingContract.RequestBuilder
 ) : PageContract.ApiService {
-    private fun createRandomPageParameter(limit: Int, namespace: Int?) : Map<String, Comparable<*>> {
+    private fun createRandomPageParameter(limit: Int, namespace: Int?): Map<String, Comparable<*>> {
         val baseParameter = mutableMapOf(
             "action" to "query",
             "format" to "json",
