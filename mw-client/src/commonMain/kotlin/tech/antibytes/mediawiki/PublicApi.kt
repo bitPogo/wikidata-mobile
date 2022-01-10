@@ -7,6 +7,7 @@
 package tech.antibytes.mediawiki
 
 typealias EntityId = String
+typealias LanguageTag = String
 
 interface PublicApi {
     fun interface Connectivity {

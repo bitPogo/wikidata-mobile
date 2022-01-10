@@ -6,12 +6,9 @@
 
 package tech.antibytes.mediawiki.wikibase.model
 
-import kotlinx.serialization.Serializable
-import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.wikibase.WikibaseContract
 
-@Serializable
-internal data class EntityResponse(
-    val entities: Map<EntityId, Entity> = emptyMap(),
+internal data class SearchEntityResponse(
+    val search: List<SearchEntity>,
     override val success: Int = 0
 ) : WikibaseContract.Response
