@@ -15,7 +15,7 @@ import tech.antibytes.util.test.MockError
 internal class WikibaseRepositoryStub(
     var fetchEntities: ((Set<EntityId>) -> List<Entity>)? = null
 ) : WikibaseContract.Repository, MockContract.Mock {
-    override suspend fun fetchEntities(ids: Set<EntityId>): List<Entity> {
+    override suspend fun fetch(ids: Set<EntityId>): List<Entity> {
         return fetchEntities?.invoke(ids) ?: throw MockError.MissingStub("Missing Sideeffect fetchEntities")
     }
 

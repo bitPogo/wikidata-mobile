@@ -21,8 +21,8 @@ internal class WikibaseRepository(
         }
     }
 
-    override suspend fun fetchEntities(ids: Set<EntityId>): List<Entity> {
-        val response = apiService.fetchEntities(ids)
+    override suspend fun fetch(ids: Set<EntityId>): List<Entity> {
+        val response = apiService.fetch(ids)
 
         return extractEntities(response)
     }

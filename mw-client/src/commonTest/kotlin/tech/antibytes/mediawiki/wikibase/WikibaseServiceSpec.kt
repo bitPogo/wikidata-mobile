@@ -43,7 +43,7 @@ class WikibaseServiceSpec {
             response
         }
         // When
-        val result = WikibaseService(repository).fetchEntities(ids)
+        val result = WikibaseService(repository).fetch(ids)
 
         // Then
         result sameAs response

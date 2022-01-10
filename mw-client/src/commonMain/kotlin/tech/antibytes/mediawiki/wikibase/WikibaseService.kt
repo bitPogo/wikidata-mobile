@@ -12,7 +12,7 @@ import tech.antibytes.mediawiki.wikibase.model.Entity
 internal class WikibaseService(
     private val wikibaseRepository: WikibaseContract.Repository
 ) : WikibaseContract.Service {
-    override suspend fun fetchEntities(
+    override suspend fun fetch(
         ids: Set<EntityId>
-    ): List<Entity> = wikibaseRepository.fetchEntities(ids)
+    ): List<Entity> = wikibaseRepository.fetch(ids)
 }

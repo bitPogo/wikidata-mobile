@@ -43,13 +43,13 @@ class WikibaseRepositorySpec {
 
         var capturedIds: Set<EntityId>? = null
 
-        apiService.fetchEntities = { givenIds ->
+        apiService.fetch = { givenIds ->
             capturedIds = givenIds
             response
         }
 
         // When
-        val result = WikibaseRepository(apiService).fetchEntities(ids)
+        val result = WikibaseRepository(apiService).fetch(ids)
 
         // Then
         result mustBe emptyList()
@@ -70,13 +70,13 @@ class WikibaseRepositorySpec {
 
         var capturedIds: Set<EntityId>? = null
 
-        apiService.fetchEntities = { givenIds ->
+        apiService.fetch = { givenIds ->
             capturedIds = givenIds
             response
         }
 
         // When
-        val result = WikibaseRepository(apiService).fetchEntities(ids.toSet())
+        val result = WikibaseRepository(apiService).fetch(ids.toSet())
 
         // Then
         result mustBe listOf(q42, q42)

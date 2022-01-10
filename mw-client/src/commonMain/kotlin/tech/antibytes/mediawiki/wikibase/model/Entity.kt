@@ -22,7 +22,7 @@ enum class EntityTypes {
 data class Entity(
     val id: EntityId,
     @SerialName("lastrevid")
-    val revisionId: Long,
+    val revisionId: Long? = null,
     @SerialName("modified")
     val lastModification: Instant,
     val type: EntityTypes,

@@ -7,9 +7,12 @@
 package tech.antibytes.mediawiki.wikibase
 
 import tech.antibytes.mediawiki.EntityId
+import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
+import tech.antibytes.mediawiki.wikibase.model.EntityTypes
+import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 
 internal interface WikibaseContract {
     interface ApiService {
@@ -18,7 +21,19 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchEntities(ids: Set<EntityId>): EntityResponse
+        suspend fun fetch(ids: Set<EntityId>): EntityResponse
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun search(
+            term: String,
+            language: LanguageTag,
+            type: EntityTypes,
+            limit: Int
+        ) : SearchEntityResponse
     }
 
     interface Repository {
@@ -27,7 +42,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchEntities(ids: Set<EntityId>): List<Entity>
+        suspend fun fetch(ids: Set<EntityId>): List<Entity>
     }
 
     interface Service {
@@ -36,6 +51,6 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchEntities(ids: Set<EntityId>): List<Entity>
+        suspend fun fetch(ids: Set<EntityId>): List<Entity>
     }
 }
