@@ -7,13 +7,13 @@
 package tech.antibytes.mediawiki.wikibase
 
 import tech.antibytes.fixture.wikibase.q42
+import tech.antibytes.mediawiki.EntityContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.wikibase.model.Alias
 import tech.antibytes.mediawiki.wikibase.model.Description
 import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
-import tech.antibytes.mediawiki.wikibase.model.EntityTypes
 import tech.antibytes.mediawiki.wikibase.model.Label
 import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
@@ -102,7 +102,7 @@ class WikibaseRepositorySpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = EntityTypes.PROPERTY
+        val type = EntityContract.EntityTypes.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = SearchEntityResponse(
@@ -122,7 +122,7 @@ class WikibaseRepositorySpec {
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: EntityTypes? = null
+        var capturedEntityType: EntityContract.EntityTypes? = null
         var capturedLimit: Int? = null
 
         apiService.search = { givenTerm, givenTag, givenType, givenLimit ->
@@ -150,7 +150,7 @@ class WikibaseRepositorySpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = EntityTypes.PROPERTY
+        val type = EntityContract.EntityTypes.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = SearchEntityResponse(
@@ -170,7 +170,7 @@ class WikibaseRepositorySpec {
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: EntityTypes? = null
+        var capturedEntityType: EntityContract.EntityTypes? = null
         var capturedLimit: Int? = null
 
         apiService.search = { givenTerm, givenTag, givenType, givenLimit ->
@@ -197,8 +197,6 @@ class WikibaseRepositorySpec {
         result mustBe listOf(
             Entity(
                 id = response.search.first().id,
-                revisionId = null,
-                lastModification = null,
                 type = type,
                 labels = mapOf(
                     languageTag to Label(

@@ -6,12 +6,12 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import tech.antibytes.mediawiki.EntityContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
-import tech.antibytes.mediawiki.wikibase.model.EntityTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 
 internal interface WikibaseContract {
@@ -35,7 +35,7 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: EntityTypes,
+            type: EntityContract.EntityTypes,
             limit: Int
         ): SearchEntityResponse
     }
@@ -46,7 +46,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetch(ids: Set<EntityId>): List<Entity>
+        suspend fun fetch(ids: Set<EntityId>): List<EntityContract.RevisionedEntity>
 
         @Throws(
             MwClientError.ResponseTransformFailure::class,
@@ -56,9 +56,9 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: EntityTypes,
+            type: EntityContract.EntityTypes,
             limit: Int
-        ): List<Entity>
+        ): List<EntityContract.Entity>
     }
 
     interface Service {
@@ -67,7 +67,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetch(ids: Set<EntityId>): List<Entity>
+        suspend fun fetch(ids: Set<EntityId>): List<EntityContract.RevisionedEntity>
 
         @Throws(
             MwClientError.ResponseTransformFailure::class,
@@ -77,8 +77,8 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: EntityTypes,
+            type: EntityContract.EntityTypes,
             limit: Int
-        ): List<Entity>
+        ): List<EntityContract.Entity>
     }
 }

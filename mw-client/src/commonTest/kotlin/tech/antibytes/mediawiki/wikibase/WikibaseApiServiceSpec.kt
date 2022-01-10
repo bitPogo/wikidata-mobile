@@ -10,11 +10,11 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpStatement
 import tech.antibytes.fixture.wikibase.q42
+import tech.antibytes.mediawiki.EntityContract
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
-import tech.antibytes.mediawiki.wikibase.model.EntityTypes
 import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
@@ -120,7 +120,7 @@ class WikibaseApiServiceSpec {
         val requestBuilder = RequestBuilderStub()
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = EntityTypes.PROPERTY
+        val type = EntityContract.EntityTypes.PROPERTY
         val limit: Int = fixture.fixture()
 
         val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
@@ -154,7 +154,7 @@ class WikibaseApiServiceSpec {
         val requestBuilder = RequestBuilderStub()
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = EntityTypes.PROPERTY
+        val type = EntityContract.EntityTypes.PROPERTY
         val limit: Int = fixture.fixture()
 
         val expectedResponse = SearchEntityResponse(

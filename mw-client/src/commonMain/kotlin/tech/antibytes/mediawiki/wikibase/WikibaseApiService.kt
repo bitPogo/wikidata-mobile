@@ -6,13 +6,13 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import tech.antibytes.mediawiki.EntityContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.MwClientContract.Companion.ENDPOINT
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.receive
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
-import tech.antibytes.mediawiki.wikibase.model.EntityTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 
 internal class WikibaseApiService(
@@ -36,7 +36,7 @@ internal class WikibaseApiService(
     override suspend fun search(
         term: String,
         language: LanguageTag,
-        type: EntityTypes,
+        type: EntityContract.EntityTypes,
         limit: Int
     ): SearchEntityResponse {
         val request = requestBuilder.setParameter(
