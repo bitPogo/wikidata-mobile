@@ -7,9 +7,8 @@
 package tech.antibytes.mediawiki.serialization
 
 import kotlinx.serialization.json.JsonBuilder
-import tech.antibytes.mediawiki.networking.plugin.KtorPluginsContract
 
-internal class JsonConfigurator : KtorPluginsContract.JsonConfigurator {
+internal class JsonConfigurator : JsonConfiguratorContract {
     override fun configure(jsonBuilder: JsonBuilder): JsonBuilder {
         jsonBuilder.isLenient = true
         jsonBuilder.ignoreUnknownKeys = true

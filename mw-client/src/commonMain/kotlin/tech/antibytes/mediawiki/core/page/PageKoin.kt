@@ -8,6 +8,7 @@ package tech.antibytes.mediawiki.core.page
 
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.annotation.InternalKoinModuleScope
 
 internal fun resolvePageModule(): Module {
@@ -22,7 +23,7 @@ internal fun resolvePageModule(): Module {
             PageRepository(get())
         }
 
-        single<PageContract.Service> {
+        single<PublicApi.PageService> {
             PageService(get(), get())
         }
     }

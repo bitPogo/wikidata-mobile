@@ -26,12 +26,12 @@ import kotlin.test.Test
 class SuspendingFunctionWrapperSpec {
     @Test
     fun `It fulfils SuspendingFunctionWrapperFactory`() {
-        SuspendingFunctionWrapper fulfils MwClientContract.SuspendingFunctionWrapperFactory::class
+        SuspendingFunctionWrapper.Factory() fulfils MwClientContract.SuspendingFunctionWrapperFactory::class
     }
 
     @Test
     fun `Given getInstance is called with a CoroutineScope and a supending Function it returns a SuspendingFunctionWrapper`() {
-        SuspendingFunctionWrapper.getInstance(
+        SuspendingFunctionWrapper.Factory().getInstance(
             CoroutineScope(Dispatchers.Default),
             suspend { /* Do nothing*/ }
         ) fulfils PublicApi.SuspendingFunctionWrapper::class
@@ -43,7 +43,7 @@ class SuspendingFunctionWrapperSpec {
         val function = suspend { /* Do nothing*/ }
 
         // When
-        val result = SuspendingFunctionWrapper.getInstance(
+        val result = SuspendingFunctionWrapper.Factory().getInstance(
             GlobalScope,
             function
         ).wrappedFunction
@@ -58,7 +58,7 @@ class SuspendingFunctionWrapperSpec {
         val function = suspend { /* Do nothing*/ }
 
         // When
-        val result = SuspendingFunctionWrapper.getInstance(
+        val result = SuspendingFunctionWrapper.Factory().getInstance(
             GlobalScope,
             function
         ).subscribe({}, {})
@@ -76,7 +76,7 @@ class SuspendingFunctionWrapperSpec {
         val capturedItem = Channel<Any>()
 
         // When
-        val job = SuspendingFunctionWrapper.getInstance(
+        val job = SuspendingFunctionWrapper.Factory().getInstance(
             GlobalScope,
             function
         ).subscribe(
@@ -107,7 +107,7 @@ class SuspendingFunctionWrapperSpec {
         val capturedError = Channel<Throwable>()
 
         // When
-        val job = SuspendingFunctionWrapper.getInstance(
+        val job = SuspendingFunctionWrapper.Factory().getInstance(
             GlobalScope,
             function
         ).subscribe(
@@ -136,7 +136,7 @@ class SuspendingFunctionWrapperSpec {
         val function = suspend { delay(5000) }
 
         // When
-        val job = SuspendingFunctionWrapper.getInstance(
+        val job = SuspendingFunctionWrapper.Factory().getInstance(
             scope,
             function
         ).subscribe({}, {},)

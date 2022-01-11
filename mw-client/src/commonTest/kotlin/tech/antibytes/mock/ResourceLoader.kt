@@ -6,7 +6,7 @@
 
 package tech.antibytes.mock
 
-import tech.anitbytes.mediawiki.test.config.test.config.TestConfig
+import tech.antibytes.mediawiki.test.config.TestConfig
 import tech.antibytes.util.test.CommonResourceLoader
 import kotlin.native.concurrent.ThreadLocal
 

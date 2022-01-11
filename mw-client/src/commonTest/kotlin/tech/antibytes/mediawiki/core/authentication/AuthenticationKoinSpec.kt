@@ -9,6 +9,7 @@ package tech.antibytes.mediawiki.core.authentication
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.MwClientContract
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.core.token.MetaTokenContract
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mock.ServiceResponseWrapperStub
@@ -72,7 +73,7 @@ class AuthenticationKoinSpec {
             )
         }
 
-        val service: AuthenticationContract.Service = koin.koin.get()
+        val service: PublicApi.AuthenticationService = koin.koin.get()
 
         // Then
         service isNot null

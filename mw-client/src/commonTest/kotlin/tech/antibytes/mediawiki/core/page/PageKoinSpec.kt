@@ -9,6 +9,7 @@ package tech.antibytes.mediawiki.core.page
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.MwClientContract
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.page.PageApiServiceStub
@@ -69,7 +70,7 @@ class PageKoinSpec {
             )
         }
 
-        val service: PageContract.Service = koin.koin.get()
+        val service: PublicApi.PageService = koin.koin.get()
 
         // Then
         service isNot null

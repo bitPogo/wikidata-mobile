@@ -12,6 +12,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
 import tech.antibytes.mediawiki.DataModelContract.LanguageValuePair
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.annotation.InternalKoinModuleScope
 import tech.antibytes.mediawiki.wikibase.model.BoxedTermsSerializer
 import tech.antibytes.mediawiki.wikibase.model.LanguageValuePairSerializer
@@ -44,7 +45,7 @@ internal fun resolveWikibaseModule(): Module {
             )
         }
 
-        single<WikibaseContract.Service> {
+        single<PublicApi.WikibaseService> {
             WikibaseService(get(), get(), get())
         }
     }

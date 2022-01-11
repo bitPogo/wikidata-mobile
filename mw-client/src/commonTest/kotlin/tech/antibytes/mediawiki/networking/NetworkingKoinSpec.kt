@@ -14,6 +14,7 @@ import io.ktor.client.engine.mock.respond
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
+import tech.antibytes.mediawiki.networking.plugin.KtorPluginsContract
 import tech.antibytes.mock.networking.FeatureStub
 import tech.antibytes.mock.networking.PluginConfiguratorStub
 import tech.antibytes.util.test.fixture.fixture
@@ -26,6 +27,21 @@ import kotlin.test.Test
 
 class NetworkingKoinSpec {
     private val fixture = kotlinFixture()
+
+    @Test
+    fun `Given resolveHttpClientModule is called it creates a Module, which contains a plain ErrorMapper`() {
+        // When
+        val koin = koinApplication {
+            modules(
+                resolveHttpClientModule()
+            )
+        }
+
+        val mapper: KtorPluginsContract.ErrorMapper = koin.koin.get()
+
+        // Then
+        mapper isNot null
+    }
 
     @Test
     fun `Given resolveHttpClientModule is called it creates a Module, which contains a plain HttpClient`() {

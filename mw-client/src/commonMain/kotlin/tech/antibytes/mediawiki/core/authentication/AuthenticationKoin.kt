@@ -8,6 +8,7 @@ package tech.antibytes.mediawiki.core.authentication
 
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.annotation.InternalKoinModuleScope
 
 internal fun resolveAuthenticationModule(): Module {
@@ -22,7 +23,7 @@ internal fun resolveAuthenticationModule(): Module {
             AuthenticationRepository(get())
         }
 
-        single<AuthenticationContract.Service> {
+        single<PublicApi.AuthenticationService> {
             AuthenticationService(get(), get(), get())
         }
     }

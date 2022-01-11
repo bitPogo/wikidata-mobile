@@ -36,7 +36,7 @@ internal class SuspendingFunctionWrapper<T> private constructor(
         }
     }
 
-    companion object Factory : MwClientContract.SuspendingFunctionWrapperFactory {
+    class Factory : MwClientContract.SuspendingFunctionWrapperFactory {
         override fun <T> getInstance(
             scope: CoroutineScope,
             function: suspend () -> T

@@ -7,13 +7,13 @@
 package tech.antibytes.mock.serialization
 
 import kotlinx.serialization.json.JsonBuilder
-import tech.antibytes.mediawiki.networking.plugin.KtorPluginsContract
+import tech.antibytes.mediawiki.serialization.JsonConfiguratorContract
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
 class JsonConfiguratorStub(
     var configure: ((JsonBuilder) -> JsonBuilder)? = null
-) : KtorPluginsContract.JsonConfigurator, MockContract.Mock {
+) : JsonConfiguratorContract, MockContract.Mock {
 
     override fun configure(jsonBuilder: JsonBuilder): JsonBuilder {
         return configure?.invoke(jsonBuilder) ?: throw MockError.MissingStub("Missing sideeffect configure")

@@ -27,9 +27,7 @@ internal class ServiceResponseWrapper(
     private val factory: MwClientContract.SuspendingFunctionWrapperFactory
 ) : MwClientContract.ServiceResponseWrapper {
     override fun <T> warp(function: suspend () -> T): PublicApi.SuspendingFunctionWrapper<T> {
-        return factory.getInstance(
-            CoroutineScope(dispatcher)
-        ) {
+        return factory.getInstance(CoroutineScope(dispatcher)) {
             connectionAwareExecution(connectivityManager, function)
         }
     }

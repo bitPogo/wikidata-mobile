@@ -15,6 +15,7 @@ import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.MwClientContract
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.core.token.MetaTokenContract
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mock.ServiceResponseWrapperStub
@@ -123,7 +124,7 @@ class WikibaseKoinSpec {
             )
         }
 
-        val service: WikibaseContract.Service = koin.koin.get()
+        val service: PublicApi.WikibaseService = koin.koin.get()
 
         // Then
         service isNot null
