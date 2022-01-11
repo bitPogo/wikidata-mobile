@@ -66,6 +66,6 @@ class HttpErrorMapperSpec {
             client.get("/somewhre")
         }
 
-       error.status mustBe HttpStatusCode.InternalServerError
+        error.status mustBe HttpStatusCode.InternalServerError
     }
 }

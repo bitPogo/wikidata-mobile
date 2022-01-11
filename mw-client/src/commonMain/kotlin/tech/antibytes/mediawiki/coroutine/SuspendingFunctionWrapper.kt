@@ -16,7 +16,7 @@ import tech.antibytes.mediawiki.PublicApi
 internal class SuspendingFunctionWrapper<T> private constructor(
     private val scope: CoroutineScope,
     override val wrappedFunction: suspend () -> T
-): PublicApi.SuspendingFunctionWrapper<T> {
+) : PublicApi.SuspendingFunctionWrapper<T> {
 
     init {
         freeze()

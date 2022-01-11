@@ -10,7 +10,6 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 

@@ -12,7 +12,7 @@ import tech.antibytes.util.test.MockError
 
 internal class ConnectivityManagerStub(
     var hasConnection: (() -> Boolean)? = null
-): PublicApi.ConnectivityManager, MockContract.Mock {
+) : PublicApi.ConnectivityManager, MockContract.Mock {
     override fun hasConnection(): Boolean {
         return hasConnection?.invoke() ?: throw MockError.MissingStub("Missing Sideeffect hasConnection")
     }

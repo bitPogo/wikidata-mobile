@@ -6,12 +6,11 @@
 
 package tech.antibytes.mock
 
-import kotlinx.coroutines.Job
 import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.util.test.MockContract
 
-internal class ServiceResponseWrapperStub: MwClientContract.ServiceResponseWrapper, MockContract.Mock {
+internal class ServiceResponseWrapperStub : MwClientContract.ServiceResponseWrapper, MockContract.Mock {
     var lastFunction: (suspend () -> Any?)? = null
 
     override fun <T> warp(

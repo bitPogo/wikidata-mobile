@@ -7,7 +7,6 @@
 package tech.antibytes.mediawiki
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 
@@ -72,7 +71,7 @@ interface PublicApi {
             host: String,
             logger: Logger,
             connection: ConnectivityManager,
-            scope: CoroutineDispatcher
+            dispatcher: CoroutineDispatcher
         ): Client
     }
 }

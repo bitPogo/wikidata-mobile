@@ -6,9 +6,9 @@
 
 package tech.antibytes.mediawiki.core.page
 
+import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.PublicApi
-import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 
 internal class PageService(
     private val repository: PageContract.Repository,
