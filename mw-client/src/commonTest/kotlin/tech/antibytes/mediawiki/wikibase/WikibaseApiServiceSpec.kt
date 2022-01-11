@@ -126,7 +126,7 @@ class WikibaseApiServiceSpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
 
         val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
@@ -159,7 +159,7 @@ class WikibaseApiServiceSpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
 
         val expectedResponse = SearchEntityResponse(
@@ -291,7 +291,7 @@ class WikibaseApiServiceSpec {
     @Test
     fun `Given create is called with a serialized Entity and a Token it fails due to a unexpected response`() = runBlockingTest {
         // Given
-        val type = DataModelContract.EntityTypes.ITEM
+        val type = DataModelContract.EntityType.ITEM
         val entity: String = fixture.fixture()
         val token: String = fixture.fixture()
 
@@ -323,7 +323,7 @@ class WikibaseApiServiceSpec {
     @Test
     fun `Given create is called with a EntityType, serialized Entity and a Token it returns a EntityResponse`() = runBlockingTest {
         // Given
-        val type = DataModelContract.EntityTypes.ITEM
+        val type = DataModelContract.EntityType.ITEM
         val entity: String = fixture.fixture()
         val token: String = fixture.fixture()
 

@@ -11,17 +11,13 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.buildSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
-import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
 import tech.antibytes.mediawiki.DataModelContract.LanguageValuePair
-import tech.antibytes.mediawiki.EntityId
 
 internal class BoxedTermsSerializer : KSerializer<BoxedTerms> {
     private val languageValuePairMapSerializer = MapSerializer(String.serializer(), LanguageValuePairSerializer())

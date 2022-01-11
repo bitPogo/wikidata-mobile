@@ -15,6 +15,8 @@ import tech.antibytes.mediawiki.wikibase.model.EntitiesResponse
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
+import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
+import tech.antibytes.mediawiki.DataModelContract.EntityType
 
 internal interface WikibaseContract {
     interface Response {
@@ -44,7 +46,7 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: DataModelContract.EntityTypes,
+            type: EntityType,
             limit: Int
         ): SearchEntityResponse
 
@@ -66,7 +68,7 @@ internal interface WikibaseContract {
             MwClientError.InternalFailure::class
         )
         suspend fun create(
-            type: DataModelContract.EntityTypes,
+            type: EntityType,
             entity: String,
             token: MetaToken
         ): EntityResponse
@@ -88,7 +90,7 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: DataModelContract.EntityTypes,
+            type: EntityType,
             limit: Int
         ): List<DataModelContract.Entity>
 
@@ -98,6 +100,13 @@ internal interface WikibaseContract {
             MwClientError.InternalFailure::class
         )
         suspend fun update(entity: RevisionedEntity, token: MetaToken): RevisionedEntity?
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun create(type: EntityType, entity: BoxedTerms, token: MetaToken): RevisionedEntity?
     }
 
     interface Service {
@@ -116,7 +125,7 @@ internal interface WikibaseContract {
         suspend fun search(
             term: String,
             language: LanguageTag,
-            type: DataModelContract.EntityTypes,
+            type: EntityType,
             limit: Int
         ): List<DataModelContract.Entity>
     }

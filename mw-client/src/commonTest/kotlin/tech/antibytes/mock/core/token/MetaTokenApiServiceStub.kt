@@ -12,10 +12,10 @@ import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
 internal class MetaTokenApiServiceStub(
-    var fetchToken: ((MetaTokenServiceContract.TokenTypes) -> MetaTokenResponse)? = null
+    var fetchToken: ((MetaTokenServiceContract.MetaTokenType) -> MetaTokenResponse)? = null
 ) : MetaTokenServiceContract.ApiService, MockContract.Mock {
 
-    override suspend fun fetchToken(type: MetaTokenServiceContract.TokenTypes): MetaTokenResponse {
+    override suspend fun fetchToken(type: MetaTokenServiceContract.MetaTokenType): MetaTokenResponse {
         return fetchToken?.invoke(type) ?: throw MockError.MissingStub("Missing Sideeffect fetchToken")
     }
 

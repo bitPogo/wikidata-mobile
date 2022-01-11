@@ -15,7 +15,7 @@ internal val q42 = Entity(
     id = "Q42",
     revisionId = 1558961212,
     lastModification = Instant.parse("2022-01-09T05:52:11Z"),
-    type = DataModelContract.EntityTypes.ITEM,
+    type = DataModelContract.EntityType.ITEM,
     labels = mapOf(
         "en" to LanguageValuePair(language = "en", value = "Douglas Adams"),
         "fr" to LanguageValuePair(language = "fr", value = "Douglas Adams"),

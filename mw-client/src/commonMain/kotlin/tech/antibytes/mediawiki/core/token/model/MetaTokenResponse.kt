@@ -16,5 +16,5 @@ internal data class MetaTokenResponse(
 
 @Serializable
 internal data class Query(
-    val tokens: Map<MetaTokenServiceContract.TokenTypes, String>
+    val tokens: Map<MetaTokenServiceContract.MetaTokenType, String>
 )

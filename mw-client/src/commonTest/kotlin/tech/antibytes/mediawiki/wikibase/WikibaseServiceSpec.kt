@@ -59,14 +59,14 @@ class WikibaseServiceSpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = listOf(q42)
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: DataModelContract.EntityTypes? = null
+        var capturedEntityType: DataModelContract.EntityType? = null
         var capturedLimit: Int? = null
 
         repository.search = { givenTerm, givenTag, givenType, givenLimit ->

@@ -19,9 +19,9 @@ import tech.antibytes.util.test.MockError
 
 internal class WikibaseApiServiceStub(
     var fetch: ((Set<EntityId>) -> EntitiesResponse)? = null,
-    var search: ((String, LanguageTag, DataModelContract.EntityTypes, Int) -> SearchEntityResponse)? = null,
+    var search: ((String, LanguageTag, DataModelContract.EntityType, Int) -> SearchEntityResponse)? = null,
     var update: ((EntityId, Long, String, MetaToken) -> EntityResponse)? = null,
-    var create: ((DataModelContract.EntityTypes, String, MetaToken) -> EntityResponse)? = null
+    var create: ((DataModelContract.EntityType, String, MetaToken) -> EntityResponse)? = null
 ) : WikibaseContract.ApiService, MockContract.Mock {
     override suspend fun fetch(ids: Set<EntityId>): EntitiesResponse {
         return fetch?.invoke(ids) ?: throw MockError.MissingStub("Missing Sideeffect fetch")
@@ -30,7 +30,7 @@ internal class WikibaseApiServiceStub(
     override suspend fun search(
         term: String,
         language: LanguageTag,
-        type: DataModelContract.EntityTypes,
+        type: DataModelContract.EntityType,
         limit: Int
     ): SearchEntityResponse {
         return search?.invoke(term, language, type, limit)
@@ -48,7 +48,7 @@ internal class WikibaseApiServiceStub(
     }
 
     override suspend fun create(
-        type: DataModelContract.EntityTypes,
+        type: DataModelContract.EntityType,
         entity: String,
         token: MetaToken
     ): EntityResponse {

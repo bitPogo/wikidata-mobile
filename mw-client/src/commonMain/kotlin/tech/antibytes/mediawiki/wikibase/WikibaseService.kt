@@ -20,7 +20,7 @@ internal class WikibaseService(
     override suspend fun search(
         term: String,
         language: LanguageTag,
-        type: DataModelContract.EntityTypes,
+        type: DataModelContract.EntityType,
         limit: Int
     ): List<DataModelContract.Entity> = wikibaseRepository.search(term, language, type, limit)
 }

@@ -12,19 +12,20 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import tech.antibytes.mediawiki.DataModelContract
 
-internal class MatchTypesSerializer : KSerializer<MatchTypes> {
+internal class EntityTypeSerializer : KSerializer<DataModelContract.EntityType> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        "MatchTypes",
+        "EntityType",
         PrimitiveKind.STRING
     )
 
-    override fun serialize(encoder: Encoder, value: MatchTypes) {
+    override fun serialize(encoder: Encoder, value: DataModelContract.EntityType) {
         encoder.encodeString(value.name.lowercase())
     }
 
-    override fun deserialize(decoder: Decoder): MatchTypes {
+    override fun deserialize(decoder: Decoder): DataModelContract.EntityType {
         val key = decoder.decodeString()
-        return MatchTypes.valueOf(key.uppercase())
+        return DataModelContract.EntityType.valueOf(key.uppercase())
     }
 }

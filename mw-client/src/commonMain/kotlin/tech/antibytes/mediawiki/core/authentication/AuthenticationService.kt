@@ -13,7 +13,7 @@ internal class AuthenticationService(
     private val tokenRepository: MetaTokenServiceContract.Repository
 ) : AuthenticationContract.Service {
     override suspend fun login(username: String, password: String): Boolean {
-        val token = tokenRepository.fetchToken(MetaTokenServiceContract.TokenTypes.LOGIN)
+        val token = tokenRepository.fetchToken(MetaTokenServiceContract.MetaTokenType.LOGIN)
 
         return authRepository.login(username, password, token)
     }

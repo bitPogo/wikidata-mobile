@@ -8,11 +8,11 @@ package tech.antibytes.mediawiki
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import tech.antibytes.mediawiki.wikibase.model.EntityTypesSerializer
+import tech.antibytes.mediawiki.wikibase.model.EntityTypeSerializer
 
 interface DataModelContract {
-    @Serializable(with = EntityTypesSerializer::class)
-    enum class EntityTypes {
+    @Serializable(with = EntityTypeSerializer::class)
+    enum class EntityType {
         ITEM,
         LEXEME,
         PROPERTY
@@ -31,7 +31,7 @@ interface DataModelContract {
 
     interface Entity : BoxedTerms {
         val id: EntityId
-        val type: EntityTypes
+        val type: EntityType
     }
 
     interface RevisionedEntity : Entity {

@@ -8,15 +8,15 @@ package tech.antibytes.mediawiki.core.token
 
 import kotlinx.serialization.Serializable
 import tech.antibytes.mediawiki.core.token.model.MetaTokenResponse
-import tech.antibytes.mediawiki.core.token.model.MetaTokenTypesSerializer
+import tech.antibytes.mediawiki.core.token.model.MetaTokenTypeSerializer
 import tech.antibytes.mediawiki.error.MwClientError
 
 internal typealias MetaToken = String
 
 internal interface MetaTokenServiceContract {
 
-    @Serializable(with = MetaTokenTypesSerializer::class)
-    enum class TokenTypes(val value: String) {
+    @Serializable(with = MetaTokenTypeSerializer::class)
+    enum class MetaTokenType(val value: String) {
         CREATE_ACCOUNT("createaccounttoken"),
         CSRF("csrftoken"),
         DELETE_GLOBAL_ACCOUNT("deleteglobalaccounttoken"),
@@ -34,7 +34,7 @@ internal interface MetaTokenServiceContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchToken(type: TokenTypes): MetaTokenResponse
+        suspend fun fetchToken(type: MetaTokenType): MetaTokenResponse
     }
 
     interface Repository {
@@ -43,6 +43,6 @@ internal interface MetaTokenServiceContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetchToken(type: TokenTypes): MetaToken
+        suspend fun fetchToken(type: MetaTokenType): MetaToken
     }
 }

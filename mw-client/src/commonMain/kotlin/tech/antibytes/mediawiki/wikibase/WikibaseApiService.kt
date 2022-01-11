@@ -40,7 +40,7 @@ internal class WikibaseApiService(
     override suspend fun search(
         term: String,
         language: LanguageTag,
-        type: DataModelContract.EntityTypes,
+        type: DataModelContract.EntityType,
         limit: Int
     ): SearchEntityResponse {
         val request = requestBuilder.setParameter(
@@ -94,7 +94,7 @@ internal class WikibaseApiService(
     }
 
     override suspend fun create(
-        type: DataModelContract.EntityTypes,
+        type: DataModelContract.EntityType,
         entity: String,
         token: MetaToken
     ): EntityResponse {

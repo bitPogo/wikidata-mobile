@@ -15,7 +15,7 @@ internal class MetaTokenApiService(
     private val requestBuilder: NetworkingContract.RequestBuilder
 ) : MetaTokenServiceContract.ApiService {
 
-    override suspend fun fetchToken(type: MetaTokenServiceContract.TokenTypes): MetaTokenResponse {
+    override suspend fun fetchToken(type: MetaTokenServiceContract.MetaTokenType): MetaTokenResponse {
         val request = requestBuilder.setParameter(
             mapOf(
                 "action" to "query",

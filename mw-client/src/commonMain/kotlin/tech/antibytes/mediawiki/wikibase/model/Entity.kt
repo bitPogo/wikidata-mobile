@@ -19,7 +19,7 @@ internal data class Entity(
     override val revisionId: Long = -1,
     @SerialName("modified")
     override val lastModification: Instant = Instant.DISTANT_PAST,
-    override val type: DataModelContract.EntityTypes,
+    override val type: DataModelContract.EntityType,
     override val labels: Map<String, LanguageValuePair>,
     override val descriptions: Map<String, LanguageValuePair>,
     override val aliases: Map<String, List<LanguageValuePair>>

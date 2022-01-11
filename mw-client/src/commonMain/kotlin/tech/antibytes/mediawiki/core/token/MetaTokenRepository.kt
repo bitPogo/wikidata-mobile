@@ -11,7 +11,7 @@ import tech.antibytes.mediawiki.error.MwClientError
 internal class MetaTokenRepository(
     private val apiService: MetaTokenServiceContract.ApiService
 ) : MetaTokenServiceContract.Repository {
-    override suspend fun fetchToken(type: MetaTokenServiceContract.TokenTypes): MetaToken {
+    override suspend fun fetchToken(type: MetaTokenServiceContract.MetaTokenType): MetaToken {
         val response = apiService.fetchToken(type)
 
         return response.query.tokens[type]

@@ -38,10 +38,10 @@ internal class AuthenticationServiceSpec {
         val token: String = fixture.fixture()
         val expected: Boolean = fixture.fixture()
 
-        var capturedTokenType: MetaTokenServiceContract.TokenTypes? = null
+        var capturedMetaTokenType: MetaTokenServiceContract.MetaTokenType? = null
 
         tokenRepository.fetchToken = { givenType ->
-            capturedTokenType = givenType
+            capturedMetaTokenType = givenType
             token
         }
 
@@ -62,7 +62,7 @@ internal class AuthenticationServiceSpec {
         // Then
         result mustBe expected
 
-        capturedTokenType mustBe MetaTokenServiceContract.TokenTypes.LOGIN
+        capturedMetaTokenType mustBe MetaTokenServiceContract.MetaTokenType.LOGIN
         capturedUsername mustBe username
         capturedPassword mustBe password
         capturedToken mustBe token

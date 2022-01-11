@@ -11,9 +11,8 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import org.koin.core.error.MissingPropertyException
 import tech.antibytes.mediawiki.DataModelContract
-import tech.antibytes.mediawiki.EntityId
+import tech.antibytes.mock.wikibase.TestEntity
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
@@ -52,7 +51,7 @@ class BoxedTermsSerializerSpec {
 
         val entity = TestEntity(
             id = fixture.fixture(),
-            type = DataModelContract.EntityTypes.ITEM,
+            type = DataModelContract.EntityType.ITEM,
             revisionId = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
@@ -107,7 +106,7 @@ class BoxedTermsSerializerSpec {
 
         val entity = TestEntity(
             id = fixture.fixture(),
-            type = DataModelContract.EntityTypes.ITEM,
+            type = DataModelContract.EntityType.ITEM,
             revisionId = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
@@ -157,7 +156,7 @@ class BoxedTermsSerializerSpec {
 
         val entity = TestEntity(
             id = fixture.fixture(),
-            type = DataModelContract.EntityTypes.ITEM,
+            type = DataModelContract.EntityType.ITEM,
             revisionId = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
@@ -193,13 +192,3 @@ class BoxedTermsSerializerSpec {
         }
     }
 }
-
-private data class TestEntity(
-    override val labels: Map<String, DataModelContract.LanguageValuePair>,
-    override val descriptions: Map<String, DataModelContract.LanguageValuePair>,
-    override val aliases: Map<String, List<DataModelContract.LanguageValuePair>>,
-    override val id: EntityId,
-    override val type: DataModelContract.EntityTypes,
-    override val revisionId: Long,
-    override val lastModification: Instant
-) : DataModelContract.RevisionedEntity
