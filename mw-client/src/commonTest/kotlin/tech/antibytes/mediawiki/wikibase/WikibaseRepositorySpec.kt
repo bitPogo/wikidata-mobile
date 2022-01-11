@@ -6,19 +6,20 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import kotlinx.serialization.json.Json
 import tech.antibytes.fixture.wikibase.q42
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
-import tech.antibytes.mediawiki.wikibase.model.Alias
-import tech.antibytes.mediawiki.wikibase.model.Description
+import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
 import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntitiesResponse
-import tech.antibytes.mediawiki.wikibase.model.Label
+import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
+import tech.antibytes.mock.ResourceLoader
 import tech.antibytes.mock.wikibase.WikibaseApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -40,7 +41,7 @@ class WikibaseRepositorySpec {
 
     @Test
     fun `It fulfils Repository`() {
-        WikibaseRepository(apiService) fulfils WikibaseContract.Repository::class
+        WikibaseRepository(apiService, Json) fulfils WikibaseContract.Repository::class
     }
 
     @Test
@@ -63,7 +64,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService).fetch(ids.toSet())
+        val result = WikibaseRepository(apiService, Json).fetch(ids.toSet())
 
         // Then
         result mustBe emptyList()
@@ -90,7 +91,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService).fetch(ids.toSet())
+        val result = WikibaseRepository(apiService, Json).fetch(ids.toSet())
 
         // Then
         result mustBe listOf(q42, q42)
@@ -98,7 +99,7 @@ class WikibaseRepositorySpec {
     }
 
     @Test
-    fun `Given search is called with  a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the Ids to the ApiService returns a EmptyList if the call was not a Success`() = runBlockingTest {
+    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the Ids to the ApiService returns a EmptyList if the call was not a Success`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
@@ -135,7 +136,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseRepository(apiService, Json).search(searchTerm, languageTag, type, limit)
 
         // Then
         result mustBe emptyList()
@@ -146,7 +147,7 @@ class WikibaseRepositorySpec {
     }
 
     @Test
-    fun `Given search is called with  a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
+    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
@@ -183,12 +184,12 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseRepository(apiService, Json).search(searchTerm, languageTag, type, limit)
 
         // Then
         val expectedAliases = response.search.first().aliases
             .map { alias ->
-                Alias(
+                LanguageValuePair(
                     language = languageTag,
                     value = alias
                 )
@@ -199,13 +200,13 @@ class WikibaseRepositorySpec {
                 id = response.search.first().id,
                 type = type,
                 labels = mapOf(
-                    languageTag to Label(
+                    languageTag to LanguageValuePair(
                         language = languageTag,
                         value = response.search.first().label
                     )
                 ),
                 descriptions = mapOf(
-                    languageTag to Description(
+                    languageTag to LanguageValuePair(
                         language = languageTag,
                         value = response.search.first().description
                     )
@@ -219,5 +220,42 @@ class WikibaseRepositorySpec {
         capturedLanguageTag mustBe languageTag
         capturedEntityType mustBe type
         capturedLimit mustBe limit
+    }
+
+    @Test
+    fun `Given update with a RevisionedEntity and MetaToken, it extracts and delegates all neccessary parameter to ApiService and returns null if the call was not a Success`() = runBlockingTest {
+        // Given
+        val entity = q42
+        val token: String = fixture.fixture()
+        val expectedSerializedEntity = ResourceLoader.loader.load("/fixture/wikibase/Q42NoEncoding.json")
+
+        val response = EntityResponse(
+            entity = q42,
+            success = 0
+        )
+
+        var capturedId: EntityId? = null
+        var capturedRevision: Long? = null
+        var capturedEntity: String? = null
+        var capturedToken: String? = null
+
+        apiService.update = { givenId, givenRevision, givenEntity, givenToken ->
+            capturedId = givenId
+            capturedRevision = givenRevision
+            capturedEntity = givenEntity
+            capturedToken = givenToken
+
+            response
+        }
+
+        // When
+        val result = WikibaseRepository(apiService, Json).update(entity, token)
+
+        // Then
+        result mustBe null
+        capturedEntity mustBe expectedSerializedEntity
+        capturedId mustBe q42.id
+        capturedRevision mustBe q42.revisionId
+        capturedToken mustBe token
     }
 }

@@ -14,6 +14,7 @@ import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.wikibase.model.EntitiesResponse
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
+import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 
 internal interface WikibaseContract {
     interface Response {
@@ -77,7 +78,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetch(ids: Set<EntityId>): List<DataModelContract.RevisionedEntity>
+        suspend fun fetch(ids: Set<EntityId>): List<RevisionedEntity>
 
         @Throws(
             MwClientError.ResponseTransformFailure::class,
@@ -90,6 +91,13 @@ internal interface WikibaseContract {
             type: DataModelContract.EntityTypes,
             limit: Int
         ): List<DataModelContract.Entity>
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun update(entity: RevisionedEntity, token: MetaToken): RevisionedEntity?
     }
 
     interface Service {
@@ -98,7 +106,7 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetch(ids: Set<EntityId>): List<DataModelContract.RevisionedEntity>
+        suspend fun fetch(ids: Set<EntityId>): List<RevisionedEntity>
 
         @Throws(
             MwClientError.ResponseTransformFailure::class,

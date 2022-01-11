@@ -6,17 +6,19 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import kotlinx.serialization.json.Json
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
-import tech.antibytes.mediawiki.wikibase.model.Alias
-import tech.antibytes.mediawiki.wikibase.model.Description
+import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
 import tech.antibytes.mediawiki.wikibase.model.Entity
-import tech.antibytes.mediawiki.wikibase.model.Label
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
+import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
+import tech.antibytes.mediawiki.core.token.MetaToken
 
 internal class WikibaseRepository(
-    private val apiService: WikibaseContract.ApiService
+    private val apiService: WikibaseContract.ApiService,
+    private val serializer: Json
 ) : WikibaseContract.Repository {
     private fun <T : DataModelContract.Entity> WikibaseContract.Response.applyOnSuccess(
         onSuccess: () -> List<T>
@@ -28,7 +30,7 @@ internal class WikibaseRepository(
         }
     }
 
-    override suspend fun fetch(ids: Set<EntityId>): List<DataModelContract.RevisionedEntity> {
+    override suspend fun fetch(ids: Set<EntityId>): List<RevisionedEntity> {
         val response = apiService.fetch(ids)
 
         return response.applyOnSuccess {
@@ -39,9 +41,9 @@ internal class WikibaseRepository(
     private fun mapAliases(
         searchAliases: List<String>,
         language: LanguageTag
-    ): List<Alias> {
+    ): List<LanguageValuePair> {
         return searchAliases.map { searchAlias ->
-            Alias(language = language, value = searchAlias)
+            LanguageValuePair(language = language, value = searchAlias)
         }
     }
 
@@ -55,10 +57,10 @@ internal class WikibaseRepository(
                 id = search.id,
                 type = type,
                 labels = mapOf(
-                    language to Label(language = language, value = search.label)
+                    language to LanguageValuePair(language = language, value = search.label)
                 ),
                 descriptions = mapOf(
-                    language to Description(language = language, value = search.description)
+                    language to LanguageValuePair(language = language, value = search.description)
                 ),
                 aliases = mapOf(
                     language to mapAliases(search.aliases, language)
@@ -78,5 +80,9 @@ internal class WikibaseRepository(
         return response.applyOnSuccess {
             mapSearchEntities(response.search, language, type)
         }
+    }
+
+    override suspend fun update(entity: RevisionedEntity, token: MetaToken): RevisionedEntity? {
+        TODO()
     }
 }

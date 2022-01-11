@@ -18,15 +18,15 @@ interface DataModelContract {
         PROPERTY
     }
 
-    interface LanguagePair {
+    interface LanguageValuePair {
         val language: LanguageTag
         val value: String
     }
 
     interface BoxedTerms {
-        val labels: Map<String, LanguagePair>
-        val descriptions: Map<String, LanguagePair>
-        val aliases: Map<String, List<LanguagePair>>
+        val labels: Map<String, LanguageValuePair>
+        val descriptions: Map<String, LanguageValuePair>
+        val aliases: Map<String, List<LanguageValuePair>>
     }
 
     interface Entity : BoxedTerms {
