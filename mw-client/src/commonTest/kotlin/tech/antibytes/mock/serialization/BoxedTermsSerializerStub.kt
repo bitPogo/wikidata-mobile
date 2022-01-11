@@ -18,7 +18,7 @@ internal class BoxedTermsSerializerStub(
     var valueDescriptor: SerialDescriptor? = null,
     var serialize: ((encoder: Encoder, value: BoxedTerms) -> Unit)? = null,
     var deserialize: ((decoder: Decoder) -> BoxedTerms)? = null
-): KSerializer<BoxedTerms>, MockContract.Mock {
+) : KSerializer<BoxedTerms>, MockContract.Mock {
     override val descriptor: SerialDescriptor
         get() {
             return valueDescriptor

@@ -9,15 +9,15 @@ package tech.antibytes.mediawiki.wikibase
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import tech.antibytes.mediawiki.DataModelContract
-import tech.antibytes.mediawiki.EntityId
-import tech.antibytes.mediawiki.LanguageTag
-import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
-import tech.antibytes.mediawiki.wikibase.model.Entity
-import tech.antibytes.mediawiki.wikibase.model.SearchEntity
-import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
 import tech.antibytes.mediawiki.DataModelContract.EntityType
+import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
+import tech.antibytes.mediawiki.EntityId
+import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.core.token.MetaToken
+import tech.antibytes.mediawiki.wikibase.model.Entity
+import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
+import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 
 internal class WikibaseRepository(
     private val apiService: WikibaseContract.ApiService,

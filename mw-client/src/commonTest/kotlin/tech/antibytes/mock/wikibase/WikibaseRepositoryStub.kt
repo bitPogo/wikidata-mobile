@@ -6,14 +6,14 @@
 
 package tech.antibytes.mock.wikibase
 
+import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
+import tech.antibytes.mediawiki.DataModelContract.EntityType
+import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.core.token.MetaToken
 import tech.antibytes.mediawiki.wikibase.WikibaseContract
 import tech.antibytes.mediawiki.wikibase.model.Entity
-import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
-import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
-import tech.antibytes.mediawiki.DataModelContract.EntityType
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 

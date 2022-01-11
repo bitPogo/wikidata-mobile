@@ -7,6 +7,9 @@
 package tech.antibytes.mediawiki.wikibase
 
 import tech.antibytes.mediawiki.DataModelContract
+import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
+import tech.antibytes.mediawiki.DataModelContract.EntityType
+import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.core.token.MetaToken
@@ -14,9 +17,6 @@ import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.wikibase.model.EntitiesResponse
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
-import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
-import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
-import tech.antibytes.mediawiki.DataModelContract.EntityType
 
 internal interface WikibaseContract {
     interface Response {
@@ -128,5 +128,19 @@ internal interface WikibaseContract {
             type: EntityType,
             limit: Int
         ): List<DataModelContract.Entity>
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun update(entity: RevisionedEntity): RevisionedEntity?
+
+        @Throws(
+            MwClientError.ResponseTransformFailure::class,
+            MwClientError.RequestValidationFailure::class,
+            MwClientError.InternalFailure::class
+        )
+        suspend fun create(type: EntityType, entity: BoxedTerms): RevisionedEntity?
     }
 }

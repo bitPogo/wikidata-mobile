@@ -60,7 +60,7 @@ internal class WikibaseApiService(
         return receive(request)
     }
 
-    private fun createEditingPayload(entity: String, token: MetaToken) : FormDataContent {
+    private fun createEditingPayload(entity: String, token: MetaToken): FormDataContent {
         return FormDataContent(
             Parameters.build {
                 append("token", token)

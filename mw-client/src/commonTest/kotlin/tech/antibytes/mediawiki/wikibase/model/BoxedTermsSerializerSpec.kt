@@ -80,7 +80,7 @@ class BoxedTermsSerializerSpec {
             "\"labels\":{\"${entity.labels.keys.first()}\":{\"language\":\"${entity.labels.values.first().language}\",\"value\":\"${entity.labels.values.first().value}\"}}," +
             "\"descriptions\":{\"${entity.descriptions.keys.first()}\":{\"language\":\"${entity.descriptions.values.first().language}\",\"value\":\"${entity.descriptions.values.first().value}\"}}," +
             "\"aliases\":{\"${entity.aliases.keys.first()}\":[{\"language\":\"${entity.aliases.values.first().first().language}\",\"value\":\"${entity.aliases.values.first().first().value}\"}]}" +
-        "}"
+            "}"
 
         // When
         val result = serializer.encodeToString(
@@ -180,7 +180,7 @@ class BoxedTermsSerializerSpec {
             "\"labels\":{\"${entity.labels.keys.first()}\":{\"language\":\"${entity.labels.values.first().language}\",\"value\":\"${entity.labels.values.first().value}\"}}," +
             "\"descriptions\":{\"${entity.descriptions.keys.first()}\":{\"language\":\"${entity.descriptions.values.first().language}\",\"value\":\"${entity.descriptions.values.first().value}\"}}," +
             "\"aliases\":{\"${entity.aliases.keys.first()}\":[]}" +
-        "}"
+            "}"
 
         // Then
         assertFailsWith<NotImplementedError> {
