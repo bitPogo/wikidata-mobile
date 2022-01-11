@@ -9,33 +9,34 @@ package tech.antibytes.mediawiki.wikibase.model
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.json.Json
+import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
 
-class MatchTypesSerializerSpec {
+class EntityTypeSerializerSpec {
     @Test
     fun `It fulfils KSerializer`() {
-        MatchTypesSerializer() fulfils KSerializer::class
+        EntityTypeSerializer() fulfils KSerializer::class
     }
 
     @Test
     fun `It has a Descriptor`() {
-        val descriptor = MatchTypesSerializer().descriptor
+        val descriptor = EntityTypeSerializer().descriptor
 
-        descriptor.serialName mustBe "MatchTypes"
+        descriptor.serialName mustBe "EntityType"
         descriptor.kind mustBe PrimitiveKind.STRING
     }
 
     @Test
-    fun `Given a Serializer is called with a MatchType, it encodes it`() {
+    fun `Given a Serializer is called with a EntityType, it encodes it`() {
         // Given
         val serializer = Json
 
-        for (field in MatchTypes.values()) {
+        for (field in DataModelContract.EntityType.values()) {
             // When
             val result = serializer.encodeToString(
-                MatchTypesSerializer(),
+                EntityTypeSerializer(),
                 field
             )
 
@@ -45,20 +46,20 @@ class MatchTypesSerializerSpec {
     }
 
     @Test
-    fun `Given a Serializer is called with a serialized MatchType, it decodess it`() {
+    fun `Given a Serializer is called with a serialized EntityType, it decodess it`() {
         // Given
         val serializer = Json
 
         val types = listOf(
-            MatchTypes.LABEL.name.lowercase() to MatchTypes.LABEL,
-            MatchTypes.DESCRIPTION.name.lowercase() to MatchTypes.DESCRIPTION,
-            MatchTypes.ALIAS.name.lowercase() to MatchTypes.ALIAS
+            DataModelContract.EntityType.ITEM.name.lowercase() to DataModelContract.EntityType.ITEM,
+            DataModelContract.EntityType.LEXEME.name.lowercase() to DataModelContract.EntityType.LEXEME,
+            DataModelContract.EntityType.PROPERTY.name.lowercase() to DataModelContract.EntityType.PROPERTY
         )
 
         for (field in types) {
             // When
             val result = serializer.decodeFromString(
-                MatchTypesSerializer(),
+                EntityTypeSerializer(),
                 "\"${field.first}\""
             )
 

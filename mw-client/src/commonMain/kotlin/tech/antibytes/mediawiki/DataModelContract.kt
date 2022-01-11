@@ -8,27 +8,30 @@ package tech.antibytes.mediawiki
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import tech.antibytes.mediawiki.wikibase.model.EntityTypesSerializer
+import tech.antibytes.mediawiki.wikibase.model.EntityTypeSerializer
 
 interface DataModelContract {
-    @Serializable(with = EntityTypesSerializer::class)
-    enum class EntityTypes {
+    @Serializable(with = EntityTypeSerializer::class)
+    enum class EntityType {
         ITEM,
         LEXEME,
         PROPERTY
     }
 
-    interface LanguagePair {
+    interface LanguageValuePair {
         val language: LanguageTag
         val value: String
     }
 
-    interface Entity {
+    interface BoxedTerms {
+        val labels: Map<String, LanguageValuePair>
+        val descriptions: Map<String, LanguageValuePair>
+        val aliases: Map<String, List<LanguageValuePair>>
+    }
+
+    interface Entity : BoxedTerms {
         val id: EntityId
-        val type: EntityTypes
-        val labels: Map<String, LanguagePair>
-        val descriptions: Map<String, LanguagePair>
-        val aliases: Map<String, List<LanguagePair>>
+        val type: EntityType
     }
 
     interface RevisionedEntity : Entity {

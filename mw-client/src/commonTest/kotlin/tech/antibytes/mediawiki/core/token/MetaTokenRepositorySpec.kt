@@ -29,7 +29,7 @@ class MetaTokenRepositorySpec {
     @Test
     fun `Given fetchToken is called with a TokenType it fails due to the missing field for the MetaToken`() = runBlockingTest {
         // Given
-        val type = MetaTokenServiceContract.TokenTypes.CSRF
+        val type = MetaTokenServiceContract.MetaTokenType.CSRF
         val response = MetaTokenResponse(
             query = Query(emptyMap())
         )
@@ -47,7 +47,7 @@ class MetaTokenRepositorySpec {
     @Test
     fun `Given fetchToken is called with a TokenType it returns a MetaToken`() = runBlockingTest {
         // Given
-        val type = MetaTokenServiceContract.TokenTypes.CSRF
+        val type = MetaTokenServiceContract.MetaTokenType.CSRF
         val expected: String = fixture.fixture()
         val response = MetaTokenResponse(
             query = Query(
@@ -57,7 +57,7 @@ class MetaTokenRepositorySpec {
             )
         )
 
-        var capturedType: MetaTokenServiceContract.TokenTypes? = null
+        var capturedType: MetaTokenServiceContract.MetaTokenType? = null
         val apiService = MetaTokenApiServiceStub { givenType ->
             capturedType = givenType
             response

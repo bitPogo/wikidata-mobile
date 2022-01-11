@@ -20,19 +20,19 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class MetaTokenTypesSerializerSpec {
+class MetaMetaTokenTypeSerializerSpec {
     private val fixture = kotlinFixture()
 
     @Test
     fun `It fulfils KSerializer`() {
-        MetaTokenTypesSerializer() fulfils KSerializer::class
+        MetaTokenTypeSerializer() fulfils KSerializer::class
     }
 
     @Test
     fun `It has a descriptor`() {
-        val descriptor = MetaTokenTypesSerializer().descriptor
+        val descriptor = MetaTokenTypeSerializer().descriptor
 
-        descriptor.serialName mustBe "TokenTypes"
+        descriptor.serialName mustBe "MetaTokenType"
         descriptor.kind mustBe PrimitiveKind.STRING
     }
 
@@ -41,10 +41,10 @@ class MetaTokenTypesSerializerSpec {
         // Given
         val serializer = Json
 
-        for (field in MetaTokenServiceContract.TokenTypes.values()) {
+        for (field in MetaTokenServiceContract.MetaTokenType.values()) {
             // When
             val result = serializer.encodeToString(
-                MetaTokenTypesSerializer(),
+                MetaTokenTypeSerializer(),
                 field
             )
 
@@ -63,7 +63,7 @@ class MetaTokenTypesSerializerSpec {
         val error = assertFailsWith<MwClientError.InternalFailure> {
             // When
             serializer.decodeFromString(
-                MetaTokenTypesSerializer(),
+                MetaTokenTypeSerializer(),
                 "\"$type\""
             )
         }
@@ -79,10 +79,10 @@ class MetaTokenTypesSerializerSpec {
         // Given
         val serializer = Json
 
-        for (field in MetaTokenServiceContract.TokenTypes.values()) {
+        for (field in MetaTokenServiceContract.MetaTokenType.values()) {
             // When
             val result = serializer.decodeFromString(
-                MetaTokenTypesSerializer(),
+                MetaTokenTypeSerializer(),
                 "\"${field.value}\""
             )
 

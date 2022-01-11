@@ -6,10 +6,15 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import kotlinx.datetime.Instant
 import tech.antibytes.fixture.wikibase.q42
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
+import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
+import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
+import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
+import tech.antibytes.mock.wikibase.TestEntity
 import tech.antibytes.mock.wikibase.WikibaseRepositoryStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -23,16 +28,17 @@ import kotlin.test.Test
 
 class WikibaseServiceSpec {
     private val fixture = kotlinFixture()
-    private val repository = WikibaseRepositoryStub()
+    private val wikibaseRepository = WikibaseRepositoryStub()
+    private val tokenRepository = MetaTokenRepositoryStub()
 
     @BeforeTest
     fun setUp() {
-        repository.clear()
+        wikibaseRepository.clear()
     }
 
     @Test
     fun `It fulfils Service`() {
-        WikibaseService(repository) fulfils WikibaseContract.Service::class
+        WikibaseService(wikibaseRepository, tokenRepository) fulfils WikibaseContract.Service::class
     }
 
     @Test
@@ -42,12 +48,12 @@ class WikibaseServiceSpec {
         val response = listOf(q42)
 
         var capturedIds: Set<EntityId>? = null
-        repository.fetch = { givenIds ->
+        wikibaseRepository.fetch = { givenIds ->
             capturedIds = givenIds
             response
         }
         // When
-        val result = WikibaseService(repository).fetch(ids)
+        val result = WikibaseService(wikibaseRepository, tokenRepository).fetch(ids)
 
         // Then
         result sameAs response
@@ -55,21 +61,21 @@ class WikibaseServiceSpec {
     }
 
     @Test
-    fun `Given fetch is called with a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the call to the Repository and returns its result`() = runBlockingTest {
+    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the call to the Repository and returns its result`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = listOf(q42)
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: DataModelContract.EntityTypes? = null
+        var capturedEntityType: DataModelContract.EntityType? = null
         var capturedLimit: Int? = null
 
-        repository.search = { givenTerm, givenTag, givenType, givenLimit ->
+        wikibaseRepository.search = { givenTerm, givenTag, givenType, givenLimit ->
             capturedTerm = givenTerm
             capturedLanguageTag = givenTag
             capturedEntityType = givenType
@@ -78,7 +84,7 @@ class WikibaseServiceSpec {
             response
         }
         // When
-        val result = WikibaseService(repository).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseService(wikibaseRepository, tokenRepository).search(searchTerm, languageTag, type, limit)
 
         // Then
         result sameAs response
@@ -86,5 +92,125 @@ class WikibaseServiceSpec {
         capturedLanguageTag mustBe languageTag
         capturedEntityType mustBe type
         capturedLimit mustBe limit
+    }
+
+    @Test
+    fun `Given update is called with a RevisionedEntity, it retrieves a EditToken and delegates the call to the Repository and returns its result`() = runBlockingTest {
+        // Given
+        val entity = TestEntity(
+            id = fixture.fixture(),
+            type = DataModelContract.EntityType.ITEM,
+            revisionId = fixture.fixture(),
+            lastModification = Instant.DISTANT_FUTURE,
+            labels = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            descriptions = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            aliases = mapOf(
+                fixture.fixture<String>() to listOf(
+                    LanguageValuePair(
+                        language = fixture.fixture(),
+                        value = fixture.fixture()
+                    )
+                )
+            )
+        )
+
+        val token: String = fixture.fixture()
+        val response = q42
+
+        var capturedTokenType: MetaTokenServiceContract.MetaTokenType? = null
+        tokenRepository.fetchToken = { givenTokenType ->
+            capturedTokenType = givenTokenType
+
+            token
+        }
+
+        var capturedEntity: DataModelContract.RevisionedEntity? = null
+        var capturedToken: String? = null
+        wikibaseRepository.update = { givenEntity, givenToken ->
+            capturedEntity = givenEntity
+            capturedToken = givenToken
+
+            response
+        }
+        // When
+        val result = WikibaseService(wikibaseRepository, tokenRepository).update(entity)
+
+        // Then
+        result sameAs response
+        capturedTokenType mustBe MetaTokenServiceContract.MetaTokenType.CSRF
+        capturedEntity sameAs entity
+        capturedToken sameAs token
+    }
+
+    @Test
+    fun `Given create is called with a EntityType, BoxedTerms, it retrieves a EditToken and delegates the call to the Repository and returns its result`() = runBlockingTest {
+        // Given
+        val type = DataModelContract.EntityType.ITEM
+        val entity = TestEntity(
+            id = fixture.fixture(),
+            type = DataModelContract.EntityType.ITEM,
+            revisionId = fixture.fixture(),
+            lastModification = Instant.DISTANT_FUTURE,
+            labels = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            descriptions = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            aliases = mapOf(
+                fixture.fixture<String>() to listOf(
+                    LanguageValuePair(
+                        language = fixture.fixture(),
+                        value = fixture.fixture()
+                    )
+                )
+            )
+        )
+
+        val token: String = fixture.fixture()
+        val response = q42
+
+        var capturedTokenType: MetaTokenServiceContract.MetaTokenType? = null
+        tokenRepository.fetchToken = { givenTokenType ->
+            capturedTokenType = givenTokenType
+
+            token
+        }
+
+        var capturedEntity: DataModelContract.BoxedTerms? = null
+        var capturedToken: String? = null
+        var capturedEntityType: DataModelContract.EntityType? = null
+        wikibaseRepository.create = { givenType, givenEntity, givenToken ->
+            capturedEntityType = givenType
+            capturedEntity = givenEntity
+            capturedToken = givenToken
+
+            response
+        }
+        // When
+        val result = WikibaseService(wikibaseRepository, tokenRepository).create(type, entity)
+
+        // Then
+        result sameAs response
+        capturedTokenType mustBe MetaTokenServiceContract.MetaTokenType.CSRF
+        capturedEntityType sameAs type
+        capturedEntity sameAs entity
+        capturedToken sameAs token
     }
 }

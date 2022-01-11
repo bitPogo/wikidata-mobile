@@ -8,12 +8,14 @@ package tech.antibytes.mediawiki.wikibase
 
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.statement.HttpStatement
 import tech.antibytes.fixture.wikibase.q42
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
+import tech.antibytes.mediawiki.wikibase.model.EntitiesResponse
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
@@ -79,11 +81,11 @@ class WikibaseApiServiceSpec {
     }
 
     @Test
-    fun `Given fetch is called with a Set of Ids, it returns a EntityResponse`() = runBlockingTest {
+    fun `Given fetch is called with a Set of Ids, it returns a EntitiesResponse`() = runBlockingTest {
         // Given
         val ids = fixture.listFixture<String>(size = 2).toSet()
 
-        val expectedResponse = EntityResponse(
+        val expectedResponse = EntitiesResponse(
             entities = mapOf(
                 fixture.fixture<String>() to q42
             ),
@@ -106,10 +108,10 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val response: EntityResponse = WikibaseApiService(requestBuilder).fetch(ids)
+        val responseFetch: EntitiesResponse = WikibaseApiService(requestBuilder).fetch(ids)
 
         // Then
-        response sameAs expectedResponse
+        responseFetch sameAs expectedResponse
         capturedMethod mustBe NetworkingContract.Method.GET
         capturedPath mustBe listOf("w", "api.php")
         requestBuilder.delegatedParameter mustBe mapOf(
@@ -124,7 +126,7 @@ class WikibaseApiServiceSpec {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
 
         val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
@@ -153,11 +155,11 @@ class WikibaseApiServiceSpec {
     }
 
     @Test
-    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit it returns a EntitySearchResponse`() = runBlockingTest {
+    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit it returns a SearchEntityResponse`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
 
         val expectedResponse = SearchEntityResponse(
@@ -205,5 +207,160 @@ class WikibaseApiServiceSpec {
             "type" to type.name.lowercase(),
             "limit" to limit
         )
+    }
+
+    @Test
+    fun `Given update is called with an EntityId, a serialized Entity and a Token it fails due to a unexpected response`() = runBlockingTest {
+        // Given
+        val id: String = fixture.fixture()
+        val revisionId: Long = fixture.fixture()
+        val entity: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
+            return@createObjectMockClient scope.respond(
+                content = fixture.fixture<String>()
+            )
+        }
+
+        requestBuilder.prepare = { _, _ ->
+            HttpStatement(
+                ktorDummy,
+                client
+            )
+        }
+
+        // Then
+        val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
+            // When
+            WikibaseApiService(requestBuilder).update(id, revisionId, entity, token)
+        }
+
+        assertEquals(
+            actual = error.message,
+            expected = "Unexpected Response"
+        )
+    }
+
+    @Test
+    fun `Given update is called with an EntityId, a serialized Entity and a Token it returns a EntityResponse`() = runBlockingTest {
+        // Given
+        val id: String = fixture.fixture()
+        val revisionId: Long = fixture.fixture()
+        val entity: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val expectedResponse = EntityResponse(
+            entity = q42,
+            success = fixture.fixture()
+        )
+
+        val client = KtorMockClientFactory.createObjectMockClient(listOf(expectedResponse)) { scope, _ ->
+            return@createObjectMockClient scope.respond(
+                content = fixture.fixture<String>()
+            )
+        }
+
+        var capturedMethod: NetworkingContract.Method? = null
+        var capturedPath: Path? = null
+
+        requestBuilder.prepare = { method, path ->
+            capturedMethod = method
+            capturedPath = path
+            HttpStatement(ktorDummy, client)
+        }
+
+        // When
+        val result = WikibaseApiService(requestBuilder).update(id, revisionId, entity, token)
+
+        // Then
+        result mustBe expectedResponse
+        capturedMethod mustBe NetworkingContract.Method.POST
+        capturedPath mustBe listOf("w", "api.php")
+        requestBuilder.delegatedParameter mustBe mapOf(
+            "action" to "wbeditentity",
+            "format" to "json",
+            "baserevid" to revisionId,
+            "id" to id
+        )
+        requestBuilder.delegatedBody!! fulfils FormDataContent::class
+        (requestBuilder.delegatedBody as FormDataContent).formData["data"] mustBe entity
+        (requestBuilder.delegatedBody as FormDataContent).formData["token"] mustBe token
+    }
+
+    @Test
+    fun `Given create is called with a serialized Entity and a Token it fails due to a unexpected response`() = runBlockingTest {
+        // Given
+        val type = DataModelContract.EntityType.ITEM
+        val entity: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
+            return@createObjectMockClient scope.respond(
+                content = fixture.fixture<String>()
+            )
+        }
+
+        requestBuilder.prepare = { _, _ ->
+            HttpStatement(
+                ktorDummy,
+                client
+            )
+        }
+
+        // Then
+        val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
+            // When
+            WikibaseApiService(requestBuilder).create(type, entity, token)
+        }
+
+        assertEquals(
+            actual = error.message,
+            expected = "Unexpected Response"
+        )
+    }
+
+    @Test
+    fun `Given create is called with a EntityType, serialized Entity and a Token it returns a EntityResponse`() = runBlockingTest {
+        // Given
+        val type = DataModelContract.EntityType.ITEM
+        val entity: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val expectedResponse = EntityResponse(
+            entity = q42,
+            success = fixture.fixture()
+        )
+
+        val client = KtorMockClientFactory.createObjectMockClient(listOf(expectedResponse)) { scope, _ ->
+            return@createObjectMockClient scope.respond(
+                content = fixture.fixture<String>()
+            )
+        }
+
+        var capturedMethod: NetworkingContract.Method? = null
+        var capturedPath: Path? = null
+
+        requestBuilder.prepare = { method, path ->
+            capturedMethod = method
+            capturedPath = path
+            HttpStatement(ktorDummy, client)
+        }
+
+        // When
+        val result = WikibaseApiService(requestBuilder).create(type, entity, token)
+
+        // Then
+        result mustBe expectedResponse
+        capturedMethod mustBe NetworkingContract.Method.POST
+        capturedPath mustBe listOf("w", "api.php")
+        requestBuilder.delegatedParameter mustBe mapOf(
+            "action" to "wbeditentity",
+            "format" to "json",
+            "new" to type.name.lowercase()
+        )
+        requestBuilder.delegatedBody!! fulfils FormDataContent::class
+        (requestBuilder.delegatedBody as FormDataContent).formData["data"] mustBe entity
+        (requestBuilder.delegatedBody as FormDataContent).formData["token"] mustBe token
     }
 }

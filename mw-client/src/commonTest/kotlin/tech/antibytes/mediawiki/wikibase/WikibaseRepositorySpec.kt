@@ -6,19 +6,22 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import kotlinx.datetime.Instant
+import kotlinx.serialization.json.Json
 import tech.antibytes.fixture.wikibase.q42
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
-import tech.antibytes.mediawiki.wikibase.model.Alias
-import tech.antibytes.mediawiki.wikibase.model.Description
+import tech.antibytes.mediawiki.wikibase.model.EntitiesResponse
 import tech.antibytes.mediawiki.wikibase.model.Entity
 import tech.antibytes.mediawiki.wikibase.model.EntityResponse
-import tech.antibytes.mediawiki.wikibase.model.Label
+import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
 import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
+import tech.antibytes.mock.serialization.BoxedTermsSerializerStub
+import tech.antibytes.mock.wikibase.TestEntity
 import tech.antibytes.mock.wikibase.WikibaseApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -26,28 +29,31 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
+import tech.antibytes.util.test.sameAs
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class WikibaseRepositorySpec {
     private val fixture = kotlinFixture()
     private val apiService = WikibaseApiServiceStub()
+    private val boxedTermsSerializer = BoxedTermsSerializerStub()
 
     @BeforeTest
     fun setUp() {
         apiService.clear()
+        boxedTermsSerializer.clear()
     }
 
     @Test
     fun `It fulfils Repository`() {
-        WikibaseRepository(apiService) fulfils WikibaseContract.Repository::class
+        WikibaseRepository(apiService, Json, boxedTermsSerializer) fulfils WikibaseContract.Repository::class
     }
 
     @Test
     fun `Given fetch is called with a Set of Ids, it delegates the Ids to the ApiService returns a EmptyList if the call was not a Success`() = runBlockingTest {
         // Given
         val ids = fixture.listFixture<EntityId>()
-        val response = EntityResponse(
+        val response = EntitiesResponse(
             entities = mapOf(
                 ids[0] to q42,
                 ids[1] to q42
@@ -63,7 +69,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService).fetch(ids.toSet())
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).fetch(ids.toSet())
 
         // Then
         result mustBe emptyList()
@@ -74,7 +80,7 @@ class WikibaseRepositorySpec {
     fun `Given fetch is called with a Set of Ids, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
         // Given
         val ids = fixture.listFixture<EntityId>(size = 2)
-        val response = EntityResponse(
+        val response = EntitiesResponse(
             entities = mapOf(
                 ids[0] to q42,
                 ids[1] to q42
@@ -90,7 +96,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService).fetch(ids.toSet())
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).fetch(ids.toSet())
 
         // Then
         result mustBe listOf(q42, q42)
@@ -98,11 +104,11 @@ class WikibaseRepositorySpec {
     }
 
     @Test
-    fun `Given search is called with  a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the Ids to the ApiService returns a EmptyList if the call was not a Success`() = runBlockingTest {
+    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the Ids to the ApiService returns a EmptyList if the call was not a Success`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = SearchEntityResponse(
@@ -122,7 +128,7 @@ class WikibaseRepositorySpec {
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: DataModelContract.EntityTypes? = null
+        var capturedEntityType: DataModelContract.EntityType? = null
         var capturedLimit: Int? = null
 
         apiService.search = { givenTerm, givenTag, givenType, givenLimit ->
@@ -135,7 +141,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).search(searchTerm, languageTag, type, limit)
 
         // Then
         result mustBe emptyList()
@@ -146,11 +152,11 @@ class WikibaseRepositorySpec {
     }
 
     @Test
-    fun `Given search is called with  a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
+    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
-        val type = DataModelContract.EntityTypes.PROPERTY
+        val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
 
         val response = SearchEntityResponse(
@@ -170,7 +176,7 @@ class WikibaseRepositorySpec {
 
         var capturedTerm: String? = null
         var capturedLanguageTag: LanguageTag? = null
-        var capturedEntityType: DataModelContract.EntityTypes? = null
+        var capturedEntityType: DataModelContract.EntityType? = null
         var capturedLimit: Int? = null
 
         apiService.search = { givenTerm, givenTag, givenType, givenLimit ->
@@ -183,12 +189,12 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).search(searchTerm, languageTag, type, limit)
 
         // Then
         val expectedAliases = response.search.first().aliases
             .map { alias ->
-                Alias(
+                LanguageValuePair(
                     language = languageTag,
                     value = alias
                 )
@@ -199,13 +205,13 @@ class WikibaseRepositorySpec {
                 id = response.search.first().id,
                 type = type,
                 labels = mapOf(
-                    languageTag to Label(
+                    languageTag to LanguageValuePair(
                         language = languageTag,
                         value = response.search.first().label
                     )
                 ),
                 descriptions = mapOf(
-                    languageTag to Description(
+                    languageTag to LanguageValuePair(
                         language = languageTag,
                         value = response.search.first().description
                     )
@@ -219,5 +225,285 @@ class WikibaseRepositorySpec {
         capturedLanguageTag mustBe languageTag
         capturedEntityType mustBe type
         capturedLimit mustBe limit
+    }
+
+    @Test
+    fun `Given update with a RevisionedEntity and MetaToken, it extracts and delegates all neccessary parameter to ApiService and returns null if the call was not a Success`() = runBlockingTest {
+        // Given
+        val entity = TestEntity(
+            id = fixture.fixture(),
+            type = DataModelContract.EntityType.ITEM,
+            revisionId = fixture.fixture(),
+            lastModification = Instant.DISTANT_FUTURE,
+            labels = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            descriptions = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            aliases = mapOf(
+                fixture.fixture<String>() to listOf(
+                    LanguageValuePair(
+                        language = fixture.fixture(),
+                        value = fixture.fixture()
+                    )
+                )
+            )
+        )
+
+        val serializedEntity: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val response = EntityResponse(
+            entity = q42,
+            success = 0
+        )
+
+        var capturedId: EntityId? = null
+        var capturedRevision: Long? = null
+        var capturedSerializedEntity: String? = null
+        var capturedToken: String? = null
+
+        apiService.update = { givenId, givenRevision, givenEntity, givenToken ->
+            capturedId = givenId
+            capturedRevision = givenRevision
+            capturedSerializedEntity = givenEntity
+            capturedToken = givenToken
+
+            response
+        }
+
+        var capturedEntity: DataModelContract.BoxedTerms? = null
+        boxedTermsSerializer.serialize = { encoder, givenEntity ->
+            capturedEntity = givenEntity
+
+            encoder.encodeString(serializedEntity)
+        }
+
+        // When
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).update(entity, token)
+
+        // Then
+        result mustBe null
+        capturedEntity mustBe entity
+        capturedSerializedEntity mustBe "\"$serializedEntity\""
+        capturedId mustBe entity.id
+        capturedRevision mustBe entity.revisionId
+        capturedToken mustBe token
+    }
+
+    @Test
+    fun `Given update with a RevisionedEntity and MetaToken, it extracts and delegates all neccessary parameter to ApiService and returns a Entity if the call was a Success`() = runBlockingTest {
+        // Given
+        val entity = TestEntity(
+            id = fixture.fixture(),
+            type = DataModelContract.EntityType.ITEM,
+            revisionId = fixture.fixture(),
+            lastModification = Instant.DISTANT_FUTURE,
+            labels = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            descriptions = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            aliases = mapOf(
+                fixture.fixture<String>() to listOf(
+                    LanguageValuePair(
+                        language = fixture.fixture(),
+                        value = fixture.fixture()
+                    )
+                )
+            )
+        )
+
+        val serializedEntity: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val response = EntityResponse(
+            entity = q42,
+            success = 1
+        )
+
+        var capturedId: EntityId? = null
+        var capturedRevision: Long? = null
+        var capturedSerializedEntity: String? = null
+        var capturedToken: String? = null
+
+        apiService.update = { givenId, givenRevision, givenEntity, givenToken ->
+            capturedId = givenId
+            capturedRevision = givenRevision
+            capturedSerializedEntity = givenEntity
+            capturedToken = givenToken
+
+            response
+        }
+
+        var capturedEntity: DataModelContract.BoxedTerms? = null
+        boxedTermsSerializer.serialize = { encoder, givenEntity ->
+            capturedEntity = givenEntity
+
+            encoder.encodeString(serializedEntity)
+        }
+
+        // When
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).update(entity, token)
+
+        // Then
+        result sameAs q42
+        capturedEntity mustBe entity
+        capturedSerializedEntity mustBe "\"$serializedEntity\""
+        capturedId mustBe entity.id
+        capturedRevision mustBe entity.revisionId
+        capturedToken mustBe token
+    }
+
+    @Test
+    fun `Given create with a BoxedTerms and MetaToken, it extracts and delegates all neccessary parameter to ApiService and returns null if the call was not a Success`() = runBlockingTest {
+        // Given
+        val type = DataModelContract.EntityType.ITEM
+        val entity = TestEntity(
+            id = fixture.fixture(),
+            type = DataModelContract.EntityType.ITEM,
+            revisionId = fixture.fixture(),
+            lastModification = Instant.DISTANT_FUTURE,
+            labels = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            descriptions = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            aliases = mapOf(
+                fixture.fixture<String>() to listOf(
+                    LanguageValuePair(
+                        language = fixture.fixture(),
+                        value = fixture.fixture()
+                    )
+                )
+            )
+        )
+
+        val serializedEntity: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val response = EntityResponse(
+            entity = q42,
+            success = 0
+        )
+
+        var capturedType: DataModelContract.EntityType? = null
+        var capturedSerializedEntity: String? = null
+        var capturedToken: String? = null
+
+        apiService.create = { givenType, givenEntity, givenToken ->
+            capturedType = givenType
+            capturedSerializedEntity = givenEntity
+            capturedToken = givenToken
+
+            response
+        }
+
+        var capturedEntity: DataModelContract.BoxedTerms? = null
+        boxedTermsSerializer.serialize = { encoder, givenEntity ->
+            capturedEntity = givenEntity
+
+            encoder.encodeString(serializedEntity)
+        }
+
+        // When
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).create(type, entity, token)
+
+        // Then
+        result mustBe null
+        capturedType mustBe type
+        capturedEntity mustBe entity
+        capturedSerializedEntity mustBe "\"$serializedEntity\""
+        capturedToken mustBe token
+    }
+
+    @Test
+    fun `Given create with a BoxedTerms and MetaToken, it extracts and delegates all neccessary parameter to ApiService and returns a Entity if the call was a Success`() = runBlockingTest {
+        // Given
+        val type = DataModelContract.EntityType.ITEM
+        val entity = TestEntity(
+            id = fixture.fixture(),
+            type = DataModelContract.EntityType.ITEM,
+            revisionId = fixture.fixture(),
+            lastModification = Instant.DISTANT_FUTURE,
+            labels = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            descriptions = mapOf(
+                fixture.fixture<String>() to LanguageValuePair(
+                    language = fixture.fixture(),
+                    value = fixture.fixture()
+                )
+            ),
+            aliases = mapOf(
+                fixture.fixture<String>() to listOf(
+                    LanguageValuePair(
+                        language = fixture.fixture(),
+                        value = fixture.fixture()
+                    )
+                )
+            )
+        )
+
+        val serializedEntity: String = fixture.fixture()
+        val token: String = fixture.fixture()
+
+        val response = EntityResponse(
+            entity = q42,
+            success = 1
+        )
+
+        var capturedType: DataModelContract.EntityType? = null
+        var capturedSerializedEntity: String? = null
+        var capturedToken: String? = null
+
+        apiService.create = { givenType, givenEntity, givenToken ->
+            capturedType = givenType
+            capturedSerializedEntity = givenEntity
+            capturedToken = givenToken
+
+            response
+        }
+
+        var capturedEntity: DataModelContract.BoxedTerms? = null
+        boxedTermsSerializer.serialize = { encoder, givenEntity ->
+            capturedEntity = givenEntity
+
+            encoder.encodeString(serializedEntity)
+        }
+
+        // When
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).create(type, entity, token)
+
+        // Then
+        result mustBe q42
+        capturedType mustBe type
+        capturedEntity mustBe entity
+        capturedSerializedEntity mustBe "\"$serializedEntity\""
+        capturedToken mustBe token
     }
 }

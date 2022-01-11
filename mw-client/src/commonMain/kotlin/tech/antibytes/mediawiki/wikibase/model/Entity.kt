@@ -19,26 +19,14 @@ internal data class Entity(
     override val revisionId: Long = -1,
     @SerialName("modified")
     override val lastModification: Instant = Instant.DISTANT_PAST,
-    override val type: DataModelContract.EntityTypes,
-    override val labels: Map<String, Label>,
-    override val descriptions: Map<String, Description>,
-    override val aliases: Map<String, List<Alias>>
+    override val type: DataModelContract.EntityType,
+    override val labels: Map<String, LanguageValuePair>,
+    override val descriptions: Map<String, LanguageValuePair>,
+    override val aliases: Map<String, List<LanguageValuePair>>
 ) : DataModelContract.RevisionedEntity
 
 @Serializable
-internal data class Label(
+internal data class LanguageValuePair(
     override val language: String,
     override val value: String
-) : DataModelContract.LanguagePair
-
-@Serializable
-internal data class Description(
-    override val language: String,
-    override val value: String
-) : DataModelContract.LanguagePair
-
-@Serializable
-internal data class Alias(
-    override val language: String,
-    override val value: String
-) : DataModelContract.LanguagePair
+) : DataModelContract.LanguageValuePair
