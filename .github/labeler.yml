@@ -21,6 +21,9 @@ documentation:
 mw-client:
   - mw-client/**/*
 
+# Tests
+mw-client-e2e:
+  - mw-client-e2e/**/*
 # Features
 
 # AppAndroid

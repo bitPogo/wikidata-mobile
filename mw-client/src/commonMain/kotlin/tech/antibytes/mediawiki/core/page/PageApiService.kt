@@ -12,7 +12,7 @@ import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.receive
 
 internal class PageApiService(
-    private val requestBuilder: NetworkingContract.RequestBuilder
+    private val requestBuilder: NetworkingContract.RequestBuilderFactory
 ) : PageContract.ApiService {
     private fun createRandomPageParameter(limit: Int, namespace: Int?): Map<String, Comparable<*>> {
         val baseParameter = mutableMapOf(
@@ -33,29 +33,32 @@ internal class PageApiService(
     }
 
     override suspend fun randomPage(limit: Int, namespace: Int?): PageResponse {
-        val request = requestBuilder.setParameter(
-            createRandomPageParameter(limit, namespace)
-        ).prepare(
-            NetworkingContract.Method.GET,
-            MwClientContract.ENDPOINT
-        )
+        val request = requestBuilder
+            .create()
+            .setParameter(createRandomPageParameter(limit, namespace))
+            .prepare(
+                NetworkingContract.Method.GET,
+                MwClientContract.ENDPOINT
+            )
 
         return receive(request)
     }
 
     override suspend fun fetchRestrictions(pageTitle: String): PageResponse {
-        val request = requestBuilder.setParameter(
-            mapOf(
-                "action" to "query",
-                "format" to "json",
-                "prop" to "info",
-                "inprop" to "protection",
-                "titles" to pageTitle
+        val request = requestBuilder
+            .create()
+            .setParameter(
+                mapOf(
+                    "action" to "query",
+                    "format" to "json",
+                    "prop" to "info",
+                    "inprop" to "protection",
+                    "titles" to pageTitle
+                )
+            ).prepare(
+                NetworkingContract.Method.GET,
+                MwClientContract.ENDPOINT
             )
-        ).prepare(
-            NetworkingContract.Method.GET,
-            MwClientContract.ENDPOINT
-        )
 
         return receive(request)
     }

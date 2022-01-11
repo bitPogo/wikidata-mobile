@@ -63,6 +63,11 @@
   description: Mediawiki Client
   color: 000080
 
+# Tests
+- name: mw-client-e2e
+  description: Mediawiki Client End to End Tests
+  color: 000080
+
 # Features
 
 # App

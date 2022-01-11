@@ -6,6 +6,7 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import kotlinx.datetime.Clock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -18,9 +19,10 @@ import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.core.token.MetaTokenContract
 import tech.antibytes.mediawiki.networking.NetworkingContract
+import tech.antibytes.mock.ClockStub
 import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
-import tech.antibytes.mock.networking.RequestBuilderStub
+import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.mock.serialization.SerializerStub
 import tech.antibytes.mock.wikibase.WikibaseApiServiceStub
 import tech.antibytes.mock.wikibase.WikibaseRepositoryStub
@@ -75,7 +77,7 @@ class WikibaseKoinSpec {
             modules(
                 resolveWikibaseModule(),
                 module {
-                    single<NetworkingContract.RequestBuilder> { RequestBuilderStub() }
+                    single<NetworkingContract.RequestBuilderFactory> { RequestBuilderFactoryStub() }
                 }
             )
         }
@@ -96,6 +98,7 @@ class WikibaseKoinSpec {
                 module {
                     single<WikibaseContract.ApiService> { WikibaseApiServiceStub() }
                     single<Json> { Json }
+                    single<Clock> { ClockStub() }
                     single<KSerializer<DataModelContract.BoxedTerms>>(named(WikibaseContract.KoinKey.BOXED_TERMS_SERIALIZER)) {
                         SerializerStub()
                     }

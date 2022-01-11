@@ -12,15 +12,16 @@ import io.ktor.client.statement.HttpStatement
 import tech.antibytes.mediawiki.core.page.model.Page
 import tech.antibytes.mediawiki.core.page.model.PageResponse
 import tech.antibytes.mediawiki.core.page.model.Query
-import tech.antibytes.mediawiki.core.page.model.Restrictions
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
+import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.mock.networking.RequestBuilderStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
+import tech.antibytes.util.test.fixture.mapFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
@@ -34,6 +35,7 @@ class PageApiServiceSpec {
     private val fixture = kotlinFixture()
     private val ktorDummy = HttpRequestBuilder()
     private val requestBuilder = RequestBuilderStub()
+    private val requestBuilderFactory = RequestBuilderFactoryStub(requestBuilder)
 
     @BeforeTest
     fun setUp() {
@@ -42,7 +44,7 @@ class PageApiServiceSpec {
 
     @Test
     fun `It fulfils ApiService`() {
-        PageApiService(requestBuilder) fulfils PageContract.ApiService::class
+        PageApiService(requestBuilderFactory) fulfils PageContract.ApiService::class
     }
 
     @Test
@@ -66,7 +68,7 @@ class PageApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            PageApiService(requestBuilder).randomPage(limit)
+            PageApiService(requestBuilderFactory).randomPage(limit)
         }
 
         assertEquals(
@@ -82,7 +84,7 @@ class PageApiServiceSpec {
 
         val expectedResponse = PageResponse(
             query = Query(
-                random = mapOf(
+                pages = mapOf(
                     fixture.fixture<String>() to Page(
                         title = fixture.fixture(),
                         revisionId = fixture.fixture()
@@ -107,7 +109,7 @@ class PageApiServiceSpec {
         }
 
         // When
-        val response: PageResponse = PageApiService(requestBuilder).randomPage(limit)
+        val response: PageResponse = PageApiService(requestBuilderFactory).randomPage(limit)
 
         // Then
         response sameAs expectedResponse
@@ -130,7 +132,7 @@ class PageApiServiceSpec {
 
         val expectedResponse = PageResponse(
             query = Query(
-                random = mapOf(
+                pages = mapOf(
                     fixture.fixture<String>() to Page(
                         title = fixture.fixture(),
                         revisionId = fixture.fixture()
@@ -155,7 +157,7 @@ class PageApiServiceSpec {
         }
 
         // When
-        val response: PageResponse = PageApiService(requestBuilder).randomPage(limit, namespace)
+        val response: PageResponse = PageApiService(requestBuilderFactory).randomPage(limit, namespace)
 
         // Then
         response sameAs expectedResponse
@@ -192,7 +194,7 @@ class PageApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            PageApiService(requestBuilder).fetchRestrictions(title)
+            PageApiService(requestBuilderFactory).fetchRestrictions(title)
         }
 
         assertEquals(
@@ -209,7 +211,12 @@ class PageApiServiceSpec {
         val expectedResponse = PageResponse(
             query = Query(
                 pages = mapOf(
-                    fixture.fixture<String>() to Restrictions(fixture.listFixture())
+                    fixture.fixture<String>() to Page(
+                        fixture.fixture(),
+                        fixture.fixture(),
+                        fixture.listFixture(),
+                        listOf(fixture.mapFixture())
+                    )
                 )
             )
         )
@@ -230,7 +237,7 @@ class PageApiServiceSpec {
         }
 
         // When
-        val response: PageResponse = PageApiService(requestBuilder).fetchRestrictions(title)
+        val response: PageResponse = PageApiService(requestBuilderFactory).fetchRestrictions(title)
 
         // Then
         response sameAs expectedResponse

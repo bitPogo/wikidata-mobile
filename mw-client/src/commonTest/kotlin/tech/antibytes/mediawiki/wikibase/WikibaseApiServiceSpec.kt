@@ -21,6 +21,7 @@ import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
+import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.mock.networking.RequestBuilderStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -39,6 +40,7 @@ class WikibaseApiServiceSpec {
     private val fixture = kotlinFixture()
     private val ktorDummy = HttpRequestBuilder()
     private val requestBuilder = RequestBuilderStub()
+    private val requestBuilderFactory = RequestBuilderFactoryStub(requestBuilder)
 
     @BeforeTest
     fun setUp() {
@@ -47,7 +49,7 @@ class WikibaseApiServiceSpec {
 
     @Test
     fun `It fuflfils ApiService`() {
-        WikibaseApiService(requestBuilder) fulfils WikibaseContract.ApiService::class
+        WikibaseApiService(requestBuilderFactory) fulfils WikibaseContract.ApiService::class
     }
 
     @Test
@@ -71,7 +73,7 @@ class WikibaseApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            WikibaseApiService(requestBuilder).fetch(ids)
+            WikibaseApiService(requestBuilderFactory).fetch(ids)
         }
 
         assertEquals(
@@ -108,7 +110,7 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val responseFetch: EntitiesResponse = WikibaseApiService(requestBuilder).fetch(ids)
+        val responseFetch: EntitiesResponse = WikibaseApiService(requestBuilderFactory).fetch(ids)
 
         // Then
         responseFetch sameAs expectedResponse
@@ -145,7 +147,7 @@ class WikibaseApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            WikibaseApiService(requestBuilder).search(searchTerm, languageTag, type, limit)
+            WikibaseApiService(requestBuilderFactory).search(searchTerm, languageTag, type, limit)
         }
 
         assertEquals(
@@ -193,7 +195,7 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val result = WikibaseApiService(requestBuilder).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseApiService(requestBuilderFactory).search(searchTerm, languageTag, type, limit)
 
         // Then
         result mustBe expectedResponse
@@ -233,7 +235,7 @@ class WikibaseApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            WikibaseApiService(requestBuilder).update(id, revisionId, entity, token)
+            WikibaseApiService(requestBuilderFactory).update(id, revisionId, entity, token)
         }
 
         assertEquals(
@@ -271,7 +273,7 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val result = WikibaseApiService(requestBuilder).update(id, revisionId, entity, token)
+        val result = WikibaseApiService(requestBuilderFactory).update(id, revisionId, entity, token)
 
         // Then
         result mustBe expectedResponse
@@ -311,7 +313,7 @@ class WikibaseApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            WikibaseApiService(requestBuilder).create(type, entity, token)
+            WikibaseApiService(requestBuilderFactory).create(type, entity, token)
         }
 
         assertEquals(
@@ -348,7 +350,7 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val result = WikibaseApiService(requestBuilder).create(type, entity, token)
+        val result = WikibaseApiService(requestBuilderFactory).create(type, entity, token)
 
         // Then
         result mustBe expectedResponse

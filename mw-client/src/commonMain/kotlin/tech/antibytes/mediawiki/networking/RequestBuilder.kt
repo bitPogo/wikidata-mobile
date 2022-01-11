@@ -18,7 +18,7 @@ import io.ktor.http.URLProtocol
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract.RequestBuilder.Companion.BODYLESS_METHODS
 
-internal class RequestBuilder constructor(
+internal class RequestBuilder private constructor(
     private val client: HttpClient,
     private val host: String,
     private val protocol: URLProtocol = URLProtocol.HTTPS,
@@ -26,7 +26,6 @@ internal class RequestBuilder constructor(
 ) : NetworkingContract.RequestBuilder {
     private var headers: Header = emptyMap()
     private var parameter: Parameter = emptyMap()
-    private var useJson: Boolean = false
     private var body: Any? = null
 
     override fun setHeaders(header: Header): NetworkingContract.RequestBuilder {
@@ -119,5 +118,21 @@ internal class RequestBuilder constructor(
             ),
             client
         )
+    }
+
+    class Factory constructor(
+        private val client: HttpClient,
+        private val host: String,
+        private val protocol: URLProtocol = URLProtocol.HTTPS,
+        private val port: Int? = null,
+    ) : NetworkingContract.RequestBuilderFactory {
+        override fun create(): NetworkingContract.RequestBuilder {
+            return RequestBuilder(
+                client,
+                host,
+                protocol,
+                port
+            )
+        }
     }
 }

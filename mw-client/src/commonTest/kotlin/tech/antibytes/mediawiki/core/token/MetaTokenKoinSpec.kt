@@ -10,7 +10,7 @@ import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mock.core.token.MetaTokenApiServiceStub
-import tech.antibytes.mock.networking.RequestBuilderStub
+import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.util.test.isNot
 import kotlin.test.Test
 
@@ -22,7 +22,7 @@ class MetaTokenKoinSpec {
             modules(
                 resolveMetaTokenModule(),
                 module {
-                    single<NetworkingContract.RequestBuilder> { RequestBuilderStub() }
+                    single<NetworkingContract.RequestBuilderFactory> { RequestBuilderFactoryStub() }
                 }
             )
         }

@@ -150,7 +150,7 @@ class NetworkingKoinSpec {
     }
 
     @Test
-    fun `Given resolveHttpClientModule is called it creates a Module, which contains a RequestBuilder`() {
+    fun `Given resolveHttpClientModule is called it creates a Module, which contains a RequestBuilderFactory`() {
         // When
         val koin = koinApplication {
             allowOverride(true)
@@ -175,7 +175,7 @@ class NetworkingKoinSpec {
         }
 
         // Then
-        val builder: NetworkingContract.RequestBuilder = koin.koin.get()
+        val builder: NetworkingContract.RequestBuilderFactory = koin.koin.get()
         builder isNot null
     }
 }

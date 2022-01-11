@@ -18,7 +18,8 @@ plugins {
 }
 
 include(
-    "mw-client"
+    "mw-client",
+    "mw-client-e2e"
 )
 
 buildCache {

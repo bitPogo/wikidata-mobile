@@ -11,6 +11,6 @@ import tech.antibytes.mediawiki.wikibase.WikibaseContract
 
 @Serializable
 internal data class EntityResponse(
-    val entity: Entity,
+    val entity: Entity? = null,
     override val success: Int = 0
 ) : WikibaseContract.Response

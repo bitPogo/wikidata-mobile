@@ -9,12 +9,12 @@ package tech.antibytes.mediawiki.core.page
 import tech.antibytes.mediawiki.core.page.model.Page
 import tech.antibytes.mediawiki.core.page.model.PageResponse
 import tech.antibytes.mediawiki.core.page.model.Query
-import tech.antibytes.mediawiki.core.page.model.Restrictions
 import tech.antibytes.mock.core.page.PageApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
+import tech.antibytes.util.test.fixture.mapFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.BeforeTest
@@ -45,7 +45,7 @@ class PageRepositorySpec {
 
         val response = PageResponse(
             query = Query(
-                random = mapOf(
+                pages = mapOf(
                     fixture.fixture<String>() to Page(
                         title = fixture.fixture(),
                         revisionId = fixture.fixture()
@@ -69,13 +69,13 @@ class PageRepositorySpec {
         val result = PageRepository(apiService).randomPage(limit, namespace)
 
         // Then
-        result mustBe response.query.random.values.toList()
+        result mustBe response.query.pages.values.toList()
         capturedLimit mustBe limit
         capturedNamespace mustBe namespace
     }
 
     @Test
-    fun `Given fetchRestrictions is called with a PageTitle it delegates the Call to the ApiService and extracts a List of Restrictions`() = runBlockingTest {
+    fun `Given fetchRestrictions is called with a PageTitle it delegates the Call to the ApiService and extracts a List of Restrictions, if ProtectionLevels are present`() = runBlockingTest {
         // Given
         val title: String = fixture.fixture()
 
@@ -84,7 +84,12 @@ class PageRepositorySpec {
         val response = PageResponse(
             query = Query(
                 pages = mapOf(
-                    fixture.fixture<String>() to Restrictions(fixture.listFixture())
+                    fixture.fixture<String>() to Page(
+                        fixture.fixture(),
+                        fixture.fixture(),
+                        fixture.listFixture(),
+                        listOf(fixture.mapFixture())
+                    )
                 )
             )
         )
@@ -104,6 +109,40 @@ class PageRepositorySpec {
     }
 
     @Test
+    fun `Given fetchRestrictions is called with a PageTitle it delegates the Call to the ApiService and returns a EmptyList, if ProtectionLevels are not present`() = runBlockingTest {
+        // Given
+        val title: String = fixture.fixture()
+
+        var capturedTitle: String? = null
+
+        val response = PageResponse(
+            query = Query(
+                pages = mapOf(
+                    fixture.fixture<String>() to Page(
+                        fixture.fixture(),
+                        fixture.fixture(),
+                        fixture.listFixture(),
+                        emptyList()
+                    )
+                )
+            )
+        )
+
+        apiService.fetchRestrictions = { givenTitle ->
+            capturedTitle = givenTitle
+
+            response
+        }
+
+        // When
+        val result = PageRepository(apiService).fetchRestrictions(title)
+
+        // Then
+        result mustBe emptyList()
+        capturedTitle mustBe title
+    }
+
+    @Test
     fun `Given fetchRestrictions is called with a PageTitle it delegates the Call to the ApiService, while removing unwanted seperators`() = runBlockingTest {
         // Given
         val title = "${fixture.fixture<String>()}|${fixture.fixture<String>()}"
@@ -113,7 +152,12 @@ class PageRepositorySpec {
         val response = PageResponse(
             query = Query(
                 pages = mapOf(
-                    fixture.fixture<String>() to Restrictions(fixture.listFixture())
+                    fixture.fixture<String>() to Page(
+                        fixture.fixture(),
+                        fixture.fixture(),
+                        fixture.listFixture(),
+                        emptyList()
+                    )
                 )
             )
         )

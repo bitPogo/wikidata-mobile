@@ -15,7 +15,7 @@ import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.receive
 
 internal class AuthenticationApiService(
-    private val requestBuilder: NetworkingContract.RequestBuilder
+    private val requestBuilder: NetworkingContract.RequestBuilderFactory
 ) : AuthenticationContract.ApiService {
     private fun createPayload(
         username: String,
@@ -39,7 +39,7 @@ internal class AuthenticationApiService(
     ): LoginResponse {
         val payload = createPayload(username, password, token)
 
-        val request = requestBuilder
+        val request = requestBuilder.create()
             .setParameter(PARAMETER)
             .setBody(payload)
             .prepare(
@@ -53,7 +53,6 @@ internal class AuthenticationApiService(
     private companion object {
         val PARAMETER = mapOf(
             "action" to "clientlogin",
-            "rememberme" to "",
             "format" to "json",
         )
     }

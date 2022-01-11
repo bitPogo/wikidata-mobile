@@ -16,7 +16,7 @@ import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.authentication.AuthenticationApiServiceStub
 import tech.antibytes.mock.core.authentication.AuthenticationRepositoryStub
 import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
-import tech.antibytes.mock.networking.RequestBuilderStub
+import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.util.test.isNot
 import kotlin.test.Test
 
@@ -28,7 +28,7 @@ class AuthenticationKoinSpec {
             modules(
                 resolveAuthenticationModule(),
                 module {
-                    single<NetworkingContract.RequestBuilder> { RequestBuilderStub() }
+                    single<NetworkingContract.RequestBuilderFactory> { RequestBuilderFactoryStub() }
                 }
             )
         }

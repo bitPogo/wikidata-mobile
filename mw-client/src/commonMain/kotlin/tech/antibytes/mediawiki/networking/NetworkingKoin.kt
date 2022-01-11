@@ -29,8 +29,8 @@ fun resolveHttpClientModule(): Module {
             }
         }
 
-        single<NetworkingContract.RequestBuilder> {
-            RequestBuilder(
+        single<NetworkingContract.RequestBuilderFactory> {
+            RequestBuilder.Factory(
                 get(named(NetworkingContract.KoinIdentifier.CONFIGURED_CLIENT)),
                 get(named(NetworkingContract.KoinIdentifier.HOST)),
                 port = getOrNull(named(NetworkingContract.KoinIdentifier.PORT))

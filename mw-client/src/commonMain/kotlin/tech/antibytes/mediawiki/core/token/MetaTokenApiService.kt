@@ -12,21 +12,23 @@ import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.receive
 
 internal class MetaTokenApiService(
-    private val requestBuilder: NetworkingContract.RequestBuilder
+    private val requestBuilder: NetworkingContract.RequestBuilderFactory
 ) : MetaTokenContract.ApiService {
 
     override suspend fun fetchToken(type: MetaTokenContract.MetaTokenType): MetaTokenResponse {
-        val request = requestBuilder.setParameter(
-            mapOf(
-                "action" to "query",
-                "meta" to "tokens",
-                "format" to "json",
-                "type" to type.value.removeSuffix("token")
+        val request = requestBuilder
+            .create()
+            .setParameter(
+                mapOf(
+                    "action" to "query",
+                    "meta" to "tokens",
+                    "format" to "json",
+                    "type" to type.value.removeSuffix("token")
+                )
+            ).prepare(
+                NetworkingContract.Method.GET,
+                ENDPOINT
             )
-        ).prepare(
-            NetworkingContract.Method.GET,
-            ENDPOINT
-        )
 
         return receive(request)
     }
