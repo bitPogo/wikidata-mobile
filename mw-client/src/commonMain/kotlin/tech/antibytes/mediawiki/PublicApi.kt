@@ -14,7 +14,7 @@ typealias EntityId = String
 typealias LanguageTag = String
 
 interface PublicApi {
-    fun interface Connectivity {
+    fun interface ConnectivityManager {
         fun hasConnection(): Boolean
     }
 
@@ -31,13 +31,6 @@ interface PublicApi {
             onSuccess: (item: T) -> Unit,
             onError: (error: Throwable) -> Unit,
         ): Job
-    }
-
-    interface SuspendingFunctionWrapperFactory {
-        fun <T> getInstance(
-            scope: CoroutineScope,
-            function: suspend () -> T
-        ): SuspendingFunctionWrapper<T>
     }
 
     interface AuthenticationService {
@@ -77,7 +70,7 @@ interface PublicApi {
         fun getInstance(
             host: String,
             logger: Logger,
-            connection: Connectivity,
+            connection: ConnectivityManager,
             scope: CoroutineScope
         ): Client
     }

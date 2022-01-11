@@ -15,6 +15,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fulfils
@@ -25,7 +26,7 @@ import kotlin.test.Test
 class SuspendingFunctionWrapperSpec {
     @Test
     fun `It fulfils SuspendingFunctionWrapperFactory`() {
-        SuspendingFunctionWrapper fulfils PublicApi.SuspendingFunctionWrapperFactory::class
+        SuspendingFunctionWrapper fulfils MwClientContract.SuspendingFunctionWrapperFactory::class
     }
 
     @Test

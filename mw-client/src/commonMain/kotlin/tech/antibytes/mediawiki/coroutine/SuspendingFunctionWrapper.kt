@@ -10,6 +10,7 @@ import co.touchlab.stately.freeze
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.PublicApi
 
 internal class SuspendingFunctionWrapper<T> private constructor(
@@ -35,7 +36,7 @@ internal class SuspendingFunctionWrapper<T> private constructor(
         }
     }
 
-    companion object Factory : PublicApi.SuspendingFunctionWrapperFactory {
+    companion object Factory : MwClientContract.SuspendingFunctionWrapperFactory {
         override fun <T> getInstance(
             scope: CoroutineScope,
             function: suspend () -> T

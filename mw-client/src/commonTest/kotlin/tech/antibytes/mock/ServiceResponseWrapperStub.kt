@@ -22,11 +22,3 @@ internal class ServiceResponseWrapperStub: MwClientContract.ServiceResponseWrapp
         lastFunction = null
     }
 }
-
-internal class SuspendingFunctionWrapperStub<T>(
-    override val wrappedFunction: suspend () -> T
-) : PublicApi.SuspendingFunctionWrapper<T> {
-    override fun subscribe(onSuccess: (item: T) -> Unit, onError: (error: Throwable) -> Unit): Job {
-        TODO("Not yet implemented")
-    }
-}

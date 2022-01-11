@@ -6,7 +6,16 @@
 
 package tech.antibytes.mediawiki
 
+import kotlinx.coroutines.CoroutineScope
+
 internal interface MwClientContract {
+    interface SuspendingFunctionWrapperFactory {
+        fun <T> getInstance(
+            scope: CoroutineScope,
+            function: suspend () -> T
+        ): PublicApi.SuspendingFunctionWrapper<T>
+    }
+
     interface ServiceResponseWrapper {
         fun <T> warp(function: suspend () -> T): PublicApi.SuspendingFunctionWrapper<T>
     }
