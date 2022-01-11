@@ -7,6 +7,10 @@
 package tech.antibytes.mediawiki
 
 internal interface MwClientContract {
+    interface ServiceResponseWrapper {
+        fun <T> warp(function: suspend () -> T): PublicApi.SuspendingFunctionWrapper<T>
+    }
+
     companion object {
         val ENDPOINT = listOf("w", "api.php")
     }

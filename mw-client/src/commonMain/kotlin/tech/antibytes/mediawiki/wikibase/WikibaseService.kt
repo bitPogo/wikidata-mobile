@@ -10,30 +10,50 @@ import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
+import tech.antibytes.mediawiki.MwClientContract
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
 
 internal class WikibaseService(
     private val wikibaseRepository: WikibaseContract.Repository,
-    private val tokenRepository: MetaTokenServiceContract.Repository
+    private val tokenRepository: MetaTokenServiceContract.Repository,
+    private val wrapper: MwClientContract.ServiceResponseWrapper
 ) : WikibaseContract.Service {
-    override suspend fun fetch(
+    private suspend fun fetch(
         ids: Set<EntityId>
     ): List<RevisionedEntity> = wikibaseRepository.fetch(ids)
 
-    override suspend fun search(
+    override fun fetchEntities(
+        ids: Set<EntityId>
+    ): PublicApi.SuspendingFunctionWrapper<List<RevisionedEntity>> = wrapper.warp { fetch(ids) }
+
+    private suspend fun search(
         term: String,
         language: LanguageTag,
         type: DataModelContract.EntityType,
         limit: Int
     ): List<DataModelContract.Entity> = wikibaseRepository.search(term, language, type, limit)
 
-    override suspend fun update(entity: RevisionedEntity): RevisionedEntity? {
+    override fun searchForEntities(
+        term: String,
+        language: LanguageTag,
+        type: DataModelContract.EntityType,
+        limit: Int
+    ): PublicApi.SuspendingFunctionWrapper<List<DataModelContract.Entity>> {
+        return wrapper.warp { search(term, language, type, limit) }
+    }
+
+    private suspend fun update(entity: RevisionedEntity): RevisionedEntity? {
         val token = tokenRepository.fetchToken(MetaTokenServiceContract.MetaTokenType.CSRF)
 
         return wikibaseRepository.update(entity, token)
     }
 
-    override suspend fun create(
+    override fun updateEntity(
+        entity: RevisionedEntity
+    ): PublicApi.SuspendingFunctionWrapper<RevisionedEntity?> = wrapper.warp { update(entity) }
+
+    private suspend fun create(
         type: DataModelContract.EntityType,
         entity: DataModelContract.BoxedTerms
     ): RevisionedEntity? {
@@ -41,4 +61,9 @@ internal class WikibaseService(
 
         return wikibaseRepository.create(type, entity, token)
     }
+
+    override fun createEntity(
+        type: DataModelContract.EntityType,
+        entity: DataModelContract.BoxedTerms
+    ): PublicApi.SuspendingFunctionWrapper<RevisionedEntity?> = wrapper.warp { create(type, entity) }
 }

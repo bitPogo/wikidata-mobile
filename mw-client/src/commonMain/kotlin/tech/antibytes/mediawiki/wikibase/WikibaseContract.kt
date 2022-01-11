@@ -12,6 +12,7 @@ import tech.antibytes.mediawiki.DataModelContract.EntityType
 import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.core.token.MetaToken
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.wikibase.model.EntitiesResponse
@@ -109,38 +110,5 @@ internal interface WikibaseContract {
         suspend fun create(type: EntityType, entity: BoxedTerms, token: MetaToken): RevisionedEntity?
     }
 
-    interface Service {
-        @Throws(
-            MwClientError.ResponseTransformFailure::class,
-            MwClientError.RequestValidationFailure::class,
-            MwClientError.InternalFailure::class
-        )
-        suspend fun fetch(ids: Set<EntityId>): List<RevisionedEntity>
-
-        @Throws(
-            MwClientError.ResponseTransformFailure::class,
-            MwClientError.RequestValidationFailure::class,
-            MwClientError.InternalFailure::class
-        )
-        suspend fun search(
-            term: String,
-            language: LanguageTag,
-            type: EntityType,
-            limit: Int
-        ): List<DataModelContract.Entity>
-
-        @Throws(
-            MwClientError.ResponseTransformFailure::class,
-            MwClientError.RequestValidationFailure::class,
-            MwClientError.InternalFailure::class
-        )
-        suspend fun update(entity: RevisionedEntity): RevisionedEntity?
-
-        @Throws(
-            MwClientError.ResponseTransformFailure::class,
-            MwClientError.RequestValidationFailure::class,
-            MwClientError.InternalFailure::class
-        )
-        suspend fun create(type: EntityType, entity: BoxedTerms): RevisionedEntity?
-    }
+    interface Service : PublicApi.WikibaseService
 }

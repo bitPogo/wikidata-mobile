@@ -6,17 +6,31 @@
 
 package tech.antibytes.mediawiki.core.page
 
-import tech.antibytes.mediawiki.DataModelContract
+import tech.antibytes.mediawiki.MwClientContract
+import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 
 internal class PageService(
-    private val repository: PageContract.Repository
+    private val repository: PageContract.Repository,
+    private val wrapper: MwClientContract.ServiceResponseWrapper
 ) : PageContract.Service {
-    override suspend fun randomPage(
+    private suspend fun fetchRandomPage(
         limit: Int,
         namespace: Int?
-    ): List<DataModelContract.RevisionedPagePointer> = repository.randomPage(limit, namespace)
+    ): List<RevisionedPagePointer> = repository.randomPage(limit, namespace)
 
-    override suspend fun fetchRestrictions(
+    private suspend fun getRestrictions(
         pageTitle: String
     ): List<String> = repository.fetchRestrictions(pageTitle)
+
+    override fun randomPage(
+        limit: Int,
+        namespace: Int?
+    ): PublicApi.SuspendingFunctionWrapper<List<RevisionedPagePointer>> {
+        return wrapper.warp { fetchRandomPage(limit, namespace) }
+    }
+
+    override fun fetchRestrictions(
+        pageTitle: String
+    ): PublicApi.SuspendingFunctionWrapper<List<String>> = wrapper.warp { getRestrictions(pageTitle) }
 }

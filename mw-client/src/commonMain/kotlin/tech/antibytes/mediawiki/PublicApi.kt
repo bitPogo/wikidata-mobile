@@ -40,17 +40,18 @@ interface PublicApi {
         ): SuspendingFunctionWrapper<T>
     }
 
+    interface AuthenticationService {
+        suspend fun login(username: String, password: String): SuspendingFunctionWrapper<Boolean>
+    }
+
     interface PageService {
         fun randomPage(limit: Int, namespace: Int? = null): SuspendingFunctionWrapper<List<RevisionedPagePointer>>
         fun fetchRestrictions(pageTitle: String): SuspendingFunctionWrapper<List<String>>
     }
 
-    interface AuthenticationService {
-        fun login(username: String, password: String): SuspendingFunctionWrapper<Boolean>
-    }
-
     interface WikibaseService {
         fun fetchEntities(ids: Set<EntityId>): SuspendingFunctionWrapper<List<DataModelContract.RevisionedEntity>>
+
         fun searchForEntities(
             term: String,
             language: LanguageTag,
@@ -59,7 +60,8 @@ interface PublicApi {
         ): SuspendingFunctionWrapper<List<DataModelContract.Entity>>
 
         fun updateEntity(entity: DataModelContract.RevisionedEntity): SuspendingFunctionWrapper<DataModelContract.RevisionedEntity?>
-        suspend fun create(
+
+        fun createEntity(
             type: DataModelContract.EntityType,
             entity: DataModelContract.BoxedTerms
         ): SuspendingFunctionWrapper<DataModelContract.RevisionedEntity?>
@@ -74,7 +76,9 @@ interface PublicApi {
     interface ClientFactory {
         fun getInstance(
             host: String,
+            logger: Logger,
+            connection: Connectivity,
             scope: CoroutineScope
-        ) : Client
+        ): Client
     }
 }

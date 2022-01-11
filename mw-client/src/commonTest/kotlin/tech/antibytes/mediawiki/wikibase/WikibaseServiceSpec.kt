@@ -13,6 +13,7 @@ import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
 import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
+import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
 import tech.antibytes.mock.wikibase.TestEntity
 import tech.antibytes.mock.wikibase.WikibaseRepositoryStub
@@ -30,19 +31,21 @@ class WikibaseServiceSpec {
     private val fixture = kotlinFixture()
     private val wikibaseRepository = WikibaseRepositoryStub()
     private val tokenRepository = MetaTokenRepositoryStub()
+    private val serviceWrapper = ServiceResponseWrapperStub()
 
     @BeforeTest
     fun setUp() {
         wikibaseRepository.clear()
+        serviceWrapper.clear()
     }
 
     @Test
     fun `It fulfils Service`() {
-        WikibaseService(wikibaseRepository, tokenRepository) fulfils WikibaseContract.Service::class
+        WikibaseService(wikibaseRepository, tokenRepository, serviceWrapper) fulfils WikibaseContract.Service::class
     }
 
     @Test
-    fun `Given fetch is called with a Set of Ids, it delegates the call to the Repository and returns its result`() = runBlockingTest {
+    fun `Given fetchEntities is called with a Set of Ids, it delegates the call to the Repository and returns its result`() = runBlockingTest {
         // Given
         val ids = fixture.listFixture<EntityId>().toSet()
         val response = listOf(q42)
@@ -53,15 +56,17 @@ class WikibaseServiceSpec {
             response
         }
         // When
-        val result = WikibaseService(wikibaseRepository, tokenRepository).fetch(ids)
+        val result = WikibaseService(wikibaseRepository, tokenRepository, serviceWrapper).fetchEntities(ids)
 
         // Then
-        result sameAs response
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
         capturedIds sameAs ids
     }
 
     @Test
-    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the call to the Repository and returns its result`() = runBlockingTest {
+    fun `Given searchForEntities is called with a SearchTerm, LanguageTag, EntityType and a Limit, it delegates the call to the Repository and returns its result`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
@@ -84,10 +89,16 @@ class WikibaseServiceSpec {
             response
         }
         // When
-        val result = WikibaseService(wikibaseRepository, tokenRepository).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseService(
+            wikibaseRepository,
+            tokenRepository,
+            serviceWrapper
+        ).searchForEntities(searchTerm, languageTag, type, limit)
 
         // Then
-        result sameAs response
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
         capturedTerm mustBe searchTerm
         capturedLanguageTag mustBe languageTag
         capturedEntityType mustBe type
@@ -95,7 +106,7 @@ class WikibaseServiceSpec {
     }
 
     @Test
-    fun `Given update is called with a RevisionedEntity, it retrieves a EditToken and delegates the call to the Repository and returns its result`() = runBlockingTest {
+    fun `Given updateEntity is called with a RevisionedEntity, it retrieves a EditToken and delegates the call to the Repository and returns its result`() = runBlockingTest {
         // Given
         val entity = TestEntity(
             id = fixture.fixture(),
@@ -143,17 +154,19 @@ class WikibaseServiceSpec {
             response
         }
         // When
-        val result = WikibaseService(wikibaseRepository, tokenRepository).update(entity)
+        val result = WikibaseService(wikibaseRepository, tokenRepository, serviceWrapper).updateEntity(entity)
 
         // Then
-        result sameAs response
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
         capturedTokenType mustBe MetaTokenServiceContract.MetaTokenType.CSRF
         capturedEntity sameAs entity
         capturedToken sameAs token
     }
 
     @Test
-    fun `Given create is called with a EntityType, BoxedTerms, it retrieves a EditToken and delegates the call to the Repository and returns its result`() = runBlockingTest {
+    fun `Given createEntity is called with a EntityType, BoxedTerms, it retrieves a EditToken and delegates the call to the Repository and returns its result`() = runBlockingTest {
         // Given
         val type = DataModelContract.EntityType.ITEM
         val entity = TestEntity(
@@ -204,10 +217,12 @@ class WikibaseServiceSpec {
             response
         }
         // When
-        val result = WikibaseService(wikibaseRepository, tokenRepository).create(type, entity)
+        val result = WikibaseService(wikibaseRepository, tokenRepository, serviceWrapper).createEntity(type, entity)
 
         // Then
-        result sameAs response
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
         capturedTokenType mustBe MetaTokenServiceContract.MetaTokenType.CSRF
         capturedEntityType sameAs type
         capturedEntity sameAs entity
