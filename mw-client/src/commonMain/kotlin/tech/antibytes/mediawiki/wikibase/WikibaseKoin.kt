@@ -41,7 +41,8 @@ internal fun resolveWikibaseModule(): Module {
             WikibaseRepository(
                 get(),
                 get(),
-                get(named(WikibaseContract.KoinKey.BOXED_TERMS_SERIALIZER))
+                get(named(WikibaseContract.KoinKey.BOXED_TERMS_SERIALIZER)),
+                get()
             )
         }
 

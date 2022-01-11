@@ -14,19 +14,17 @@ import tech.antibytes.mediawiki.DataModelContract
 internal data class Page(
     override val title: String,
     @SerialName("lastrevid")
-    override val revisionId: Long
+    override val revisionId: Long,
+    @SerialName("restrictiontypes")
+    val restrictions: List<String> = emptyList(),
+    // TODO This should be smooth with a MwApiExpert
+    @SerialName("protection")
+    val protectionLevels: List<Map<String, String>> = emptyList()
 ) : DataModelContract.RevisionedPagePointer
 
 @Serializable
-internal data class Restrictions(
-    @SerialName("restrictiontypes")
-    val restrictions: List<String>
-)
-
-@Serializable
 internal data class Query(
-    val random: Map<String, Page> = emptyMap(),
-    val pages: Map<String, Restrictions> = emptyMap()
+    val pages: Map<String, Page> = emptyMap()
 )
 
 @Serializable

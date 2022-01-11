@@ -9,6 +9,7 @@ package tech.antibytes.mediawiki.di
 import io.ktor.client.features.cookies.CookiesStorage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -26,6 +27,21 @@ import kotlin.test.Test
 
 class MwClientKoinSpec {
     private val fixture = kotlinFixture()
+
+    @Test
+    fun `Given resolveMwClientModule is called, it contains a Clock`() {
+        // When
+        val koin = koinApplication {
+            modules(
+                resolveMwClientModule()
+            )
+        }
+
+        val clock: Clock = koin.koin.get()
+
+        // Then
+        clock isNot null
+    }
 
     @Test
     fun `Given resolveMwClientModule is called, it contains a JsonConfigurator`() {

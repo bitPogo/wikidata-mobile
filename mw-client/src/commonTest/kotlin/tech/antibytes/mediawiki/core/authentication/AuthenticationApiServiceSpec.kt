@@ -16,6 +16,7 @@ import tech.antibytes.mediawiki.core.authentication.model.LoginStatus
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
+import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.mock.networking.RequestBuilderStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -24,6 +25,7 @@ import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -31,16 +33,22 @@ import kotlin.test.assertFailsWith
 class AuthenticationApiServiceSpec {
     private val fixture = kotlinFixture()
     private val ktorDummy = HttpRequestBuilder()
+    private val requestBuilder = RequestBuilderStub()
+    private val requestBuilderFactory = RequestBuilderFactoryStub(requestBuilder)
+
+    @BeforeTest
+    fun setUp() {
+        requestBuilder.clear()
+    }
 
     @Test
     fun `It fulfils ApiService`() {
-        AuthenticationApiService(RequestBuilderStub()) fulfils AuthenticationContract.ApiService::class
+        AuthenticationApiService(requestBuilderFactory) fulfils AuthenticationContract.ApiService::class
     }
 
     @Test
     fun `Given login is called with a UserName, Password and a Token it fails due to a unexpected response`() = runBlockingTest {
         // Given
-        val requestBuilder = RequestBuilderStub()
         val username: String = fixture.fixture()
         val password: String = fixture.fixture()
         val token: String = fixture.fixture()
@@ -61,7 +69,7 @@ class AuthenticationApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            AuthenticationApiService(requestBuilder).login(username, password, token)
+            AuthenticationApiService(requestBuilderFactory).login(username, password, token)
         }
 
         assertEquals(
@@ -73,7 +81,6 @@ class AuthenticationApiServiceSpec {
     @Test
     fun `Given login is called with a UserName, Password and a Token, it returns a LoginResponse`() = runBlockingTest {
         // Given
-        val requestBuilder = RequestBuilderStub()
         val username: String = fixture.fixture()
         val password: String = fixture.fixture()
         val token: String = fixture.fixture()
@@ -102,7 +109,7 @@ class AuthenticationApiServiceSpec {
         }
 
         // When
-        val response: LoginResponse = AuthenticationApiService(requestBuilder).login(username, password, token)
+        val response: LoginResponse = AuthenticationApiService(requestBuilderFactory).login(username, password, token)
 
         // Then
         response sameAs expectedResponse
@@ -110,7 +117,6 @@ class AuthenticationApiServiceSpec {
         capturedPath mustBe listOf("w", "api.php")
         requestBuilder.delegatedParameter mustBe mapOf(
             "action" to "clientlogin",
-            "rememberme" to "",
             "format" to "json",
         )
         requestBuilder.delegatedBody!! fulfils FormDataContent::class

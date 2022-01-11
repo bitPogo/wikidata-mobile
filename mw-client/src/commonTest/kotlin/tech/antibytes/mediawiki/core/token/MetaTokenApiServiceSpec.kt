@@ -14,6 +14,7 @@ import tech.antibytes.mediawiki.core.token.model.Query
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mediawiki.networking.Path
+import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.mock.networking.RequestBuilderStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -22,6 +23,7 @@ import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory.createObjectMockClient
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -29,16 +31,22 @@ import kotlin.test.assertFailsWith
 class MetaTokenApiServiceSpec {
     private val fixture = kotlinFixture()
     private val ktorDummy = HttpRequestBuilder()
+    private val requestBuilder = RequestBuilderStub()
+    private val requestBuilderFactory = RequestBuilderFactoryStub(requestBuilder)
+
+    @BeforeTest
+    fun setUp() {
+        requestBuilder.clear()
+    }
 
     @Test
     fun `It fulfils ApiService`() {
-        MetaTokenApiService(RequestBuilderStub()) fulfils MetaTokenContract.ApiService::class
+        MetaTokenApiService(requestBuilderFactory) fulfils MetaTokenContract.ApiService::class
     }
 
     @Test
     fun `Given fetchToken was called with a TokenType it fails due to unexpected response`() = runBlockingTest {
         // Given
-        val requestBuilder = RequestBuilderStub()
         val client = createObjectMockClient { scope, _ ->
             return@createObjectMockClient scope.respond(
                 content = fixture.fixture<String>()
@@ -55,7 +63,7 @@ class MetaTokenApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            MetaTokenApiService(requestBuilder).fetchToken(MetaTokenContract.MetaTokenType.CSRF)
+            MetaTokenApiService(requestBuilderFactory).fetchToken(MetaTokenContract.MetaTokenType.CSRF)
         }
 
         assertEquals(
@@ -68,7 +76,6 @@ class MetaTokenApiServiceSpec {
     fun `Given fetchToken is called with a TokenType, it returns a TokenResponse`() = runBlockingTest {
         // Given
         val type = MetaTokenContract.MetaTokenType.CSRF
-        val requestBuilder = RequestBuilderStub()
         val tokenResponse = MetaTokenResponse(
             query = Query(
                 mapOf(
@@ -92,7 +99,7 @@ class MetaTokenApiServiceSpec {
         }
 
         // When
-        val response = MetaTokenApiService(requestBuilder).fetchToken(type)
+        val response = MetaTokenApiService(requestBuilderFactory).fetchToken(type)
 
         // Then
         response sameAs tokenResponse

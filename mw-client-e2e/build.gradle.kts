@@ -51,6 +51,8 @@ kotlin {
                 implementation(Dependency.multiplatform.dateTime)
 
                 implementation(Dependency.multiplatform.stately.freeze)
+
+                api(project(":mw-client"))
             }
         }
         val commonTest by getting {
@@ -103,13 +105,17 @@ kotlin {
 }
 
 tasks.withType(Test::class.java) {
+    exclude("**/e2e/**")
     testLogging {
         events(FAILED)
     }
 }
 
 val templatesPath = "${projectDir}/src/commonTest/resources/template"
-val configPath = "${projectDir}/src-gen/commonTest/kotlin/tech/antibytes/mediawiki/test/e2e/config"
+val configPath = "${projectDir}/src-gen/commonTest/kotlin/tech/antibytes/mediawiki/e2e/test/config"
+
+val username: String = project.findProperty("gpr.wb.user").toString()
+val password: String = project.findProperty("gpr.wb.pw").toString()
 
 val provideTestConfig: Task by tasks.creating {
     doFirst {
@@ -119,6 +125,8 @@ val provideTestConfig: Task by tasks.creating {
         val config = File(templates, "TestConfig.tmpl")
             .readText()
             .replace("PROJECT_DIR", projectDir.toPath().toAbsolutePath().toString())
+            .replace("USERNAME", username)
+            .replace("PASSWORD", password)
 
         if (!configs.exists()) {
             if(!configs.mkdir()) {

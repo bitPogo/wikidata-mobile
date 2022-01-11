@@ -57,3 +57,15 @@ internal class RequestBuilderStub(
         body = null
     }
 }
+
+internal class RequestBuilderFactoryStub(
+    var instance: NetworkingContract.RequestBuilder? = null
+) : NetworkingContract.RequestBuilderFactory, MockContract.Mock {
+    override fun create(): NetworkingContract.RequestBuilder {
+        return instance ?: throw MockError.MissingStub("Missing RequestBuilder Instance")
+    }
+
+    override fun clear() {
+        instance = null
+    }
+}

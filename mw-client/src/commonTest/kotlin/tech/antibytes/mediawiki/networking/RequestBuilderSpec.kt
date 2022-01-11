@@ -54,15 +54,30 @@ class RequestBuilderSpec {
     }
 
     @Test
-    fun `It fulfils RequestBuilder`() {
+    fun `It fulfils RequestBuilderFactory`() {
         // Given
         val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
 
         // When
-        val builder: Any = RequestBuilder(
+        val builder: Any = RequestBuilder.Factory(
             client,
             fixture.fixture(),
         )
+
+        // Then
+        builder fulfils NetworkingContract.RequestBuilderFactory::class
+    }
+
+    @Test
+    fun `Given create is called it returns a RequestBuilder`() {
+        // Given
+        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
+
+        // When
+        val builder: Any = RequestBuilder.Factory(
+            client,
+            fixture.fixture(),
+        ).create()
 
         // Then
         builder fulfils NetworkingContract.RequestBuilder::class
@@ -77,10 +92,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             fixture.fixture(),
-        ).prepare().execute()
+        ).create().prepare().execute()
     }
 
     @Test
@@ -93,10 +108,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).prepare().execute()
+        ).create().prepare().execute()
     }
 
     @Test
@@ -108,10 +123,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
-            host,
-        ).prepare().execute()
+            fixture.fixture(),
+        ).create().prepare().execute()
     }
 
     @Test
@@ -119,17 +134,16 @@ class RequestBuilderSpec {
         // Given
         val path = fixture.listFixture<String>(size = 3)
 
-        val host: String = fixture.fixture()
         val client = createMockClientWithAssertion { request ->
             // Then
             request.url.fullPath mustBe "/${path.joinToString("/")}"
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
-            host,
-        ).prepare(path = path).execute()
+            fixture.fixture(),
+        ).create().prepare(path = path).execute()
     }
 
     @Test
@@ -141,10 +155,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
-            host,
-        ).prepare().execute()
+            fixture.fixture(),
+        ).create().prepare().execute()
     }
 
     @Test
@@ -156,11 +170,11 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
             protocol = URLProtocol.HTTP
-        ).prepare().execute()
+        ).create().prepare().execute()
     }
 
     @Test
@@ -172,10 +186,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
-            host,
-        ).prepare().execute()
+            fixture.fixture(),
+        ).create().prepare().execute()
     }
 
     @Test
@@ -190,11 +204,11 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
             port = port
-        ).prepare().execute()
+        ).create().prepare().execute()
     }
 
     @Test
@@ -209,10 +223,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
-            host,
-        ).prepare().execute()
+            fixture.fixture(),
+        ).create().prepare().execute()
     }
 
     @Test
@@ -236,10 +250,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).setHeaders(headers).prepare().execute()
+        ).create().setHeaders(headers).prepare().execute()
     }
 
     @Test
@@ -251,10 +265,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
-            host,
-        ).prepare().execute()
+            fixture.fixture(),
+        ).create().prepare().execute()
     }
 
     @Test
@@ -277,10 +291,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).setParameter(parameter).prepare().execute()
+        ).create().setParameter(parameter).prepare().execute()
     }
 
     @Test
@@ -292,10 +306,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
-            host,
-        ).prepare().execute()
+            fixture.fixture(),
+        ).create().prepare().execute()
     }
 
     @Test
@@ -306,10 +320,10 @@ class RequestBuilderSpec {
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
-            RequestBuilder(
+            RequestBuilder.Factory(
                 client,
                 host,
-            ).setBody(fixture.fixture<String>()).prepare(NetworkingContract.Method.GET)
+            ).create().setBody(fixture.fixture<String>()).prepare(NetworkingContract.Method.GET)
         }
 
         // Then
@@ -324,10 +338,10 @@ class RequestBuilderSpec {
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
-            RequestBuilder(
+            RequestBuilder.Factory(
                 client,
                 host,
-            ).setBody(fixture.fixture<String>()).prepare(NetworkingContract.Method.HEAD)
+            ).create().setBody(fixture.fixture<String>()).prepare(NetworkingContract.Method.HEAD)
         }
 
         // Then
@@ -342,10 +356,10 @@ class RequestBuilderSpec {
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
-            RequestBuilder(
+            RequestBuilder.Factory(
                 client,
                 host,
-            ).prepare(NetworkingContract.Method.POST)
+            ).create().prepare(NetworkingContract.Method.POST)
         }
 
         // Then
@@ -360,10 +374,10 @@ class RequestBuilderSpec {
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
-            RequestBuilder(
+            RequestBuilder.Factory(
                 client,
                 host,
-            ).prepare(NetworkingContract.Method.PUT)
+            ).create().prepare(NetworkingContract.Method.PUT)
         }
 
         // Then
@@ -378,10 +392,10 @@ class RequestBuilderSpec {
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
             // When
-            RequestBuilder(
+            RequestBuilder.Factory(
                 client,
                 host,
-            ).prepare(NetworkingContract.Method.DELETE)
+            ).create().prepare(NetworkingContract.Method.DELETE)
         }
 
         // Then
@@ -397,10 +411,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
-            host,
-        ).prepare(NetworkingContract.Method.HEAD).execute()
+            fixture.fixture(),
+        ).create().prepare(NetworkingContract.Method.HEAD).execute()
     }
 
     @Test
@@ -414,10 +428,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).setBody(payload).prepare(NetworkingContract.Method.POST).execute()
+        ).create().setBody(payload).prepare(NetworkingContract.Method.POST).execute()
     }
 
     @Test
@@ -436,10 +450,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).setBody(payload).prepare(NetworkingContract.Method.POST).execute()
+        ).create().setBody(payload).prepare(NetworkingContract.Method.POST).execute()
     }
 
     @Test
@@ -453,10 +467,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).setBody(payload).prepare(NetworkingContract.Method.PUT).execute()
+        ).create().setBody(payload).prepare(NetworkingContract.Method.PUT).execute()
     }
 
     @Test
@@ -475,10 +489,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).setBody(payload).prepare(NetworkingContract.Method.PUT).execute()
+        ).create().setBody(payload).prepare(NetworkingContract.Method.PUT).execute()
     }
 
     @Test
@@ -492,10 +506,10 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).setBody(payload).prepare(NetworkingContract.Method.DELETE).execute()
+        ).create().setBody(payload).prepare(NetworkingContract.Method.DELETE).execute()
     }
 
     @Test
@@ -515,9 +529,9 @@ class RequestBuilderSpec {
         }
 
         // When
-        RequestBuilder(
+        RequestBuilder.Factory(
             client,
             host,
-        ).setBody(payload).prepare(NetworkingContract.Method.DELETE).execute()
+        ).create().setBody(payload).prepare(NetworkingContract.Method.DELETE).execute()
     }
 }

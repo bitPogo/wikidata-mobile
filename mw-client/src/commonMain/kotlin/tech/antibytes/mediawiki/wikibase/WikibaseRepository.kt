@@ -6,6 +6,7 @@
 
 package tech.antibytes.mediawiki.wikibase
 
+import kotlinx.datetime.Clock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import tech.antibytes.mediawiki.DataModelContract
@@ -16,13 +17,15 @@ import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.core.token.MetaToken
 import tech.antibytes.mediawiki.wikibase.model.Entity
+import tech.antibytes.mediawiki.wikibase.model.EntityResponse
 import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 
 internal class WikibaseRepository(
     private val apiService: WikibaseContract.ApiService,
     private val serializer: Json,
-    private val boxedTermSerializer: KSerializer<BoxedTerms>
+    private val boxedTermSerializer: KSerializer<BoxedTerms>,
+    private val clock: Clock
 ) : WikibaseContract.Repository {
     private fun <T : DataModelContract.Entity> WikibaseContract.Response.returnListOnSuccess(
         onSuccess: () -> List<T>
@@ -96,6 +99,12 @@ internal class WikibaseRepository(
         }
     }
 
+    private fun extractEntityAfterEditing(response: EntityResponse): RevisionedEntity? {
+        return response.returnObjectOnSuccess {
+            response.entity!!.copy(lastModification = clock.now())
+        }
+    }
+
     override suspend fun update(entity: RevisionedEntity, token: MetaToken): RevisionedEntity? {
         val id = entity.id
         val revision = entity.revisionId
@@ -106,9 +115,7 @@ internal class WikibaseRepository(
 
         val response = apiService.update(id, revision, serializedEntity, token)
 
-        return response.returnObjectOnSuccess {
-            response.entity
-        }
+        return extractEntityAfterEditing(response)
     }
 
     override suspend fun create(type: EntityType, entity: BoxedTerms, token: MetaToken): RevisionedEntity? {
@@ -119,8 +126,6 @@ internal class WikibaseRepository(
 
         val response = apiService.create(type, serializedEntity, token)
 
-        return response.returnObjectOnSuccess {
-            response.entity
-        }
+        return extractEntityAfterEditing(response)
     }
 }

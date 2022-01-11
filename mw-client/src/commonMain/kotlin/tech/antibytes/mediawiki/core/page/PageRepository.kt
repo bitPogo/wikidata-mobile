@@ -7,6 +7,7 @@
 package tech.antibytes.mediawiki.core.page
 
 import tech.antibytes.mediawiki.DataModelContract
+import tech.antibytes.mediawiki.core.page.model.PageResponse
 
 internal class PageRepository(
     private val apiService: PageContract.ApiService
@@ -14,7 +15,16 @@ internal class PageRepository(
     override suspend fun randomPage(limit: Int, namespace: Int?): List<DataModelContract.RevisionedPagePointer> {
         val response = apiService.randomPage(limit, namespace)
 
-        return response.query.random.values.toList()
+        return response.query.pages.values.toList()
+    }
+
+    // TODO This should be smooth with a MwApiExpert
+    private fun extractRestrictions(response: PageResponse): List<String> {
+        return if (response.query.pages.values.first().protectionLevels.isEmpty()) {
+            emptyList()
+        } else {
+            response.query.pages.values.first().restrictions
+        }
     }
 
     override suspend fun fetchRestrictions(pageTitle: String): List<String> {
@@ -22,6 +32,6 @@ internal class PageRepository(
             pageTitle.replace("|", "")
         )
 
-        return response.query.pages.values.first().restrictions
+        return extractRestrictions(response)
     }
 }

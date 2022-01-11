@@ -14,7 +14,7 @@ import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.page.PageApiServiceStub
 import tech.antibytes.mock.core.page.PageRepositoryStub
-import tech.antibytes.mock.networking.RequestBuilderStub
+import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.util.test.isNot
 import kotlin.test.Test
 
@@ -26,7 +26,7 @@ class PageKoinSpec {
             modules(
                 resolvePageModule(),
                 module {
-                    single<NetworkingContract.RequestBuilder> { RequestBuilderStub() }
+                    single<NetworkingContract.RequestBuilderFactory> { RequestBuilderFactoryStub() }
                 }
             )
         }

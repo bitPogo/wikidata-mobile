@@ -8,6 +8,7 @@ package tech.antibytes.mediawiki.di
 
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.CookiesStorage
+import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -19,6 +20,8 @@ import tech.antibytes.mediawiki.serialization.JsonConfiguratorContract
 
 internal fun resolveMwClientModule(): Module {
     return module {
+        factory<Clock> { Clock.System }
+
         factory<JsonConfiguratorContract> {
             JsonConfigurator()
         }

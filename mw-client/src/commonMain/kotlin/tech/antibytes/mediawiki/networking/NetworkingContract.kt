@@ -61,4 +61,8 @@ internal interface NetworkingContract {
             val BODYLESS_METHODS = listOf(Method.HEAD, Method.GET)
         }
     }
+
+    interface RequestBuilderFactory {
+        fun create(): RequestBuilder
+    }
 }

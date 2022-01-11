@@ -20,6 +20,7 @@ import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
+import tech.antibytes.mock.ClockStub
 import tech.antibytes.mock.serialization.SerializerStub
 import tech.antibytes.mock.wikibase.TestEntity
 import tech.antibytes.mock.wikibase.WikibaseApiServiceStub
@@ -29,7 +30,6 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.util.test.sameAs
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -37,16 +37,18 @@ class WikibaseRepositorySpec {
     private val fixture = kotlinFixture()
     private val apiService = WikibaseApiServiceStub()
     private val boxedTermsSerializer = SerializerStub<DataModelContract.BoxedTerms>()
+    private val clock = ClockStub()
 
     @BeforeTest
     fun setUp() {
         apiService.clear()
         boxedTermsSerializer.clear()
+        clock.clear()
     }
 
     @Test
     fun `It fulfils Repository`() {
-        WikibaseRepository(apiService, Json, boxedTermsSerializer) fulfils WikibaseContract.Repository::class
+        WikibaseRepository(apiService, Json, boxedTermsSerializer, clock) fulfils WikibaseContract.Repository::class
     }
 
     @Test
@@ -69,7 +71,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).fetch(ids.toSet())
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer, clock).fetch(ids.toSet())
 
         // Then
         result mustBe emptyList()
@@ -96,7 +98,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).fetch(ids.toSet())
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer, clock).fetch(ids.toSet())
 
         // Then
         result mustBe listOf(q42, q42)
@@ -141,7 +143,12 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseRepository(
+            apiService,
+            Json,
+            boxedTermsSerializer,
+            clock
+        ).search(searchTerm, languageTag, type, limit)
 
         // Then
         result mustBe emptyList()
@@ -189,7 +196,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer, clock).search(searchTerm, languageTag, type, limit)
 
         // Then
         val expectedAliases = response.search.first().aliases
@@ -287,7 +294,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).update(entity, token)
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer, clock).update(entity, token)
 
         // Then
         result mustBe null
@@ -328,6 +335,7 @@ class WikibaseRepositorySpec {
             )
         )
 
+        val modificationDate = Instant.DISTANT_PAST
         val serializedEntity: String = fixture.fixture()
         val token: String = fixture.fixture()
 
@@ -357,11 +365,14 @@ class WikibaseRepositorySpec {
             encoder.encodeString(serializedEntity)
         }
 
+        clock.now = { modificationDate }
+
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).update(entity, token)
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer, clock).update(entity, token)
 
         // Then
-        result sameAs q42
+        result mustBe q42.copy(lastModification = modificationDate)
+
         capturedEntity mustBe entity
         capturedSerializedEntity mustBe "\"$serializedEntity\""
         capturedId mustBe entity.id
@@ -428,7 +439,7 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).create(type, entity, token)
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer, clock).create(type, entity, token)
 
         // Then
         result mustBe null
@@ -469,6 +480,7 @@ class WikibaseRepositorySpec {
             )
         )
 
+        val modificationDate = Instant.DISTANT_PAST
         val serializedEntity: String = fixture.fixture()
         val token: String = fixture.fixture()
 
@@ -496,11 +508,13 @@ class WikibaseRepositorySpec {
             encoder.encodeString(serializedEntity)
         }
 
+        clock.now = { modificationDate }
+
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer).create(type, entity, token)
+        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer, clock).create(type, entity, token)
 
         // Then
-        result mustBe q42
+        result mustBe q42.copy(lastModification = modificationDate)
         capturedType mustBe type
         capturedEntity mustBe entity
         capturedSerializedEntity mustBe "\"$serializedEntity\""
