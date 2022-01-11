@@ -8,6 +8,7 @@ package tech.antibytes.mediawiki
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 
 typealias EntityId = String
 typealias LanguageTag = String
@@ -29,7 +30,7 @@ interface PublicApi {
         fun subscribe(
             onSuccess: (item: T) -> Unit,
             onError: (error: Throwable) -> Unit,
-        ) : Job
+        ): Job
     }
 
     interface SuspendingFunctionWrapperFactory {
@@ -39,7 +40,41 @@ interface PublicApi {
         ): SuspendingFunctionWrapper<T>
     }
 
-    interface Client {
+    interface PageService {
+        fun randomPage(limit: Int, namespace: Int? = null): SuspendingFunctionWrapper<List<RevisionedPagePointer>>
+        fun fetchRestrictions(pageTitle: String): SuspendingFunctionWrapper<List<String>>
+    }
 
+    interface AuthenticationService {
+        fun login(username: String, password: String): SuspendingFunctionWrapper<Boolean>
+    }
+
+    interface WikibaseService {
+        fun fetchEntities(ids: Set<EntityId>): SuspendingFunctionWrapper<List<DataModelContract.RevisionedEntity>>
+        fun searchForEntities(
+            term: String,
+            language: LanguageTag,
+            type: DataModelContract.EntityType,
+            limit: Int
+        ): SuspendingFunctionWrapper<List<DataModelContract.Entity>>
+
+        fun updateEntity(entity: DataModelContract.RevisionedEntity): SuspendingFunctionWrapper<DataModelContract.RevisionedEntity?>
+        suspend fun create(
+            type: DataModelContract.EntityType,
+            entity: DataModelContract.BoxedTerms
+        ): SuspendingFunctionWrapper<DataModelContract.RevisionedEntity?>
+    }
+
+    interface Client {
+        val authentication: AuthenticationService
+        val page: PageService
+        val wikibase: WikibaseService
+    }
+
+    interface ClientFactory {
+        fun getInstance(
+            host: String,
+            scope: CoroutineScope
+        ) : Client
     }
 }
