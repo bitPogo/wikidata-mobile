@@ -14,22 +14,22 @@ import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
-internal class BoxedTermsSerializerStub(
+internal class SerializerStub <T> (
     var valueDescriptor: SerialDescriptor? = null,
-    var serialize: ((encoder: Encoder, value: BoxedTerms) -> Unit)? = null,
-    var deserialize: ((decoder: Decoder) -> BoxedTerms)? = null
-) : KSerializer<BoxedTerms>, MockContract.Mock {
+    var serialize: ((encoder: Encoder, value: T) -> Unit)? = null,
+    var deserialize: ((decoder: Decoder) -> T)? = null
+) : KSerializer<T>, MockContract.Mock {
     override val descriptor: SerialDescriptor
         get() {
             return valueDescriptor
                 ?: throw MockError.MissingStub("Missing Sideeffect valueDescriptor")
         }
 
-    override fun deserialize(decoder: Decoder): BoxedTerms {
+    override fun deserialize(decoder: Decoder): T {
         return deserialize?.invoke(decoder) ?: throw MockError.MissingStub("Missing Sideeffect deserialize")
     }
 
-    override fun serialize(encoder: Encoder, value: BoxedTerms) {
+    override fun serialize(encoder: Encoder, value: T) {
         return serialize?.invoke(encoder, value) ?: throw MockError.MissingStub("Missing Sideeffect serialize")
     }
 

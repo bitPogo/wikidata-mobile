@@ -7,14 +7,14 @@
 package tech.antibytes.mock.core.token
 
 import tech.antibytes.mediawiki.core.token.MetaToken
-import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
+import tech.antibytes.mediawiki.core.token.MetaTokenContract
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
 internal class MetaTokenRepositoryStub(
-    var fetchToken: ((MetaTokenServiceContract.MetaTokenType) -> MetaToken)? = null
-) : MetaTokenServiceContract.Repository, MockContract.Mock {
-    override suspend fun fetchToken(type: MetaTokenServiceContract.MetaTokenType): MetaToken {
+    var fetchToken: ((MetaTokenContract.MetaTokenType) -> MetaToken)? = null
+) : MetaTokenContract.Repository, MockContract.Mock {
+    override suspend fun fetchToken(type: MetaTokenContract.MetaTokenType): MetaToken {
         return fetchToken?.invoke(type) ?: throw MockError.MissingStub("Missing Sideeffect fetchToken")
     }
 

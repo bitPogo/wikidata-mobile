@@ -111,4 +111,10 @@ internal interface WikibaseContract {
     }
 
     interface Service : PublicApi.WikibaseService
+
+
+    enum class KoinKey {
+        LANGUAGE_PAIR_SERIALIZER,
+        BOXED_TERMS_SERIALIZER,
+    }
 }

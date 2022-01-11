@@ -6,7 +6,7 @@
 
 package tech.antibytes.mediawiki.core.authentication
 
-import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
+import tech.antibytes.mediawiki.core.token.MetaTokenContract
 import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.authentication.AuthenticationRepositoryStub
 import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
@@ -42,7 +42,7 @@ internal class AuthenticationServiceSpec {
         val token: String = fixture.fixture()
         val expected: Boolean = fixture.fixture()
 
-        var capturedMetaTokenType: MetaTokenServiceContract.MetaTokenType? = null
+        var capturedMetaTokenType: MetaTokenContract.MetaTokenType? = null
 
         tokenRepository.fetchToken = { givenType ->
             capturedMetaTokenType = givenType
@@ -71,7 +71,7 @@ internal class AuthenticationServiceSpec {
         result.wrappedFunction.invoke() mustBe expected
 
         serviceWrapper.lastFunction sameAs result.wrappedFunction
-        capturedMetaTokenType mustBe MetaTokenServiceContract.MetaTokenType.LOGIN
+        capturedMetaTokenType mustBe MetaTokenContract.MetaTokenType.LOGIN
         capturedUsername mustBe username
         capturedPassword mustBe password
         capturedToken mustBe token

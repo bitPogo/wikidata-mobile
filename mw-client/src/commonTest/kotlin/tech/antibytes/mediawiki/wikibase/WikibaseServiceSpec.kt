@@ -11,7 +11,7 @@ import tech.antibytes.fixture.wikibase.q42
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
-import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
+import tech.antibytes.mediawiki.core.token.MetaTokenContract
 import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
 import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
@@ -138,7 +138,7 @@ class WikibaseServiceSpec {
         val token: String = fixture.fixture()
         val response = q42
 
-        var capturedTokenType: MetaTokenServiceContract.MetaTokenType? = null
+        var capturedTokenType: MetaTokenContract.MetaTokenType? = null
         tokenRepository.fetchToken = { givenTokenType ->
             capturedTokenType = givenTokenType
 
@@ -160,7 +160,7 @@ class WikibaseServiceSpec {
         result.wrappedFunction.invoke() mustBe response
 
         serviceWrapper.lastFunction sameAs result.wrappedFunction
-        capturedTokenType mustBe MetaTokenServiceContract.MetaTokenType.CSRF
+        capturedTokenType mustBe MetaTokenContract.MetaTokenType.CSRF
         capturedEntity sameAs entity
         capturedToken sameAs token
     }
@@ -199,7 +199,7 @@ class WikibaseServiceSpec {
         val token: String = fixture.fixture()
         val response = q42
 
-        var capturedTokenType: MetaTokenServiceContract.MetaTokenType? = null
+        var capturedTokenType: MetaTokenContract.MetaTokenType? = null
         tokenRepository.fetchToken = { givenTokenType ->
             capturedTokenType = givenTokenType
 
@@ -223,7 +223,7 @@ class WikibaseServiceSpec {
         result.wrappedFunction.invoke() mustBe response
 
         serviceWrapper.lastFunction sameAs result.wrappedFunction
-        capturedTokenType mustBe MetaTokenServiceContract.MetaTokenType.CSRF
+        capturedTokenType mustBe MetaTokenContract.MetaTokenType.CSRF
         capturedEntityType sameAs type
         capturedEntity sameAs entity
         capturedToken sameAs token

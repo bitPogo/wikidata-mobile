@@ -32,7 +32,7 @@ class MetaTokenApiServiceSpec {
 
     @Test
     fun `It fulfils ApiService`() {
-        MetaTokenApiService(RequestBuilderStub()) fulfils MetaTokenServiceContract.ApiService::class
+        MetaTokenApiService(RequestBuilderStub()) fulfils MetaTokenContract.ApiService::class
     }
 
     @Test
@@ -55,7 +55,7 @@ class MetaTokenApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            MetaTokenApiService(requestBuilder).fetchToken(MetaTokenServiceContract.MetaTokenType.CSRF)
+            MetaTokenApiService(requestBuilder).fetchToken(MetaTokenContract.MetaTokenType.CSRF)
         }
 
         assertEquals(
@@ -67,7 +67,7 @@ class MetaTokenApiServiceSpec {
     @Test
     fun `Given fetchToken is called with a TokenType, it returns a TokenResponse`() = runBlockingTest {
         // Given
-        val type = MetaTokenServiceContract.MetaTokenType.CSRF
+        val type = MetaTokenContract.MetaTokenType.CSRF
         val requestBuilder = RequestBuilderStub()
         val tokenResponse = MetaTokenResponse(
             query = Query(

@@ -22,15 +22,16 @@ import kotlin.test.assertFailsWith
 
 class BoxedTermsSerializerSpec {
     private val fixture = kotlinFixture()
+    private val languageValuePairSerializer = LanguageValuePairSerializer()
 
     @Test
     fun `It fulfils KSerlializer`() {
-        BoxedTermsSerializer() fulfils KSerializer::class
+        BoxedTermsSerializer(languageValuePairSerializer) fulfils KSerializer::class
     }
 
     @Test
     fun `It has an descriptor`() {
-        val descriptor = BoxedTermsSerializer().descriptor
+        val descriptor = BoxedTermsSerializer(languageValuePairSerializer).descriptor
 
         descriptor.serialName mustBe "BoxedTerms"
         descriptor.kind mustBe StructureKind.CLASS
@@ -84,7 +85,7 @@ class BoxedTermsSerializerSpec {
 
         // When
         val result = serializer.encodeToString(
-            BoxedTermsSerializer(),
+            BoxedTermsSerializer(languageValuePairSerializer),
             entity
         )
 
@@ -134,7 +135,7 @@ class BoxedTermsSerializerSpec {
 
         // When
         val result = serializer.encodeToString(
-            BoxedTermsSerializer(),
+            BoxedTermsSerializer(languageValuePairSerializer),
             entity
         )
 
@@ -186,7 +187,7 @@ class BoxedTermsSerializerSpec {
         assertFailsWith<NotImplementedError> {
             // When
             serializer.decodeFromString(
-                BoxedTermsSerializer(),
+                BoxedTermsSerializer(languageValuePairSerializer),
                 serializedEntity
             )
         }

@@ -13,7 +13,7 @@ import tech.antibytes.mediawiki.error.MwClientError
 
 internal typealias MetaToken = String
 
-internal interface MetaTokenServiceContract {
+internal interface MetaTokenContract {
 
     @Serializable(with = MetaTokenTypeSerializer::class)
     enum class MetaTokenType(val value: String) {

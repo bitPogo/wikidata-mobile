@@ -13,9 +13,9 @@ import tech.antibytes.mediawiki.networking.receive
 
 internal class MetaTokenApiService(
     private val requestBuilder: NetworkingContract.RequestBuilder
-) : MetaTokenServiceContract.ApiService {
+) : MetaTokenContract.ApiService {
 
-    override suspend fun fetchToken(type: MetaTokenServiceContract.MetaTokenType): MetaTokenResponse {
+    override suspend fun fetchToken(type: MetaTokenContract.MetaTokenType): MetaTokenResponse {
         val request = requestBuilder.setParameter(
             mapOf(
                 "action" to "query",

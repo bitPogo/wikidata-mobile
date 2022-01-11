@@ -9,7 +9,7 @@ package tech.antibytes.mediawiki.core.token.model
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.json.Json
-import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
+import tech.antibytes.mediawiki.core.token.MetaTokenContract
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
@@ -41,7 +41,7 @@ class MetaMetaTokenTypeSerializerSpec {
         // Given
         val serializer = Json
 
-        for (field in MetaTokenServiceContract.MetaTokenType.values()) {
+        for (field in MetaTokenContract.MetaTokenType.values()) {
             // When
             val result = serializer.encodeToString(
                 MetaTokenTypeSerializer(),
@@ -79,7 +79,7 @@ class MetaMetaTokenTypeSerializerSpec {
         // Given
         val serializer = Json
 
-        for (field in MetaTokenServiceContract.MetaTokenType.values()) {
+        for (field in MetaTokenContract.MetaTokenType.values()) {
             // When
             val result = serializer.decodeFromString(
                 MetaTokenTypeSerializer(),

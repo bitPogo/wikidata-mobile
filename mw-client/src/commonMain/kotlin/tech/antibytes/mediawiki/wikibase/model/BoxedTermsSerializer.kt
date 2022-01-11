@@ -19,11 +19,13 @@ import kotlinx.serialization.encoding.encodeStructure
 import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
 import tech.antibytes.mediawiki.DataModelContract.LanguageValuePair
 
-internal class BoxedTermsSerializer : KSerializer<BoxedTerms> {
-    private val languageValuePairMapSerializer = MapSerializer(String.serializer(), LanguageValuePairSerializer())
+internal class BoxedTermsSerializer(
+    languageValuePairSerializer: KSerializer<LanguageValuePair>
+) : KSerializer<BoxedTerms> {
+    private val languageValuePairMapSerializer = MapSerializer(String.serializer(), languageValuePairSerializer)
     private val aliasesSerializer = MapSerializer(
         String.serializer(),
-        ListSerializer(LanguageValuePairSerializer())
+        ListSerializer(languageValuePairSerializer)
     )
 
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("BoxedTerms") {

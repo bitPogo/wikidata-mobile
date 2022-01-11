@@ -12,11 +12,11 @@ import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.PublicApi
-import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
+import tech.antibytes.mediawiki.core.token.MetaTokenContract
 
 internal class WikibaseService(
     private val wikibaseRepository: WikibaseContract.Repository,
-    private val tokenRepository: MetaTokenServiceContract.Repository,
+    private val tokenRepository: MetaTokenContract.Repository,
     private val wrapper: MwClientContract.ServiceResponseWrapper
 ) : WikibaseContract.Service {
     private suspend fun fetch(
@@ -44,7 +44,7 @@ internal class WikibaseService(
     }
 
     private suspend fun update(entity: RevisionedEntity): RevisionedEntity? {
-        val token = tokenRepository.fetchToken(MetaTokenServiceContract.MetaTokenType.CSRF)
+        val token = tokenRepository.fetchToken(MetaTokenContract.MetaTokenType.CSRF)
 
         return wikibaseRepository.update(entity, token)
     }
@@ -57,7 +57,7 @@ internal class WikibaseService(
         type: DataModelContract.EntityType,
         entity: DataModelContract.BoxedTerms
     ): RevisionedEntity? {
-        val token = tokenRepository.fetchToken(MetaTokenServiceContract.MetaTokenType.CSRF)
+        val token = tokenRepository.fetchToken(MetaTokenContract.MetaTokenType.CSRF)
 
         return wikibaseRepository.create(type, entity, token)
     }
