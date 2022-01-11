@@ -43,9 +43,6 @@ internal interface AuthenticationContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun login(
-            username: String,
-            password: String
-        ): Boolean
+        suspend fun login(username: String, password: String): Boolean
     }
 }

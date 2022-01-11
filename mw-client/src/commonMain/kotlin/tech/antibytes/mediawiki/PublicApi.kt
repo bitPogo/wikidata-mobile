@@ -6,6 +6,9 @@
 
 package tech.antibytes.mediawiki
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+
 typealias EntityId = String
 typealias LanguageTag = String
 
@@ -18,5 +21,25 @@ interface PublicApi {
         fun info(message: String)
         fun warn(message: String)
         fun error(exception: Throwable, message: String?)
+    }
+
+    interface SuspendingFunctionWrapper<T> {
+        val wrappedFunction: suspend () -> T
+
+        fun subscribe(
+            onSuccess: (item: T) -> Unit,
+            onError: (error: Throwable) -> Unit,
+        ) : Job
+    }
+
+    interface SuspendingFunctionWrapperFactory {
+        fun <T> getInstance(
+            scope: CoroutineScope,
+            function: suspend () -> T
+        ): SuspendingFunctionWrapper<T>
+    }
+
+    interface Client {
+
     }
 }

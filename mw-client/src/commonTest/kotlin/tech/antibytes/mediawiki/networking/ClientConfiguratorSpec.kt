@@ -12,6 +12,7 @@ import io.ktor.client.engine.mock.respond
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import tech.antibytes.mock.networking.FeatureStub
 import tech.antibytes.mock.networking.PluginConfiguratorStub
 import tech.antibytes.util.test.coroutine.runBlockingTestWithContext
@@ -75,8 +76,10 @@ class ClientConfiguratorSpec {
         }
 
         // Then
-        capturedPluginConfig.receive() fulfils FeatureStub.Config::class
-        capturedSubConfig.receive() mustBe subConfig
+        withTimeout(2000) {
+            capturedPluginConfig.receive() fulfils FeatureStub.Config::class
+            capturedSubConfig.receive() mustBe subConfig
+        }
     }
 
     @Test
