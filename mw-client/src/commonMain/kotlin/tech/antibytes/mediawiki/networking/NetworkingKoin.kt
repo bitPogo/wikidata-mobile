@@ -11,6 +11,7 @@ import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.annotation.InternalKoinModuleScope
+import tech.antibytes.mediawiki.networking.plugin.KtorPluginsContract
 
 fun resolveHttpClientModule(): Module {
     return module {
@@ -27,12 +28,17 @@ fun resolveHttpClientModule(): Module {
                 )
             }
         }
-        factory<NetworkingContract.RequestBuilder> {
+
+        single<NetworkingContract.RequestBuilder> {
             RequestBuilder(
                 get(named(NetworkingContract.KoinIdentifier.CONFIGURED_CLIENT)),
                 get(named(NetworkingContract.KoinIdentifier.HOST)),
                 port = getOrNull(named(NetworkingContract.KoinIdentifier.PORT))
             )
+        }
+
+        single<KtorPluginsContract.ErrorMapper> {
+            HttpErrorMapper()
         }
     }
 }

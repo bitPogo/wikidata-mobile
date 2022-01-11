@@ -54,6 +54,8 @@ kotlin {
 
                 implementation(Dependency.multiplatform.serialization.common)
                 implementation(Dependency.multiplatform.dateTime)
+
+                implementation(Dependency.multiplatform.stately.freeze)
             }
         }
         val commonTest by getting {

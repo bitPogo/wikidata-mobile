@@ -7,6 +7,7 @@
 package tech.antibytes.mediawiki.core.page
 
 import tech.antibytes.mediawiki.core.page.model.Page
+import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.page.PageRepositoryStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
@@ -21,15 +22,16 @@ import kotlin.test.Test
 class PageServiceSpec {
     private val fixture = kotlinFixture()
     private val repository = PageRepositoryStub()
+    private val serviceWrapper = ServiceResponseWrapperStub()
 
     @BeforeTest
     fun setUp() {
-        repository.randomPage = null
+        repository.clear()
     }
 
     @Test
     fun `It fulfils Service`() {
-        PageService(repository) fulfils PageContract.Service::class
+        PageService(repository, serviceWrapper) fulfils PageContract.Service::class
     }
 
     @Test
@@ -60,10 +62,12 @@ class PageServiceSpec {
         }
 
         // When
-        val result = PageService(repository).randomPage(limit, namespace)
+        val result = PageService(repository, serviceWrapper).randomPage(limit, namespace)
 
         // Then
-        result sameAs response
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
         capturedLimit mustBe limit
         capturedNamespace mustBe namespace
     }
@@ -84,10 +88,12 @@ class PageServiceSpec {
         }
 
         // When
-        val result = PageService(repository).fetchRestrictions(title)
+        val result = PageService(repository, serviceWrapper).fetchRestrictions(title)
 
         // Then
-        result sameAs response
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
         capturedTitle mustBe title
     }
 }

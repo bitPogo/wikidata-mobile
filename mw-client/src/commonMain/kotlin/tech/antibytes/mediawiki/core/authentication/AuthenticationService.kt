@@ -6,15 +6,23 @@
 
 package tech.antibytes.mediawiki.core.authentication
 
-import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
+import tech.antibytes.mediawiki.MwClientContract
+import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.mediawiki.core.token.MetaTokenContract
 
 internal class AuthenticationService(
     private val authRepository: AuthenticationContract.Repository,
-    private val tokenRepository: MetaTokenServiceContract.Repository
+    private val tokenRepository: MetaTokenContract.Repository,
+    private val wrapper: MwClientContract.ServiceResponseWrapper
 ) : AuthenticationContract.Service {
-    override suspend fun login(username: String, password: String): Boolean {
-        val token = tokenRepository.fetchToken(MetaTokenServiceContract.MetaTokenType.LOGIN)
+    private suspend fun doLogin(username: String, password: String): Boolean {
+        val token = tokenRepository.fetchToken(MetaTokenContract.MetaTokenType.LOGIN)
 
         return authRepository.login(username, password, token)
     }
+
+    override suspend fun login(
+        username: String,
+        password: String
+    ): PublicApi.SuspendingFunctionWrapper<Boolean> = wrapper.warp { doLogin(username, password) }
 }

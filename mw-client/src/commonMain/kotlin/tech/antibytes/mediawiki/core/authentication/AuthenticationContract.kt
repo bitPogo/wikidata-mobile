@@ -6,6 +6,7 @@
 
 package tech.antibytes.mediawiki.core.authentication
 
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
 import tech.antibytes.mediawiki.core.token.MetaToken
 import tech.antibytes.mediawiki.error.MwClientError
@@ -37,15 +38,5 @@ internal interface AuthenticationContract {
         ): Boolean
     }
 
-    interface Service {
-        @Throws(
-            MwClientError.ResponseTransformFailure::class,
-            MwClientError.RequestValidationFailure::class,
-            MwClientError.InternalFailure::class
-        )
-        suspend fun login(
-            username: String,
-            password: String
-        ): Boolean
-    }
+    interface Service : PublicApi.AuthenticationService
 }

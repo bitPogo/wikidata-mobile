@@ -6,11 +6,15 @@
 
 package tech.antibytes.mediawiki
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
+import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
+
 typealias EntityId = String
 typealias LanguageTag = String
 
 interface PublicApi {
-    fun interface Connectivity {
+    fun interface ConnectivityManager {
         fun hasConnection(): Boolean
     }
 
@@ -18,5 +22,56 @@ interface PublicApi {
         fun info(message: String)
         fun warn(message: String)
         fun error(exception: Throwable, message: String?)
+    }
+
+    interface SuspendingFunctionWrapper<T> {
+        val wrappedFunction: suspend () -> T
+
+        fun subscribe(
+            onSuccess: (item: T) -> Unit,
+            onError: (error: Throwable) -> Unit,
+        ): Job
+    }
+
+    interface AuthenticationService {
+        suspend fun login(username: String, password: String): SuspendingFunctionWrapper<Boolean>
+    }
+
+    interface PageService {
+        fun randomPage(limit: Int, namespace: Int? = null): SuspendingFunctionWrapper<List<RevisionedPagePointer>>
+        fun fetchRestrictions(pageTitle: String): SuspendingFunctionWrapper<List<String>>
+    }
+
+    interface WikibaseService {
+        fun fetchEntities(ids: Set<EntityId>): SuspendingFunctionWrapper<List<DataModelContract.RevisionedEntity>>
+
+        fun searchForEntities(
+            term: String,
+            language: LanguageTag,
+            type: DataModelContract.EntityType,
+            limit: Int
+        ): SuspendingFunctionWrapper<List<DataModelContract.Entity>>
+
+        fun updateEntity(entity: DataModelContract.RevisionedEntity): SuspendingFunctionWrapper<DataModelContract.RevisionedEntity?>
+
+        fun createEntity(
+            type: DataModelContract.EntityType,
+            entity: DataModelContract.BoxedTerms
+        ): SuspendingFunctionWrapper<DataModelContract.RevisionedEntity?>
+    }
+
+    interface Client {
+        val authentication: AuthenticationService
+        val page: PageService
+        val wikibase: WikibaseService
+    }
+
+    interface ClientFactory {
+        fun getInstance(
+            host: String,
+            logger: Logger,
+            connection: ConnectivityManager,
+            dispatcher: CoroutineDispatcher
+        ): Client
     }
 }

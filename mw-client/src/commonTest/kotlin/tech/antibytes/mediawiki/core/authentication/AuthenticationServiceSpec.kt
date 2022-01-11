@@ -6,7 +6,8 @@
 
 package tech.antibytes.mediawiki.core.authentication
 
-import tech.antibytes.mediawiki.core.token.MetaTokenServiceContract
+import tech.antibytes.mediawiki.core.token.MetaTokenContract
+import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.authentication.AuthenticationRepositoryStub
 import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
@@ -14,6 +15,7 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
+import tech.antibytes.util.test.sameAs
 import kotlin.test.Test
 
 internal class AuthenticationServiceSpec {
@@ -23,7 +25,8 @@ internal class AuthenticationServiceSpec {
     fun `It fulfils Service`() {
         AuthenticationService(
             AuthenticationRepositoryStub(),
-            MetaTokenRepositoryStub()
+            MetaTokenRepositoryStub(),
+            ServiceResponseWrapperStub()
         ) fulfils AuthenticationContract.Service::class
     }
 
@@ -32,13 +35,14 @@ internal class AuthenticationServiceSpec {
         // Given
         val authRepository = AuthenticationRepositoryStub()
         val tokenRepository = MetaTokenRepositoryStub()
+        val serviceWrapper = ServiceResponseWrapperStub()
 
         val username: String = fixture.fixture()
         val password: String = fixture.fixture()
         val token: String = fixture.fixture()
         val expected: Boolean = fixture.fixture()
 
-        var capturedMetaTokenType: MetaTokenServiceContract.MetaTokenType? = null
+        var capturedMetaTokenType: MetaTokenContract.MetaTokenType? = null
 
         tokenRepository.fetchToken = { givenType ->
             capturedMetaTokenType = givenType
@@ -57,12 +61,17 @@ internal class AuthenticationServiceSpec {
         }
 
         // When
-        val result = AuthenticationService(authRepository, tokenRepository).login(username, password)
+        val result = AuthenticationService(
+            authRepository,
+            tokenRepository,
+            serviceWrapper
+        ).login(username, password)
 
         // Then
-        result mustBe expected
+        result.wrappedFunction.invoke() mustBe expected
 
-        capturedMetaTokenType mustBe MetaTokenServiceContract.MetaTokenType.LOGIN
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
+        capturedMetaTokenType mustBe MetaTokenContract.MetaTokenType.LOGIN
         capturedUsername mustBe username
         capturedPassword mustBe password
         capturedToken mustBe token

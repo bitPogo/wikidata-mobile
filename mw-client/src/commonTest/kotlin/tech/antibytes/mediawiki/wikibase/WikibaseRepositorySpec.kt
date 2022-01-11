@@ -20,7 +20,7 @@ import tech.antibytes.mediawiki.wikibase.model.Match
 import tech.antibytes.mediawiki.wikibase.model.MatchTypes
 import tech.antibytes.mediawiki.wikibase.model.SearchEntity
 import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
-import tech.antibytes.mock.serialization.BoxedTermsSerializerStub
+import tech.antibytes.mock.serialization.SerializerStub
 import tech.antibytes.mock.wikibase.TestEntity
 import tech.antibytes.mock.wikibase.WikibaseApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
@@ -36,7 +36,7 @@ import kotlin.test.Test
 class WikibaseRepositorySpec {
     private val fixture = kotlinFixture()
     private val apiService = WikibaseApiServiceStub()
-    private val boxedTermsSerializer = BoxedTermsSerializerStub()
+    private val boxedTermsSerializer = SerializerStub<DataModelContract.BoxedTerms>()
 
     @BeforeTest
     fun setUp() {

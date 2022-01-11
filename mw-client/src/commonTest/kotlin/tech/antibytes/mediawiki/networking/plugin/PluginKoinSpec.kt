@@ -15,6 +15,7 @@ import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.networking.NetworkingContract
+import tech.antibytes.mediawiki.serialization.JsonConfiguratorContract
 import tech.antibytes.mock.LoggerStub
 import tech.antibytes.mock.networking.plugin.CookieStorageStub
 import tech.antibytes.mock.networking.plugin.ErrorMapperStub
@@ -39,7 +40,7 @@ class PluginKoinSpec {
                 module {
                     single<PublicApi.Logger> { logger }
                     single<KtorPluginsContract.ErrorMapper> { mapper }
-                    single<KtorPluginsContract.JsonConfigurator> { serializer }
+                    single<JsonConfiguratorContract> { serializer }
                     single<CookiesStorage> { cookieStorage }
                 }
             )
@@ -60,7 +61,7 @@ class PluginKoinSpec {
                     plugin.subConfiguration sameAs mapper
                     plugin.feature sameAs HttpCallValidator
                 }
-                is KtorPluginsContract.JsonConfigurator -> {
+                is JsonConfiguratorContract -> {
                     plugin.subConfiguration sameAs serializer
                     plugin.feature sameAs JsonFeature
                 }

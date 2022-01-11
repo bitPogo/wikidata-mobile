@@ -7,6 +7,7 @@
 package tech.antibytes.mediawiki.core.page
 
 import tech.antibytes.mediawiki.DataModelContract
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.core.page.model.PageResponse
 import tech.antibytes.mediawiki.error.MwClientError
 
@@ -43,19 +44,5 @@ internal interface PageContract {
         suspend fun fetchRestrictions(pageTitle: String): List<String>
     }
 
-    interface Service {
-        @Throws(
-            MwClientError.ResponseTransformFailure::class,
-            MwClientError.RequestValidationFailure::class,
-            MwClientError.InternalFailure::class
-        )
-        suspend fun randomPage(limit: Int, namespace: Int? = null): List<DataModelContract.RevisionedPagePointer>
-
-        @Throws(
-            MwClientError.ResponseTransformFailure::class,
-            MwClientError.RequestValidationFailure::class,
-            MwClientError.InternalFailure::class
-        )
-        suspend fun fetchRestrictions(pageTitle: String): List<String>
-    }
+    interface Service : PublicApi.PageService
 }
