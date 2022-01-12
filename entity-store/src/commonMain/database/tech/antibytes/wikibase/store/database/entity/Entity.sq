@@ -21,12 +21,12 @@ CREATE TABLE Term (
 selectEntityById:
 SELECT *
 FROM Entity
-WHERE id = ?;
+WHERE id = :whereId;
 
 selectMonoligualEntityById:
 SELECT id, revision, lastModified, edibility, label, description, aliases
 FROM Entity, Term
-WHERE id = ? AND language = ?;
+WHERE entityId = :whereId AND language = :whereLanguage;
 
 addEntity:
 INSERT INTO Entity(id, revision, lastModified, edibility)
@@ -35,7 +35,7 @@ VALUES (?, ?, ?, ?);
 updateEntity:
 UPDATE Entity
 SET revision = ?, lastModified = ?, edibility = ?
-WHERE id = ?;
+WHERE id = :whereId;
 
 addTerm:
 INSERT INTO Term(entityId, language, label, description, aliases)
@@ -44,4 +44,8 @@ VALUES (?, ?, ?, ?, ?);
 updateTerm:
 UPDATE Term
 SET label = ?, description = ?, aliases = ?
-WHERE entityId = ? AND language = ?;
+WHERE entityId = :whereId AND language = :whereLanguage;
+
+deleteTerm:
+DELETE FROM Term
+WHERE entityId = :whereId AND language = :whereLanguage;

@@ -153,4 +153,35 @@ class SchemaSpec {
             aliases
         )
     }
+
+    @Test
+    fun `It adds, deletes Terms and retrievs MonoligualEntities`() {
+        // Given
+        val id: String = fixture.fixture()
+        val revision: Long = fixture.fixture()
+        val lastModified = Instant.fromEpochMilliseconds(fixture.fixture())
+        val edibility: Boolean = fixture.fixture()
+
+        val language: String = fixture.fixture()
+        val label: String = fixture.fixture()
+        val description: String = fixture.fixture()
+        val aliases: List<String> = fixture.listFixture()
+
+        // When
+        val entityQueries: EntityQueries = db.dataBase.entityQueries
+        entityQueries.addEntity(
+            id,
+            revision,
+            lastModified,
+            edibility
+        )
+        entityQueries.addTerm(id, language, label, description, aliases)
+        entityQueries.deleteTerm(id, language)
+
+        val storedValues = entityQueries.selectMonoligualEntityById(id, language)
+            .executeAsList()
+
+        // Then
+        storedValues.isEmpty() mustBe true
+    }
 }
