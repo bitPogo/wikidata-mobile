@@ -17,6 +17,8 @@ plugins {
     id("tech.antibytes.gradle.configuration")
     id("tech.antibytes.gradle.coverage")
 
+    // SqlDelight
+    id("com.squareup.sqldelight")
 
     // Serialization
     id("org.jetbrains.kotlin.plugin.serialization")
@@ -48,14 +50,14 @@ kotlin {
                 }
 
                 implementation(Dependency.multiplatform.coroutines.common)
-                implementation(Dependency.multiplatform.ktor.common.core)
-                implementation(Dependency.multiplatform.ktor.common.serialization)
-                implementation((Dependency.multiplatform.ktor.logger))
 
                 implementation(Dependency.multiplatform.serialization.common)
+                implementation(Dependency.multiplatform.serialization.json)
                 implementation(Dependency.multiplatform.dateTime)
 
                 implementation(Dependency.multiplatform.stately.freeze)
+
+                implementation(LocalDependency.sqldelight.coroutines)
             }
         }
         val commonTest by getting {
@@ -64,8 +66,6 @@ kotlin {
             dependencies {
                 implementation(Dependency.multiplatform.test.common)
                 implementation(Dependency.multiplatform.test.annotations)
-
-                implementation(Dependency.multiplatform.ktor.mock)
 
                 implementation(LocalDependency.antibytes.test.core)
                 implementation(LocalDependency.antibytes.test.fixture)
@@ -78,7 +78,7 @@ kotlin {
             dependencies {
                implementation(Dependency.multiplatform.kotlin.android)
                 implementation(Dependency.multiplatform.coroutines.android)
-                implementation(Dependency.multiplatform.ktor.android.client)
+                implementation(LocalDependency.sqldelight.android)
             }
         }
         val androidTest by getting {
@@ -87,7 +87,9 @@ kotlin {
 
                 implementation(Dependency.multiplatform.test.jvm)
                 implementation(Dependency.multiplatform.test.junit)
+                implementation(Dependency.android.test.ktx)
                 implementation(Dependency.android.test.robolectric)
+                implementation(Dependency.android.test.junit)
             }
         }
 
@@ -95,7 +97,7 @@ kotlin {
             dependencies {
                 implementation(Dependency.multiplatform.kotlin.jdk8)
                 implementation(Dependency.multiplatform.coroutines.common)
-                implementation(Dependency.multiplatform.ktor.jvm.core)
+                implementation(LocalDependency.sqldelight.jvm)
             }
         }
         val jvmTest by getting {
@@ -109,6 +111,14 @@ kotlin {
     }
 }
 
+android {
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+}
+
 tasks.withType(Test::class.java) {
     testLogging {
         events(FAILED)
@@ -116,7 +126,7 @@ tasks.withType(Test::class.java) {
 }
 
 val templatesPath = "${projectDir}/src/commonTest/resources/template"
-val configPath = "${projectDir}/src-gen/commonTest/kotlin/tech/antibytes/mediawiki/test/config"
+val configPath = "${projectDir}/src-gen/commonTest/kotlin/tech/antibytes/wikibase/store/entity/test/config"
 
 val provideTestConfig: Task by tasks.creating {
     doFirst {
@@ -139,5 +149,13 @@ val provideTestConfig: Task by tasks.creating {
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile::class.java) {
     if (this.name.contains("Test")) {
         this.dependsOn(provideTestConfig)
+    }
+}
+
+sqldelight {
+    database("WikibaseDataBase") {
+        packageName = "tech.antibytes.wikibase.store.database.entity"
+        sourceFolders = listOf("database")
+        verifyMigrations = true
     }
 }

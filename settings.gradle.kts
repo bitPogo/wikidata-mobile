@@ -19,7 +19,8 @@ plugins {
 
 include(
     "mw-client",
-    "mw-client-e2e"
+    "mw-client-e2e",
+    "entity-store"
 )
 
 buildCache {
