@@ -28,6 +28,7 @@ interface MapperContract {
     interface LocalEntityMapper {
         fun toMonolingualEntity(
             id: String,
+            type: EntityModelContract.EntityType,
             revision: Long,
             lastModified: Instant,
             edibility: Boolean
@@ -35,6 +36,7 @@ interface MapperContract {
 
         fun toMonolingualEntity(
             id: String,
+            type: EntityModelContract.EntityType,
             revision: Long,
             lastModified: Instant,
             edibility: Boolean,

@@ -57,7 +57,7 @@ internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
             id = monolingualEntity.id,
             revision = monolingualEntity.revision,
             type = DataModelContract.EntityType.valueOf(monolingualEntity.type.name),
-            lastModification = Instant.DISTANT_PAST,
+            lastModification = Instant.DISTANT_PAST, // TODO Use Clock.now, once a proper RequestQueue is in place
             labels = mapOf(language to mapValue(language, monolingualEntity.label)),
             descriptions = mapOf(language to mapValue(language, monolingualEntity.description)),
             aliases = mapOf(language to mapAliases(language, monolingualEntity.aliases)),
