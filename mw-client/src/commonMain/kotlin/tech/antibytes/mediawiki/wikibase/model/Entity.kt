@@ -16,7 +16,7 @@ import tech.antibytes.mediawiki.EntityId
 internal data class Entity(
     override val id: EntityId,
     @SerialName("lastrevid")
-    override val revisionId: Long = -1,
+    override val revision: Long = -1,
     @SerialName("modified")
     override val lastModification: Instant = Instant.DISTANT_PAST,
     override val type: DataModelContract.EntityType,

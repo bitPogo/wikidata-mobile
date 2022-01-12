@@ -10,8 +10,16 @@ typealias EntityId = String
 typealias LanguageTag = String
 
 interface EntityModelContract {
+    enum class EntityType {
+        ITEM,
+        PROPERTY,
+        LEXEME
+    }
+
     interface MonolingualEntity {
         val id: EntityId
+        val type: EntityType
+        val revision: Long
         val isEditable: Boolean
         val label: String?
         val description: String?

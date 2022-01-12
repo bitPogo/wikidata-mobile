@@ -15,8 +15,10 @@ import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.mustBe
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore
 class MwClientE2ESpec {
     val fixture = kotlinFixture()
 
@@ -24,7 +26,7 @@ class MwClientE2ESpec {
         return TestEntity(
             id = this.id,
             type = this.type,
-            revisionId = this.revisionId,
+            revision = this.revision,
             lastModification = this.lastModification,
             labels = this.labels,
             descriptions = this.descriptions,
@@ -39,7 +41,7 @@ class MwClientE2ESpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 language to LanguageValuePair(
@@ -90,16 +92,20 @@ class MwClientE2ESpec {
         )
 
         val response = client.wikibase.updateEntity(modifiedEntity).wrappedFunction.invoke()
-        modifiedEntity.labels["de"] mustBe response!!.labels["de"]
+        modifiedEntity.labels[language] mustBe response!!.labels[language]
         modifiedEntity.labels["en"]!!.value mustBe response.labels["en"]!!.value
         modifiedEntity.descriptions mustBe response.descriptions
         modifiedEntity.aliases mustBe response.aliases
 
-        val fetchedModifiedEntities = client.wikibase.fetchEntities(setOf(modifiedEntity.id)).wrappedFunction.invoke()
+        val fetchedModifiedEntities = client.wikibase.fetchEntities(
+            setOf(modifiedEntity.id),
+            "en"
+        ).wrappedFunction.invoke().first()
 
-        response.labels mustBe fetchedModifiedEntities.first().labels
-        response.descriptions mustBe fetchedModifiedEntities.first().descriptions
-        response.aliases mustBe fetchedModifiedEntities.first().aliases
+        fetchedModifiedEntities.labels.containsKey(language) mustBe false
+        response.labels["en"] mustBe fetchedModifiedEntities.labels["en"]
+        response.descriptions["en"] mustBe fetchedModifiedEntities.descriptions["en"]
+        response.aliases["en"] mustBe fetchedModifiedEntities.aliases["en"]
     }
 
     @Test

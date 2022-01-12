@@ -6,14 +6,18 @@
 
 package tech.antibytes.wikibase.store.entity.data.services
 
+import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
 import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.wikibase.store.database.entity.Entity
 import tech.antibytes.wikibase.store.database.entity.SelectMonoligualEntityById
 import tech.antibytes.wikibase.store.database.entity.Term
 import tech.antibytes.wikibase.store.entity.domain.model.EntityId
+import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 
 internal interface ServiceContract {
+
+
     interface DatabaseService {
         suspend fun setEntity(entity: Entity): Entity
         suspend fun setTerm(term: Term): Term

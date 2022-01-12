@@ -1,8 +1,10 @@
 import kotlin.collections.List;
 import kotlinx.datetime.Instant;
+import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract.EntityType;
 
 CREATE TABLE Entity (
     id TEXT NOT NULL UNIQUE PRIMARY KEY,
+    type TEXT AS EntityType NOT NULL,
     revision INTEGER NOT NULL,
     lastModified INTEGER AS Instant NOT NULL,
     edibility INTEGER AS Boolean NOT NULL
@@ -24,13 +26,13 @@ FROM Entity
 WHERE id = :whereId;
 
 selectMonoligualEntityById:
-SELECT id, revision, lastModified, edibility, label, description, aliases
+SELECT id, type, revision, lastModified, edibility, label, description, aliases
 FROM Entity, Term
 WHERE entityId = :whereId AND language = :whereLanguage;
 
 addEntity:
-INSERT INTO Entity(id, revision, lastModified, edibility)
-VALUES (?, ?, ?, ?);
+INSERT INTO Entity(id, type, revision, lastModified, edibility)
+VALUES (?, ?, ?, ?, ?);
 
 updateEntity:
 UPDATE Entity

@@ -17,7 +17,7 @@ data class TestEntity(
     override val aliases: Map<String, List<DataModelContract.LanguageValuePair>>,
     override val id: EntityId,
     override val type: DataModelContract.EntityType,
-    override val revisionId: Long,
+    override val revision: Long,
     override val lastModification: Instant
 ) : DataModelContract.RevisionedEntity
 

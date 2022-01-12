@@ -33,7 +33,7 @@ class EntitySpec {
 
         // Then
         result.id mustBe q42.id
-        result.revisionId mustBe q42.revisionId
+        result.revision mustBe q42.revision
         result.lastModification mustBe q42.lastModification
         result.type mustBe q42.type
         result.labels mustBe q42.labels

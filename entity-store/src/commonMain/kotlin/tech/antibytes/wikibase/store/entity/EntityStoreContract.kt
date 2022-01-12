@@ -6,11 +6,12 @@
 
 package tech.antibytes.wikibase.store.entity
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 
 interface EntityStoreContract {
-    val entity: StateFlow<EntityModelContract.MonolingualEntity?>
+    val entity: Flow<EntityModelContract.MonolingualEntity>
 
     fun setLabel(label: String?)
     fun setDescription(label: String?)

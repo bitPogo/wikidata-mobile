@@ -11,12 +11,12 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.wikibase.store.mock.MwClientStub
-import tech.antibytes.wikibase.store.mock.RevisionedEntity
+import tech.antibytes.wikibase.store.entity.data.dto.RevisionedEntity
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
-import tech.antibytes.wikibase.store.mock.LanguageValuePair
+import tech.antibytes.wikibase.store.entity.data.dto.LanguageValuePair
 import tech.antibytes.wikibase.store.mock.SuspendingFunctionWrapperStub
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -42,7 +42,7 @@ class ApiServiceSpec {
         val expectedEntity = RevisionedEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
@@ -67,7 +67,7 @@ class ApiServiceSpec {
         )
 
         var capturedIds: Set<String>? = null
-        client.wikibase.fetchEntities = { givenIds ->
+        client.wikibase.fetchEntities = { givenIds, _ ->
             capturedIds = givenIds
 
             SuspendingFunctionWrapperStub(
@@ -89,7 +89,7 @@ class ApiServiceSpec {
         val expectedEntity = RevisionedEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
@@ -137,7 +137,7 @@ class ApiServiceSpec {
         val expectedEntity = RevisionedEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(

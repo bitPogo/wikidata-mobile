@@ -22,15 +22,27 @@ import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 internal class WikibaseApiService(
     private val requestBuilder: NetworkingContract.RequestBuilderFactory
 ) : WikibaseContract.ApiService {
-    override suspend fun fetch(ids: Set<EntityId>): EntitiesResponse {
+    private fun createFetchParameter(ids: Set<EntityId>, language: LanguageTag?): Map<String, Any> {
+        val parameter = mutableMapOf<String, Any>(
+            "action" to "wbgetentities",
+            "format" to "json",
+            "ids" to ids.joinToString("|")
+        )
+
+        return if (language != null) {
+            parameter.also {
+                it["languages"] = language
+            }
+        } else {
+            parameter
+        }
+    }
+
+    override suspend fun fetch(ids: Set<EntityId>, language: LanguageTag?): EntitiesResponse {
         val request = requestBuilder
             .create()
             .setParameter(
-                mapOf(
-                    "action" to "wbgetentities",
-                    "format" to "json",
-                    "ids" to ids.joinToString("|")
-                )
+                createFetchParameter(ids, language)
             ).prepare(
                 NetworkingContract.Method.GET,
                 ENDPOINT

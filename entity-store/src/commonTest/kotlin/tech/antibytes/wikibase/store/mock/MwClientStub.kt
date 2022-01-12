@@ -55,12 +55,15 @@ class PageStub : PublicApi.PageService, MockContract.Mock {
 }
 
 class WikibaseStub: PublicApi.WikibaseService, MockContract.Mock {
-    var fetchEntities: ((Set<EntityId>) -> SuspendingFunctionWrapper<List<RevisionedEntity>>)? = null
+    var fetchEntities: ((Set<EntityId>, LanguageTag?) -> SuspendingFunctionWrapper<List<RevisionedEntity>>)? = null
     var updateEntity: ((RevisionedEntity) -> SuspendingFunctionWrapper<RevisionedEntity?>)? = null
     var createEntity: ((EntityType, BoxedTerms) -> SuspendingFunctionWrapper<RevisionedEntity?>)? = null
 
-    override fun fetchEntities(ids: Set<EntityId>): SuspendingFunctionWrapper<List<RevisionedEntity>> {
-        return fetchEntities?.invoke(ids)
+    override fun fetchEntities(
+        ids: Set<EntityId>,
+        language: LanguageTag?
+    ): SuspendingFunctionWrapper<List<RevisionedEntity>> {
+        return fetchEntities?.invoke(ids, language)
             ?: throw MockError.MissingStub("Missing Sideeffect fetchEntities")
     }
 

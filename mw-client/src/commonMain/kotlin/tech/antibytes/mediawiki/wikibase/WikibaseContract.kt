@@ -37,7 +37,10 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetch(ids: Set<EntityId>): EntitiesResponse
+        suspend fun fetch(
+            ids: Set<EntityId>,
+            language: LanguageTag? = null
+        ): EntitiesResponse
 
         @Throws(
             MwClientError.ResponseTransformFailure::class,
@@ -81,7 +84,10 @@ internal interface WikibaseContract {
             MwClientError.RequestValidationFailure::class,
             MwClientError.InternalFailure::class
         )
-        suspend fun fetch(ids: Set<EntityId>): List<RevisionedEntity>
+        suspend fun fetch(
+            ids: Set<EntityId>,
+            language: LanguageTag? = null
+        ): List<RevisionedEntity>
 
         @Throws(
             MwClientError.ResponseTransformFailure::class,
