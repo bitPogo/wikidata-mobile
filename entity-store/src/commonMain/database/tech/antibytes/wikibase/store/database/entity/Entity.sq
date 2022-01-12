@@ -1,0 +1,47 @@
+import kotlin.collections.List;
+import kotlinx.datetime.Instant;
+
+CREATE TABLE Entity (
+    id TEXT NOT NULL UNIQUE PRIMARY KEY,
+    revision INTEGER NOT NULL,
+    lastModified INTEGER AS Instant NOT NULL,
+    edibility INTEGER AS Boolean NOT NULL
+);
+
+CREATE TABLE Term (
+    entityId TEXT NOT NULL,
+    language TEXT NOT NULL,
+    label TEXT,
+    description TEXT,
+    aliases TEXT AS List<String> NOT NULL,
+    FOREIGN KEY (entityId) REFERENCES Entity(id),
+    CONSTRAINT monoligualEntitId PRIMARY KEY (entityId, language)
+);
+
+selectEntityById:
+SELECT *
+FROM Entity
+WHERE id = ?;
+
+selectMonoligualEntityById:
+SELECT id, revision, lastModified, edibility, label, description, aliases
+FROM Entity, Term
+WHERE id = ? AND language = ?;
+
+addEntity:
+INSERT INTO Entity(id, revision, lastModified, edibility)
+VALUES (?, ?, ?, ?);
+
+updateEntity:
+UPDATE Entity
+SET revision = ?, lastModified = ?, edibility = ?
+WHERE id = ?;
+
+addTerm:
+INSERT INTO Term(entityId, language, label, description, aliases)
+VALUES (?, ?, ?, ?, ?);
+
+updateTerm:
+UPDATE Term
+SET label = ?, description = ?, aliases = ?
+WHERE entityId = ? AND language = ?;

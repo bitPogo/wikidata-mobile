@@ -16,7 +16,7 @@ object Version {
         /**
          * [AnitBytes GradlePlugins](https://github.com/bitPogo/gradle-plugins)
          */
-        const val antibytes = "d555f79"
+        const val antibytes = "558ae36"
 
         /**
          * [Spotless](https://plugins.gradle.org/plugin/com.diffplug.gradle.spotless)
@@ -27,4 +27,9 @@ object Version {
     object Antibytes {
         val test = "789d509"
     }
+
+    /**
+     * [SQLDelight](https://github.com/cashapp/sqldelight/)
+     */
+    const val sqldelight = "1.5.3"
 }
