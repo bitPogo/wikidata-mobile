@@ -105,7 +105,6 @@ class MwClientE2ESpec {
     @Test
     fun `It logins in and fetches a random Entity`() = runBlockingTest {
         val host = "test.wikidata.org"
-        val language = "de"
 
         val client = MwClient.getInstance(
             host,

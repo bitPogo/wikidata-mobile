@@ -58,6 +58,8 @@ kotlin {
                 implementation(Dependency.multiplatform.stately.freeze)
 
                 implementation(LocalDependency.sqldelight.coroutines)
+
+                api(project(":mw-client"))
             }
         }
         val commonTest by getting {

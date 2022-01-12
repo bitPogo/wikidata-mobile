@@ -4,8 +4,10 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.entity.services
+package tech.antibytes.wikibase.store.entity.data.services
 
+import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
+import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.wikibase.store.database.entity.Entity
 import tech.antibytes.wikibase.store.database.entity.SelectMonoligualEntityById
 import tech.antibytes.wikibase.store.database.entity.Term
@@ -20,5 +22,11 @@ internal interface ServiceContract {
         suspend fun updateTerm(term: Term): Term
 
         suspend fun fetchMonolingualEntity(id: EntityId): SelectMonoligualEntityById
+    }
+
+    interface ApiService {
+        suspend fun fetchEntity(id: EntityId): RevisionedEntity
+        suspend fun updateEntity(entity: RevisionedEntity): RevisionedEntity?
+        suspend fun createEntity(entity: BoxedTerms): RevisionedEntity?
     }
 }
