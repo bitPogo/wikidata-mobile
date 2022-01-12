@@ -15,5 +15,6 @@ internal class ListAdapter(
     private val serializer: Json
 ) : ColumnAdapter<List<String>, String> {
     override fun decode(databaseValue: String): List<String> = serializer.decodeFromString(databaseValue)
+
     override fun encode(value: List<String>): String = serializer.encodeToString(value)
 }
