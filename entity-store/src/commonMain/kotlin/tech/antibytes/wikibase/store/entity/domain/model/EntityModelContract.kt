@@ -21,6 +21,7 @@ interface EntityModelContract {
         val type: EntityType
         val revision: Long
         val isEditable: Boolean
+        val language: LanguageTag
         val label: String?
         val description: String?
         val aliases: List<String>

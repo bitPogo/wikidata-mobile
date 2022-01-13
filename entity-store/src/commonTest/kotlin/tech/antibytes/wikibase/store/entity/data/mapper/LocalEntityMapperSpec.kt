@@ -29,17 +29,19 @@ class LocalEntityMapperSpec {
         val id: String = fixture.fixture()
         val type: EntityModelContract.EntityType = EntityModelContract.EntityType.PROPERTY
         val revision: Long = fixture.fixture()
+        val language: String = fixture.fixture()
         val lastModified: Instant = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
 
         // When
-        val entity = LocalEntityMapper().toMonolingualEntity(id, type, revision, lastModified, edibility)
+        val entity = LocalEntityMapper().toMonolingualEntity(id, type, revision, language, lastModified, edibility)
 
         // Then
         entity fulfils EntityModelContract.MonolingualEntity::class
         entity.id mustBe id
         entity.type mustBe type
         entity.revision mustBe revision
+        entity.language mustBe language
         entity.isEditable mustBe edibility
         entity.label mustBe null
         entity.description mustBe null
@@ -52,6 +54,7 @@ class LocalEntityMapperSpec {
         val id: String = fixture.fixture()
         val type: EntityModelContract.EntityType = EntityModelContract.EntityType.PROPERTY
         val revision: Long = fixture.fixture()
+        val language: String = fixture.fixture()
         val lastModified: Instant = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
         val label: String = fixture.fixture()
@@ -63,6 +66,7 @@ class LocalEntityMapperSpec {
             id,
             type,
             revision,
+            language,
             lastModified,
             edibility,
             label,
@@ -75,6 +79,7 @@ class LocalEntityMapperSpec {
         entity.id mustBe id
         entity.type mustBe type
         entity.revision mustBe revision
+        entity.language mustBe language
         entity.isEditable mustBe edibility
         entity.label mustBe label
         entity.description mustBe description

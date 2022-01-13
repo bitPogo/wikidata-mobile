@@ -28,7 +28,7 @@ class RemoteEntityMapperSpec {
     }
 
     @Test
-    fun `Given toMonolingualEntity is called with a LanguageTag, RevisionedEntity and a isEditable Flag, it returns a MonolingualEntity, while ignoring missmatches`() {
+    fun `Given toMonolingualEntity is called with a LanguageTag, RevisionedEntity and Restrictions, it returns a MonolingualEntity, while ignoring missmatches`() {
         // Given
         val language: String = fixture.fixture()
         val revisioned = RevisionedEntity(
@@ -58,24 +58,28 @@ class RemoteEntityMapperSpec {
             ),
         )
 
-        val flag: Boolean = fixture.fixture()
+        val restrictions: List<String> =  if (fixture.fixture()) {
+            emptyList()
+        } else {
+            fixture.listFixture()
+        }
 
         // When
-        val monolingual = RemoteEntityMapper().toMonolingualEntity(language, revisioned, flag)
+        val monolingual = RemoteEntityMapper().toMonolingualEntity(language, revisioned, restrictions)
 
         // Then
         monolingual fulfils EntityModelContract.MonolingualEntity::class
         monolingual.id mustBe revisioned.id
         monolingual.type mustBe EntityModelContract.EntityType.valueOf(revisioned.type.name)
         monolingual.revision mustBe revisioned.revision
-        monolingual.isEditable mustBe flag
+        monolingual.isEditable mustBe restrictions.isEmpty()
         monolingual.label mustBe null
         monolingual.description mustBe null
         monolingual.aliases mustBe emptyList()
     }
 
     @Test
-    fun `Given toMonolingualEntity is called with a LanguageTag, RevisionedEntity and a isEditable Flag, it returns a MonolingualEntity`() {
+    fun `Given toMonolingualEntity is called with a LanguageTag, RevisionedEntity and Restircions, it returns a MonolingualEntity`() {
         // Given
         val language: String = fixture.fixture()
         val revisioned = RevisionedEntity(
@@ -119,17 +123,21 @@ class RemoteEntityMapperSpec {
             ),
         )
 
-        val flag: Boolean = fixture.fixture()
+        val restrictions: List<String> =  if (fixture.fixture()) {
+            emptyList()
+        } else {
+            fixture.listFixture()
+        }
 
         // When
-        val monolingual = RemoteEntityMapper().toMonolingualEntity(language, revisioned, flag)
+        val monolingual = RemoteEntityMapper().toMonolingualEntity(language, revisioned, restrictions)
 
         // Then
         monolingual fulfils EntityModelContract.MonolingualEntity::class
         monolingual.id mustBe revisioned.id
         monolingual.type mustBe EntityModelContract.EntityType.valueOf(revisioned.type.name)
         monolingual.revision mustBe revisioned.revision
-        monolingual.isEditable mustBe flag
+        monolingual.isEditable mustBe restrictions.isEmpty()
         monolingual.label mustBe revisioned.labels[language]?.value
         monolingual.description mustBe revisioned.descriptions[language]?.value
         monolingual.aliases mustBe listOf(revisioned.aliases[language]?.first()?.value)
@@ -143,6 +151,7 @@ class RemoteEntityMapperSpec {
             id = fixture.fixture(),
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
+            language = language,
             isEditable = fixture.fixture(),
             label = null,
             description = null,
@@ -150,7 +159,7 @@ class RemoteEntityMapperSpec {
         )
 
         // When
-        val revisioned = RemoteEntityMapper().toRevisionedEntity(language, monolingual)
+        val revisioned = RemoteEntityMapper().toRevisionedEntity(monolingual)
 
         // Then
         revisioned fulfils DataModelContract.RevisionedEntity::class
@@ -171,6 +180,7 @@ class RemoteEntityMapperSpec {
             id = fixture.fixture(),
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
+            language = language,
             isEditable = fixture.fixture(),
             label = fixture.fixture<String>(),
             description = fixture.fixture<String>(),
@@ -178,7 +188,7 @@ class RemoteEntityMapperSpec {
         )
 
         // When
-        val revisioned = RemoteEntityMapper().toRevisionedEntity(language, monolingual)
+        val revisioned = RemoteEntityMapper().toRevisionedEntity(monolingual)
 
         // Then
         revisioned fulfils DataModelContract.RevisionedEntity::class

@@ -22,13 +22,14 @@ internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
     override fun toMonolingualEntity(
         language: LanguageTag,
         revisionedEntity: DataModelContract.RevisionedEntity,
-        isEditable: Boolean
+        restrictions: List<String>
     ): EntityModelContract.MonolingualEntity {
         return MonolingualEntity(
             id = revisionedEntity.id,
             type = EntityModelContract.EntityType.valueOf(revisionedEntity.type.name),
             revision = revisionedEntity.revision,
-            isEditable = isEditable,
+            language = language,
+            isEditable = restrictions.isEmpty(),
             label = revisionedEntity.labels[language]?.value,
             description = revisionedEntity.descriptions[language]?.value,
             aliases = mapAliases(revisionedEntity.aliases[language])
@@ -50,7 +51,6 @@ internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
     }
 
     override fun toRevisionedEntity(
-        language: LanguageTag,
         monolingualEntity: EntityModelContract.MonolingualEntity
     ): DataModelContract.RevisionedEntity {
         return RevisionedEntity(
@@ -58,9 +58,23 @@ internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
             revision = monolingualEntity.revision,
             type = DataModelContract.EntityType.valueOf(monolingualEntity.type.name),
             lastModification = Instant.DISTANT_PAST, // TODO Use Clock.now, once a proper RequestQueue is in place
-            labels = mapOf(language to mapValue(language, monolingualEntity.label)),
-            descriptions = mapOf(language to mapValue(language, monolingualEntity.description)),
-            aliases = mapOf(language to mapAliases(language, monolingualEntity.aliases)),
+            labels = mapOf(
+                monolingualEntity.language to mapValue(
+                    monolingualEntity.language, monolingualEntity.label
+                )
+            ),
+            descriptions = mapOf(
+                monolingualEntity.language to mapValue(
+                    monolingualEntity.language,
+                    monolingualEntity.description
+                )
+            ),
+            aliases = mapOf(
+                monolingualEntity.language to mapAliases(
+                    monolingualEntity.language,
+                    monolingualEntity.aliases
+                )
+            ),
         )
     }
 }

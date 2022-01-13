@@ -8,6 +8,7 @@ package tech.antibytes.wikibase.store.entity.data.mapper
 
 import kotlinx.datetime.Instant
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
+import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
 
 internal class LocalEntityMapper : MapperContract.LocalEntityMapper {
@@ -15,6 +16,7 @@ internal class LocalEntityMapper : MapperContract.LocalEntityMapper {
         id: String,
         type: EntityModelContract.EntityType,
         revision: Long,
+        language: LanguageTag,
         lastModified: Instant,
         edibility: Boolean
     ): EntityModelContract.MonolingualEntity {
@@ -22,6 +24,7 @@ internal class LocalEntityMapper : MapperContract.LocalEntityMapper {
             id = id,
             type = type,
             revision = revision,
+            language = language,
             isEditable = edibility
         )
     }
@@ -30,6 +33,7 @@ internal class LocalEntityMapper : MapperContract.LocalEntityMapper {
         id: String,
         type: EntityModelContract.EntityType,
         revision: Long,
+        language: LanguageTag,
         lastModified: Instant,
         edibility: Boolean,
         label: String?,
@@ -40,6 +44,7 @@ internal class LocalEntityMapper : MapperContract.LocalEntityMapper {
             id = id,
             type = type,
             revision = revision,
+            language = language,
             isEditable = edibility,
             label = label,
             description = description,

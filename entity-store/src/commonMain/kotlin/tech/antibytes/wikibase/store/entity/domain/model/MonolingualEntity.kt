@@ -10,6 +10,7 @@ internal data class MonolingualEntity(
     override val id: EntityId,
     override val type: EntityModelContract.EntityType,
     override val revision: Long,
+    override val language: LanguageTag,
     override val isEditable: Boolean,
     override val label: String? = null,
     override val description: String? = null,

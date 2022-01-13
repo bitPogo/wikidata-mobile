@@ -16,11 +16,10 @@ interface MapperContract {
         fun toMonolingualEntity(
             language: LanguageTag,
             revisionedEntity: DataModelContract.RevisionedEntity,
-            isEditable: Boolean
+            restrictions: List<String>
         ): EntityModelContract.MonolingualEntity
 
         fun toRevisionedEntity(
-            language: LanguageTag,
             monolingualEntity: EntityModelContract.MonolingualEntity
         ): DataModelContract.RevisionedEntity
     }
@@ -30,6 +29,7 @@ interface MapperContract {
             id: String,
             type: EntityModelContract.EntityType,
             revision: Long,
+            language: LanguageTag,
             lastModified: Instant,
             edibility: Boolean
         ): EntityModelContract.MonolingualEntity
@@ -38,6 +38,7 @@ interface MapperContract {
             id: String,
             type: EntityModelContract.EntityType,
             revision: Long,
+            language: LanguageTag,
             lastModified: Instant,
             edibility: Boolean,
             label: String?,
