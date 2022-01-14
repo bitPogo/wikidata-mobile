@@ -7,7 +7,6 @@
 package tech.antibytes.wikibase.store.entity
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 
 interface EntityStoreContract {

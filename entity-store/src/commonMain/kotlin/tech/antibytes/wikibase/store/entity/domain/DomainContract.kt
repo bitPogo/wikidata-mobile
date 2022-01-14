@@ -12,8 +12,8 @@ import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 
 internal interface DomainContract {
     interface Repository {
-        suspend fun fetchEntity(id: EntityId, language: LanguageTag): MonolingualEntity
-        suspend fun createEntity(entity: MonolingualEntity): MonolingualEntity
-        suspend fun updateEntity(entity: MonolingualEntity): MonolingualEntity
+        suspend fun fetchEntity(id: EntityId, language: LanguageTag): MonolingualEntity?
+        suspend fun createEntity(entity: MonolingualEntity): MonolingualEntity?
+        suspend fun updateEntity(entity: MonolingualEntity): MonolingualEntity?
     }
 }

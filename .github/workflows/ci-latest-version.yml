@@ -9,7 +9,7 @@ on:
 jobs:
   latest-version:
 
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     env:
       PACKAGE_REGISTRY_UPLOAD_USERNAME: ${{ secrets.PACKAGE_REGISTRY_UPLOAD_USERNAME }}
@@ -27,5 +27,7 @@ jobs:
           java-version: '11'
       - name: Cleanup
         run: ./gradlew clean
+      - name: Create DB
+        run: ./gradlew generateCommonMainWikibaseDataBaseInterface
       - name: Build
         run: ./gradlew build

@@ -58,7 +58,7 @@ class RemoteEntityMapperSpec {
             ),
         )
 
-        val restrictions: List<String> =  if (fixture.fixture()) {
+        val restrictions: List<String> = if (fixture.fixture()) {
             emptyList()
         } else {
             fixture.listFixture()
@@ -72,6 +72,7 @@ class RemoteEntityMapperSpec {
         monolingual.id mustBe revisioned.id
         monolingual.type mustBe EntityModelContract.EntityType.valueOf(revisioned.type.name)
         monolingual.revision mustBe revisioned.revision
+        monolingual.lastModification mustBe revisioned.lastModification
         monolingual.isEditable mustBe restrictions.isEmpty()
         monolingual.label mustBe null
         monolingual.description mustBe null
@@ -123,7 +124,7 @@ class RemoteEntityMapperSpec {
             ),
         )
 
-        val restrictions: List<String> =  if (fixture.fixture()) {
+        val restrictions: List<String> = if (fixture.fixture()) {
             emptyList()
         } else {
             fixture.listFixture()
@@ -137,6 +138,7 @@ class RemoteEntityMapperSpec {
         monolingual.id mustBe revisioned.id
         monolingual.type mustBe EntityModelContract.EntityType.valueOf(revisioned.type.name)
         monolingual.revision mustBe revisioned.revision
+        monolingual.lastModification mustBe revisioned.lastModification
         monolingual.isEditable mustBe restrictions.isEmpty()
         monolingual.label mustBe revisioned.labels[language]?.value
         monolingual.description mustBe revisioned.descriptions[language]?.value
@@ -152,6 +154,7 @@ class RemoteEntityMapperSpec {
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = language,
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
             description = null,
@@ -166,10 +169,10 @@ class RemoteEntityMapperSpec {
         revisioned.id mustBe monolingual.id
         revisioned.type mustBe DataModelContract.EntityType.valueOf(monolingual.type.name)
         revisioned.revision mustBe monolingual.revision
+        revisioned.lastModification mustBe monolingual.lastModification
         revisioned.labels mustBe mapOf(language to LanguageValuePair(language, ""))
         revisioned.descriptions mustBe mapOf(language to LanguageValuePair(language, ""))
         revisioned.aliases mustBe mapOf(language to emptyList())
-        revisioned.lastModification mustBe Instant.DISTANT_PAST
     }
 
     @Test
@@ -181,6 +184,7 @@ class RemoteEntityMapperSpec {
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = language,
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = fixture.fixture<String>(),
             description = fixture.fixture<String>(),
@@ -195,9 +199,9 @@ class RemoteEntityMapperSpec {
         revisioned.id mustBe monolingual.id
         revisioned.type mustBe DataModelContract.EntityType.valueOf(monolingual.type.name)
         revisioned.revision mustBe monolingual.revision
+        revisioned.lastModification mustBe monolingual.lastModification
         revisioned.labels mustBe mapOf(language to LanguageValuePair(language, monolingual.label!!))
         revisioned.descriptions mustBe mapOf(language to LanguageValuePair(language, monolingual.description!!))
-        revisioned.lastModification mustBe Instant.DISTANT_PAST
 
         val aliases = monolingual.aliases.map { alias -> LanguageValuePair(language, alias) }
         revisioned.aliases mustBe mapOf(language to aliases)

@@ -6,7 +6,6 @@
 
 package tech.antibytes.wikibase.store.entity.data.mapper
 
-import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.wikibase.store.entity.data.dto.LanguageValuePair
 import tech.antibytes.wikibase.store.entity.data.dto.RevisionedEntity
@@ -29,6 +28,7 @@ internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
             type = EntityModelContract.EntityType.valueOf(revisionedEntity.type.name),
             revision = revisionedEntity.revision,
             language = language,
+            lastModification = revisionedEntity.lastModification,
             isEditable = restrictions.isEmpty(),
             label = revisionedEntity.labels[language]?.value,
             description = revisionedEntity.descriptions[language]?.value,
@@ -50,14 +50,12 @@ internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
         return aliases.map { alias -> LanguageValuePair(language, alias) }
     }
 
-    override fun toRevisionedEntity(
-        monolingualEntity: EntityModelContract.MonolingualEntity
-    ): DataModelContract.RevisionedEntity {
+    override fun toRevisionedEntity(monolingualEntity: EntityModelContract.MonolingualEntity): DataModelContract.RevisionedEntity {
         return RevisionedEntity(
             id = monolingualEntity.id,
             revision = monolingualEntity.revision,
             type = DataModelContract.EntityType.valueOf(monolingualEntity.type.name),
-            lastModification = Instant.DISTANT_PAST, // TODO Use Clock.now, once a proper RequestQueue is in place
+            lastModification = monolingualEntity.lastModification,
             labels = mapOf(
                 monolingualEntity.language to mapValue(
                     monolingualEntity.language, monolingualEntity.label

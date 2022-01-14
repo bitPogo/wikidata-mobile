@@ -7,13 +7,13 @@
 package tech.antibytes.wikibase.store.mock
 
 import tech.antibytes.mediawiki.DataModelContract
-import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
 import tech.antibytes.mediawiki.DataModelContract.EntityType
-import tech.antibytes.mediawiki.PublicApi.SuspendingFunctionWrapper
+import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.mediawiki.PublicApi.SuspendingFunctionWrapper
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
@@ -54,7 +54,7 @@ class PageStub : PublicApi.PageService, MockContract.Mock {
     }
 }
 
-class WikibaseStub: PublicApi.WikibaseService, MockContract.Mock {
+class WikibaseStub : PublicApi.WikibaseService, MockContract.Mock {
     var fetchEntities: ((Set<EntityId>, LanguageTag?) -> SuspendingFunctionWrapper<List<RevisionedEntity>>)? = null
     var updateEntity: ((RevisionedEntity) -> SuspendingFunctionWrapper<RevisionedEntity?>)? = null
     var createEntity: ((EntityType, BoxedTerms) -> SuspendingFunctionWrapper<RevisionedEntity?>)? = null

@@ -25,6 +25,11 @@ SELECT *
 FROM Entity
 WHERE id = :whereId;
 
+hasTerm:
+SELECT COUNT(1)
+FROM Term
+WHERE entityId = :whereId AND language = :whereLanguage;
+
 selectMonoligualEntityById:
 SELECT id, type, revision, lastModified, edibility, label, description, aliases
 FROM Entity, Term

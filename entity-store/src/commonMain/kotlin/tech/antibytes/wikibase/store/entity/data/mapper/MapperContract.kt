@@ -31,19 +31,10 @@ interface MapperContract {
             revision: Long,
             language: LanguageTag,
             lastModified: Instant,
-            edibility: Boolean
-        ): EntityModelContract.MonolingualEntity
-
-        fun toMonolingualEntity(
-            id: String,
-            type: EntityModelContract.EntityType,
-            revision: Long,
-            language: LanguageTag,
-            lastModified: Instant,
             edibility: Boolean,
-            label: String?,
-            description: String?,
-            aliases: List<String>
+            label: String? = null,
+            description: String? = null,
+            aliases: List<String> = emptyList()
         ): EntityModelContract.MonolingualEntity
     }
 }

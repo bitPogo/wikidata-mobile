@@ -13,8 +13,6 @@ import tech.antibytes.wikibase.store.entity.domain.DomainContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityId
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
-import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
-import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
 
 internal class RemoteRepository(
     private val client: PublicApi.Client,
@@ -23,17 +21,13 @@ internal class RemoteRepository(
     private suspend fun fetchDataTransferEntity(
         id: EntityId,
         language: LanguageTag
-    ): RevisionedEntity {
+    ): RevisionedEntity? {
         val entities = client.wikibase
             .fetchEntities(setOf(id), language)
             .wrappedFunction
             .invoke()
 
-        return if (entities.isEmpty()) {
-            throw EntityStoreError.MissingEntity(id, language)
-        } else {
-            entities.first()
-        }
+        return entities.getOrNull(0)
     }
 
     private suspend fun fetchEntityEdibility(id: EntityId): List<String> {
@@ -43,54 +37,76 @@ internal class RemoteRepository(
             .invoke()
     }
 
+    private fun mapEntityResponse(
+        language: LanguageTag,
+        revisionedEntity: RevisionedEntity?,
+        restrictions: List<String>
+    ): EntityModelContract.MonolingualEntity? {
+        return if (revisionedEntity == null) {
+            null
+        } else {
+            entityMapper.toMonolingualEntity(
+                language,
+                revisionedEntity,
+                restrictions
+            )
+        }
+    }
+
+    private suspend fun fetchRestrictions(entity: RevisionedEntity?): List<String> {
+        return if (entity == null) {
+            emptyList()
+        } else {
+            fetchEntityEdibility(entity.id)
+        }
+    }
+
     override suspend fun fetchEntity(
         id: EntityId,
         language: LanguageTag
-    ): EntityModelContract.MonolingualEntity {
-        val revisionedEntity = fetchDataTransferEntity(id, language)
-        val restrictions = fetchEntityEdibility(id)
+    ): EntityModelContract.MonolingualEntity? {
+        val response = fetchDataTransferEntity(id, language)
+        val restrictions = fetchRestrictions(response)
 
-        return entityMapper.toMonolingualEntity(language, revisionedEntity, restrictions)
+        return mapEntityResponse(
+            language,
+            response,
+            restrictions
+        )
     }
 
-    private suspend fun createEntity(language: LanguageTag, entity: RevisionedEntity): RevisionedEntity {
-        val response = client.wikibase
+    private suspend fun createEntity(entity: RevisionedEntity): RevisionedEntity? {
+        return client.wikibase
             .createEntity(entity.type, entity)
             .wrappedFunction
             .invoke()
-
-        return response ?: throw EntityStoreError.CreationFailure(language)
     }
 
     override suspend fun createEntity(
         entity: EntityModelContract.MonolingualEntity
-    ): EntityModelContract.MonolingualEntity {
+    ): EntityModelContract.MonolingualEntity? {
         val revisioned = entityMapper.toRevisionedEntity(entity)
-        val response = createEntity(entity.language, revisioned)
+        val response = createEntity(revisioned)
 
-        return entityMapper.toMonolingualEntity(
+        return mapEntityResponse(
             entity.language,
             response,
             emptyList()
         )
     }
 
-    private suspend fun editEntity(language: LanguageTag, entity: RevisionedEntity): RevisionedEntity {
-        val response = client.wikibase
+    private suspend fun editEntity(entity: RevisionedEntity): RevisionedEntity? {
+        return client.wikibase
             .updateEntity(entity)
             .wrappedFunction
             .invoke()
-
-        return response ?: throw EntityStoreError.EditFailure(entity.id, language)
     }
 
-    override suspend fun updateEntity(
-        entity: EntityModelContract.MonolingualEntity
-    ): EntityModelContract.MonolingualEntity {
+    override suspend fun updateEntity(entity: EntityModelContract.MonolingualEntity): EntityModelContract.MonolingualEntity? {
         val revisioned = entityMapper.toRevisionedEntity(entity)
-        val response = editEntity(entity.language, revisioned)
+        val response = editEntity(revisioned)
 
-        return entityMapper.toMonolingualEntity(
+        return mapEntityResponse(
             entity.language,
             response,
             emptyList()

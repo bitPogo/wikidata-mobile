@@ -18,23 +18,6 @@ internal class LocalEntityMapper : MapperContract.LocalEntityMapper {
         revision: Long,
         language: LanguageTag,
         lastModified: Instant,
-        edibility: Boolean
-    ): EntityModelContract.MonolingualEntity {
-        return MonolingualEntity(
-            id = id,
-            type = type,
-            revision = revision,
-            language = language,
-            isEditable = edibility
-        )
-    }
-
-    override fun toMonolingualEntity(
-        id: String,
-        type: EntityModelContract.EntityType,
-        revision: Long,
-        language: LanguageTag,
-        lastModified: Instant,
         edibility: Boolean,
         label: String?,
         description: String?,
@@ -45,6 +28,7 @@ internal class LocalEntityMapper : MapperContract.LocalEntityMapper {
             type = type,
             revision = revision,
             language = language,
+            lastModification = lastModified,
             isEditable = edibility,
             label = label,
             description = description,

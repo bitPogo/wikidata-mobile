@@ -30,17 +30,18 @@ class LocalEntityMapperSpec {
         val type: EntityModelContract.EntityType = EntityModelContract.EntityType.PROPERTY
         val revision: Long = fixture.fixture()
         val language: String = fixture.fixture()
-        val lastModified: Instant = Instant.fromEpochMilliseconds(fixture.fixture())
+        val lastModification: Instant = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
 
         // When
-        val entity = LocalEntityMapper().toMonolingualEntity(id, type, revision, language, lastModified, edibility)
+        val entity = LocalEntityMapper().toMonolingualEntity(id, type, revision, language, lastModification, edibility)
 
         // Then
         entity fulfils EntityModelContract.MonolingualEntity::class
         entity.id mustBe id
         entity.type mustBe type
         entity.revision mustBe revision
+        entity.lastModification mustBe lastModification
         entity.language mustBe language
         entity.isEditable mustBe edibility
         entity.label mustBe null
@@ -55,7 +56,7 @@ class LocalEntityMapperSpec {
         val type: EntityModelContract.EntityType = EntityModelContract.EntityType.PROPERTY
         val revision: Long = fixture.fixture()
         val language: String = fixture.fixture()
-        val lastModified: Instant = Instant.fromEpochMilliseconds(fixture.fixture())
+        val lastModification: Instant = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
         val label: String = fixture.fixture()
         val description: String = fixture.fixture()
@@ -67,7 +68,7 @@ class LocalEntityMapperSpec {
             type,
             revision,
             language,
-            lastModified,
+            lastModification,
             edibility,
             label,
             description,
@@ -79,6 +80,7 @@ class LocalEntityMapperSpec {
         entity.id mustBe id
         entity.type mustBe type
         entity.revision mustBe revision
+        entity.lastModification mustBe lastModification
         entity.language mustBe language
         entity.isEditable mustBe edibility
         entity.label mustBe label

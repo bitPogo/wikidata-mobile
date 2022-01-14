@@ -21,13 +21,11 @@ import tech.antibytes.wikibase.store.entity.domain.DomainContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
-import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
 import tech.antibytes.wikibase.store.mock.MwClientStub
 import tech.antibytes.wikibase.store.mock.SuspendingFunctionWrapperStub
 import tech.antibytes.wikibase.store.mock.data.mapper.RemoteEntityMapperStub
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 
 class RemoteRepositorySpec {
     private val fixture = kotlinFixture()
@@ -46,7 +44,7 @@ class RemoteRepositorySpec {
     }
 
     @Test
-    fun `Given fetchEntity is called with a EntityId and a LanguageTage, it fails due to a empty Response`() = runBlockingTest {
+    fun `Given fetchEntity is called with a EntityId and a LanguageTage, it returns null due to a empty Response`() = runBlockingTest {
         // Given
         val id: String = fixture.fixture()
         val language: String = fixture.fixture()
@@ -61,13 +59,12 @@ class RemoteRepositorySpec {
                 suspend { emptyList() }
             )
         }
-        // Then
-        val error = assertFailsWith<EntityStoreError.MissingEntity> {
-            // When
-            RemoteRepository(client, mapper).fetchEntity(id, language)
-        }
 
-        error.message mustBe "Missing Entity ($id) in Language ($language)"
+        // When
+        val response = RemoteRepository(client, mapper).fetchEntity(id, language)
+
+        // Then
+        response mustBe null
         capturedIds mustBe setOf(id)
         capturedLanguage mustBe language
     }
@@ -110,6 +107,7 @@ class RemoteRepositorySpec {
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
             description = null,
@@ -157,7 +155,7 @@ class RemoteRepositorySpec {
         capturedIds mustBe setOf(id)
         capturedLanguage mustBe language
 
-        capturedRestrictionId mustBe id
+        capturedRestrictionId mustBe revisionedEntity.id
 
         capturedMapperLanguage mustBe language
         capturedRevisionEntity mustBe revisionedEntity
@@ -165,13 +163,14 @@ class RemoteRepositorySpec {
     }
 
     @Test
-    fun `Given createEntity is called with a MonolingualEntity, it fails due to a empty Response`() = runBlockingTest {
+    fun `Given createEntity is called with a MonolingualEntity, it returns null due to a empty Response`() = runBlockingTest {
         // Given
         val monolingualEntity = MonolingualEntity(
             id = fixture.fixture(),
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
             description = null,
@@ -223,13 +222,11 @@ class RemoteRepositorySpec {
             )
         }
 
-        // Then
-        val error = assertFailsWith<EntityStoreError.CreationFailure> {
-            // When
-           RemoteRepository(client, mapper).createEntity(monolingualEntity)
-        }
+        // When
+        val response = RemoteRepository(client, mapper).createEntity(monolingualEntity)
 
-        error.message mustBe "Cannot create Entity in Language (${monolingualEntity.language})"
+        // Then
+        response mustBe null
 
         capturedMonolingualEntity sameAs monolingualEntity
         capturedOutGoingEntity sameAs outGoingRevisionedEntity
@@ -244,6 +241,7 @@ class RemoteRepositorySpec {
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
             description = null,
@@ -255,6 +253,7 @@ class RemoteRepositorySpec {
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
             description = null,
@@ -358,13 +357,14 @@ class RemoteRepositorySpec {
     }
 
     @Test
-    fun `Given updateEntity is called with a MonolingualEntity, it fails due to a empty Response`() = runBlockingTest {
+    fun `Given updateEntity is called with a MonolingualEntity, it returns null due to a empty Response`() = runBlockingTest {
         // Given
         val monolingualEntity = MonolingualEntity(
             id = fixture.fixture(),
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
             description = null,
@@ -414,13 +414,11 @@ class RemoteRepositorySpec {
             )
         }
 
-        // Then
-        val error = assertFailsWith<EntityStoreError.EditFailure> {
-            // When
-            RemoteRepository(client, mapper).updateEntity(monolingualEntity)
-        }
+        // When
+        val response = RemoteRepository(client, mapper).updateEntity(monolingualEntity)
 
-        error.message mustBe "Cannot edit Entity (${outGoingRevisionedEntity.id}) in Language (${monolingualEntity.language})"
+        // Then
+        response mustBe null
 
         capturedMonolingualEntity sameAs monolingualEntity
         capturedOutGoingEntity sameAs outGoingRevisionedEntity
@@ -434,6 +432,7 @@ class RemoteRepositorySpec {
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
             description = null,
@@ -445,6 +444,7 @@ class RemoteRepositorySpec {
             type = EntityModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
             description = null,

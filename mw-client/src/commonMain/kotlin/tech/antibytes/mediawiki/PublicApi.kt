@@ -8,8 +8,8 @@ package tech.antibytes.mediawiki
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
-import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
+import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 
 typealias EntityId = String
 typealias LanguageTag = String
