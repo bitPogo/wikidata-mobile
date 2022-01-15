@@ -18,6 +18,7 @@ import tech.antibytes.wikibase.store.database.entity.Entity
 import tech.antibytes.wikibase.store.database.entity.EntityQueries
 import tech.antibytes.wikibase.store.database.entity.SelectMonoligualEntityById
 import tech.antibytes.wikibase.store.database.entity.WikibaseDataBase
+import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -43,24 +44,26 @@ class SchemaSpec {
         // Given
         val id: String = fixture.fixture()
         val revision: Long = fixture.fixture()
+        val type = EntityModelContract.EntityType.ITEM
         val lastModified = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
 
         // When
         val entityQueries: EntityQueries = db.dataBase.entityQueries
-        entityQueries.addEntity(id, revision, lastModified, edibility)
+        entityQueries.addEntity(id, type, revision, lastModified, edibility)
 
         val storedValues = entityQueries.selectEntityById(id)
             .executeAsList()
 
         // Then
-        storedValues.first() mustBe Entity(id, revision, lastModified, edibility)
+        storedValues.first() mustBe Entity(id, type, revision, lastModified, edibility)
     }
 
     @Test
     fun `It adds and retrievs MonoligualEntities`() {
         // Given
         val id: String = fixture.fixture()
+        val type = EntityModelContract.EntityType.ITEM
         val revision: Long = fixture.fixture()
         val lastModified = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
@@ -72,7 +75,7 @@ class SchemaSpec {
 
         // When
         val entityQueries: EntityQueries = db.dataBase.entityQueries
-        entityQueries.addEntity(id, revision, lastModified, edibility)
+        entityQueries.addEntity(id, type, revision, lastModified, edibility)
         entityQueries.addTerm(id, language, label, description, aliases)
 
         val storedValues = entityQueries.selectMonoligualEntityById(id, language)
@@ -81,6 +84,7 @@ class SchemaSpec {
         // Then
         storedValues.first() mustBe SelectMonoligualEntityById(
             id,
+            type,
             revision,
             lastModified,
             edibility,
@@ -94,6 +98,7 @@ class SchemaSpec {
     fun `It adds, updates and retrievs Entities`() {
         // Given
         val id: String = fixture.fixture()
+        val type = EntityModelContract.EntityType.ITEM
         val revision: Long = fixture.fixture()
         val lastModified = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
@@ -102,6 +107,7 @@ class SchemaSpec {
         val entityQueries: EntityQueries = db.dataBase.entityQueries
         entityQueries.addEntity(
             id,
+            type,
             fixture.fixture(),
             Instant.fromEpochMilliseconds(fixture.fixture()),
             fixture.fixture()
@@ -112,13 +118,14 @@ class SchemaSpec {
             .executeAsList()
 
         // Then
-        storedValues.first() mustBe Entity(id, revision, lastModified, edibility)
+        storedValues.first() mustBe Entity(id, type, revision, lastModified, edibility)
     }
 
     @Test
     fun `It adds, updates Terms and retrievs MonoligualEntities`() {
         // Given
         val id: String = fixture.fixture()
+        val type = EntityModelContract.EntityType.ITEM
         val revision: Long = fixture.fixture()
         val lastModified = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
@@ -132,6 +139,7 @@ class SchemaSpec {
         val entityQueries: EntityQueries = db.dataBase.entityQueries
         entityQueries.addEntity(
             id,
+            type,
             revision,
             lastModified,
             edibility
@@ -145,6 +153,7 @@ class SchemaSpec {
         // Then
         storedValues.first() mustBe SelectMonoligualEntityById(
             id,
+            type,
             revision,
             lastModified,
             edibility,
@@ -158,6 +167,7 @@ class SchemaSpec {
     fun `It adds, deletes Terms and retrievs MonoligualEntities`() {
         // Given
         val id: String = fixture.fixture()
+        val type = EntityModelContract.EntityType.ITEM
         val revision: Long = fixture.fixture()
         val lastModified = Instant.fromEpochMilliseconds(fixture.fixture())
         val edibility: Boolean = fixture.fixture()
@@ -171,6 +181,7 @@ class SchemaSpec {
         val entityQueries: EntityQueries = db.dataBase.entityQueries
         entityQueries.addEntity(
             id,
+            type,
             revision,
             lastModified,
             edibility

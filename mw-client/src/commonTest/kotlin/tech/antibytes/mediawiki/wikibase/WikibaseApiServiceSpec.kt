@@ -124,6 +124,49 @@ class WikibaseApiServiceSpec {
     }
 
     @Test
+    fun `Given fetch is called with a Set of Ids and a LanguageTag, it returns a EntitiesResponse`() = runBlockingTest {
+        // Given
+        val ids = fixture.listFixture<String>(size = 2).toSet()
+        val language: String = fixture.fixture()
+
+        val expectedResponse = EntitiesResponse(
+            entities = mapOf(
+                fixture.fixture<String>() to q42
+            ),
+            success = fixture.fixture()
+        )
+
+        val client = KtorMockClientFactory.createObjectMockClient(listOf(expectedResponse)) { scope, _ ->
+            return@createObjectMockClient scope.respond(
+                content = fixture.fixture<String>()
+            )
+        }
+
+        var capturedMethod: NetworkingContract.Method? = null
+        var capturedPath: Path? = null
+
+        requestBuilder.prepare = { method, path ->
+            capturedMethod = method
+            capturedPath = path
+            HttpStatement(ktorDummy, client)
+        }
+
+        // When
+        val responseFetch: EntitiesResponse = WikibaseApiService(requestBuilderFactory).fetch(ids, language)
+
+        // Then
+        responseFetch sameAs expectedResponse
+        capturedMethod mustBe NetworkingContract.Method.GET
+        capturedPath mustBe listOf("w", "api.php")
+        requestBuilder.delegatedParameter mustBe mapOf(
+            "action" to "wbgetentities",
+            "format" to "json",
+            "languages" to language,
+            "ids" to ids.joinToString("|")
+        )
+    }
+
+    @Test
     fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit it fails due to a unexpected response`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()

@@ -13,7 +13,7 @@ import tech.antibytes.mediawiki.wikibase.model.LanguageValuePair
 
 internal val q42 = Entity(
     id = "Q42",
-    revisionId = 1558961212,
+    revision = 1558961212,
     lastModification = Instant.parse("2022-01-09T05:52:11Z"),
     type = DataModelContract.EntityType.ITEM,
     labels = mapOf(

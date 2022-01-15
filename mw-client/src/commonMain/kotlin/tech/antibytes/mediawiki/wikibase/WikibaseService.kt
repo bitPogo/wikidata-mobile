@@ -20,12 +20,14 @@ internal class WikibaseService(
     private val wrapper: MwClientContract.ServiceResponseWrapper
 ) : WikibaseContract.Service {
     private suspend fun fetch(
-        ids: Set<EntityId>
-    ): List<RevisionedEntity> = wikibaseRepository.fetch(ids)
+        ids: Set<EntityId>,
+        language: LanguageTag?
+    ): List<RevisionedEntity> = wikibaseRepository.fetch(ids, language)
 
     override fun fetchEntities(
-        ids: Set<EntityId>
-    ): PublicApi.SuspendingFunctionWrapper<List<RevisionedEntity>> = wrapper.warp { fetch(ids) }
+        ids: Set<EntityId>,
+        language: LanguageTag?
+    ): PublicApi.SuspendingFunctionWrapper<List<RevisionedEntity>> = wrapper.warp { fetch(ids, language) }
 
     private suspend fun search(
         term: String,

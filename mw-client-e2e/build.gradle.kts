@@ -105,7 +105,6 @@ kotlin {
 }
 
 tasks.withType(Test::class.java) {
-    exclude("**/e2e/**")
     testLogging {
         events(FAILED)
     }

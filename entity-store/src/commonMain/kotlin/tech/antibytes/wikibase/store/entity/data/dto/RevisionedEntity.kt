@@ -4,14 +4,14 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.mediawiki.e2e
+package tech.antibytes.wikibase.store.entity.data.dto
 
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 
-data class TestEntity(
+data class RevisionedEntity(
     override val labels: Map<String, DataModelContract.LanguageValuePair>,
     override val descriptions: Map<String, DataModelContract.LanguageValuePair>,
     override val aliases: Map<String, List<DataModelContract.LanguageValuePair>>,

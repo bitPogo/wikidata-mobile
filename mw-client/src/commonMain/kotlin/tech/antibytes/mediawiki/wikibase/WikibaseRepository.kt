@@ -47,8 +47,8 @@ internal class WikibaseRepository(
         }
     }
 
-    override suspend fun fetch(ids: Set<EntityId>): List<RevisionedEntity> {
-        val response = apiService.fetch(ids)
+    override suspend fun fetch(ids: Set<EntityId>, language: LanguageTag?): List<RevisionedEntity> {
+        val response = apiService.fetch(ids, language)
 
         return response.returnListOnSuccess {
             response.entities.values.toList()
@@ -107,7 +107,7 @@ internal class WikibaseRepository(
 
     override suspend fun update(entity: RevisionedEntity, token: MetaToken): RevisionedEntity? {
         val id = entity.id
-        val revision = entity.revisionId
+        val revision = entity.revision
         val serializedEntity = serializer.encodeToString(
             boxedTermSerializer,
             entity

@@ -64,9 +64,12 @@ class WikibaseRepositorySpec {
         )
 
         var capturedIds: Set<EntityId>? = null
+        var capturedLanguage: LanguageTag? = fixture.fixture<String>()
 
-        apiService.fetch = { givenIds ->
+        apiService.fetch = { givenIds, givenLanguageTag ->
             capturedIds = givenIds
+            capturedLanguage = givenLanguageTag
+
             response
         }
 
@@ -76,12 +79,15 @@ class WikibaseRepositorySpec {
         // Then
         result mustBe emptyList()
         capturedIds mustBe ids.toSet()
+        capturedLanguage mustBe null
     }
 
     @Test
-    fun `Given fetch is called with a Set of Ids, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
+    fun `Given fetch is called with a Set of Ids and LanguageTag, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
         // Given
         val ids = fixture.listFixture<EntityId>(size = 2)
+        val languageTag: String = fixture.fixture()
+
         val response = EntitiesResponse(
             entities = mapOf(
                 ids[0] to q42,
@@ -91,18 +97,27 @@ class WikibaseRepositorySpec {
         )
 
         var capturedIds: Set<EntityId>? = null
+        var capturedLanguage: LanguageTag? = null
 
-        apiService.fetch = { givenIds ->
+        apiService.fetch = { givenIds, givenLanguageTag ->
             capturedIds = givenIds
+            capturedLanguage = givenLanguageTag
+
             response
         }
 
         // When
-        val result = WikibaseRepository(apiService, Json, boxedTermsSerializer, clock).fetch(ids.toSet())
+        val result = WikibaseRepository(
+            apiService,
+            Json,
+            boxedTermsSerializer,
+            clock
+        ).fetch(ids.toSet(), languageTag)
 
         // Then
         result mustBe listOf(q42, q42)
         capturedIds mustBe ids.toSet()
+        capturedLanguage mustBe languageTag
     }
 
     @Test
@@ -240,7 +255,7 @@ class WikibaseRepositorySpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
@@ -301,7 +316,7 @@ class WikibaseRepositorySpec {
         capturedEntity mustBe entity
         capturedSerializedEntity mustBe "\"$serializedEntity\""
         capturedId mustBe entity.id
-        capturedRevision mustBe entity.revisionId
+        capturedRevision mustBe entity.revision
         capturedToken mustBe token
     }
 
@@ -311,7 +326,7 @@ class WikibaseRepositorySpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
@@ -376,7 +391,7 @@ class WikibaseRepositorySpec {
         capturedEntity mustBe entity
         capturedSerializedEntity mustBe "\"$serializedEntity\""
         capturedId mustBe entity.id
-        capturedRevision mustBe entity.revisionId
+        capturedRevision mustBe entity.revision
         capturedToken mustBe token
     }
 
@@ -387,7 +402,7 @@ class WikibaseRepositorySpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
@@ -456,7 +471,7 @@ class WikibaseRepositorySpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(

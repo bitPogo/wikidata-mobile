@@ -8,6 +8,7 @@ package tech.antibytes.mediawiki
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
+import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 
 typealias EntityId = String
@@ -43,7 +44,10 @@ interface PublicApi {
     }
 
     interface WikibaseService {
-        fun fetchEntities(ids: Set<EntityId>): SuspendingFunctionWrapper<List<DataModelContract.RevisionedEntity>>
+        fun fetchEntities(
+            ids: Set<EntityId>,
+            language: LanguageTag? = null
+        ): SuspendingFunctionWrapper<List<RevisionedEntity>>
 
         fun searchForEntities(
             term: String,
@@ -52,12 +56,12 @@ interface PublicApi {
             limit: Int
         ): SuspendingFunctionWrapper<List<DataModelContract.Entity>>
 
-        fun updateEntity(entity: DataModelContract.RevisionedEntity): SuspendingFunctionWrapper<DataModelContract.RevisionedEntity?>
+        fun updateEntity(entity: RevisionedEntity): SuspendingFunctionWrapper<RevisionedEntity?>
 
         fun createEntity(
             type: DataModelContract.EntityType,
             entity: DataModelContract.BoxedTerms
-        ): SuspendingFunctionWrapper<DataModelContract.RevisionedEntity?>
+        ): SuspendingFunctionWrapper<RevisionedEntity?>
     }
 
     interface Client {

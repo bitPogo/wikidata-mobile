@@ -22,6 +22,7 @@ actual class DatabaseDriver {
                 aliasesAdapter = ListAdapter(Json)
             ),
             EntityAdapter = Entity.Adapter(
+                typeAdapter = TypeAdapter(),
                 lastModifiedAdapter = InstantAdapter()
             )
         )

@@ -6,13 +6,25 @@
 
 package tech.antibytes.wikibase.store.entity.domain.model
 
+import kotlinx.datetime.Instant
+
 typealias EntityId = String
 typealias LanguageTag = String
 
 interface EntityModelContract {
+    enum class EntityType {
+        ITEM,
+        PROPERTY,
+        LEXEME
+    }
+
     interface MonolingualEntity {
         val id: EntityId
+        val type: EntityType
+        val revision: Long
         val isEditable: Boolean
+        val language: LanguageTag
+        val lastModification: Instant
         val label: String?
         val description: String?
         val aliases: List<String>

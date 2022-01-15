@@ -51,8 +51,12 @@ class WikibaseServiceSpec {
         val response = listOf(q42)
 
         var capturedIds: Set<EntityId>? = null
-        wikibaseRepository.fetch = { givenIds ->
+        var capturedLanguage: LanguageTag? = fixture.fixture<String>()
+
+        wikibaseRepository.fetch = { givenIds, givenLanguage ->
             capturedIds = givenIds
+            capturedLanguage = givenLanguage
+
             response
         }
         // When
@@ -63,6 +67,38 @@ class WikibaseServiceSpec {
 
         serviceWrapper.lastFunction sameAs result.wrappedFunction
         capturedIds sameAs ids
+        capturedLanguage mustBe null
+    }
+
+    @Test
+    fun `Given fetchEntities is called with a Set of Ids and a LanguageTag, it delegates the call to the Repository and returns its result`() = runBlockingTest {
+        // Given
+        val ids = fixture.listFixture<EntityId>().toSet()
+        val language: String = fixture.fixture()
+        val response = listOf(q42)
+
+        var capturedIds: Set<EntityId>? = null
+        var capturedLanguage: LanguageTag? = null
+
+        wikibaseRepository.fetch = { givenIds, givenLanguage ->
+            capturedIds = givenIds
+            capturedLanguage = givenLanguage
+
+            response
+        }
+        // When
+        val result = WikibaseService(
+            wikibaseRepository,
+            tokenRepository,
+            serviceWrapper
+        ).fetchEntities(ids, language)
+
+        // Then
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
+        capturedIds sameAs ids
+        capturedLanguage mustBe language
     }
 
     @Test
@@ -111,7 +147,7 @@ class WikibaseServiceSpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
@@ -172,7 +208,7 @@ class WikibaseServiceSpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(

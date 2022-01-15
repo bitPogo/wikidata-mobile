@@ -18,13 +18,14 @@ import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
 internal class WikibaseRepositoryStub(
-    var fetch: ((Set<EntityId>) -> List<Entity>)? = null,
+    var fetch: ((Set<EntityId>, LanguageTag?) -> List<Entity>)? = null,
     var search: ((String, LanguageTag, EntityType, Int) -> List<Entity>)? = null,
     var update: ((RevisionedEntity, MetaToken) -> RevisionedEntity?)? = null,
     var create: ((EntityType, BoxedTerms, MetaToken) -> RevisionedEntity?)? = null
 ) : WikibaseContract.Repository, MockContract.Mock {
-    override suspend fun fetch(ids: Set<EntityId>): List<Entity> {
-        return fetch?.invoke(ids) ?: throw MockError.MissingStub("Missing Sideeffect fetchEntities")
+    override suspend fun fetch(ids: Set<EntityId>, language: LanguageTag?): List<Entity> {
+        return fetch?.invoke(ids, language)
+            ?: throw MockError.MissingStub("Missing Sideeffect fetchEntities")
     }
 
     override suspend fun search(

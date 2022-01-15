@@ -35,7 +35,7 @@ interface DataModelContract {
     }
 
     interface RevisionedEntity : Entity {
-        val revisionId: Long
+        val revision: Long
         val lastModification: Instant
     }
 

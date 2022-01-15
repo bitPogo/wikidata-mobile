@@ -53,7 +53,7 @@ class BoxedTermsSerializerSpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
@@ -108,7 +108,7 @@ class BoxedTermsSerializerSpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
@@ -158,7 +158,7 @@ class BoxedTermsSerializerSpec {
         val entity = TestEntity(
             id = fixture.fixture(),
             type = DataModelContract.EntityType.ITEM,
-            revisionId = fixture.fixture(),
+            revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
