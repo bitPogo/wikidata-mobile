@@ -67,6 +67,10 @@
   description: Storage for Entities
   color: 000080
 
+- name: utils-coroutine
+  description: Wrappers for Coroutines
+  color: 000080
+
 # Tests
 - name: mw-client-e2e
   description: Mediawiki Client End to End Tests
