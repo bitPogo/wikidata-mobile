@@ -6,7 +6,10 @@
 
 package tech.antibytes.wikibase.store.entity
 
+import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SharedFlowWrapper
+import tech.antibytes.wikibase.store.database.entity.EntityQueries
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 
 interface EntityStoreContract {
@@ -20,5 +23,14 @@ interface EntityStoreContract {
         fun fetchEntity(id: String)
         fun save()
         fun rollback()
+    }
+
+    interface EntityStoreFactory {
+        fun getInstance(
+            client: PublicApi.Client,
+            database: EntityQueries,
+            producerScope: CoroutineScopeDispatcher,
+            consumerScope: CoroutineScopeDispatcher
+        ): EntityStore
     }
 }

@@ -6,11 +6,14 @@
 
 package tech.antibytes.wikibase.store.entity.di
 
+import kotlinx.coroutines.flow.MutableSharedFlow
 import org.koin.core.KoinApplication
 import org.koin.dsl.koinApplication
 import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.wikibase.store.database.entity.EntityQueries
+import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.transfer.resolveDataTransferModule
 
 internal fun initKoin(
@@ -27,7 +30,8 @@ internal fun initKoin(
                 producerScope,
                 consumerScope
             ),
-            resolveDataTransferModule()
+            resolveDataTransferModule(),
+            resolveEntityStoreModule()
         )
     }
 }
