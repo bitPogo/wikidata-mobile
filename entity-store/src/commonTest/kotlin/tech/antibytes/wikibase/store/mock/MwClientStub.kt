@@ -13,7 +13,7 @@ import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.PublicApi
-import tech.antibytes.mediawiki.PublicApi.SuspendingFunctionWrapper
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SuspendingFunctionWrapper
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 

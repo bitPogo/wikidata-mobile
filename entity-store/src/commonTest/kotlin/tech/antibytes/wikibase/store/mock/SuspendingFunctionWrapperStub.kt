@@ -7,11 +7,11 @@
 package tech.antibytes.wikibase.store.mock
 
 import kotlinx.coroutines.Job
-import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 
 class SuspendingFunctionWrapperStub<T>(
     var function: suspend () -> T
-) : PublicApi.SuspendingFunctionWrapper<T> {
+) : CoroutineWrapperContract.SuspendingFunctionWrapper<T> {
     override val wrappedFunction: suspend () -> T
         get() = function
 
