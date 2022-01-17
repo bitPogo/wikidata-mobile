@@ -6,6 +6,7 @@
 
 package tech.antibytes.integration
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import tech.antibytes.mediawiki.MwClient
 import tech.antibytes.mediawiki.PublicApi
@@ -25,7 +26,7 @@ class MwClientIntegrationSpec {
         val logger = LoggerStub()
         val host: String = fixture.fixture()
         val connection = ConnectivityManagerStub()
-        val dispatcher = Dispatchers.Main
+        val dispatcher = { CoroutineScope(Dispatchers.Main) }
 
         // When
         val service = MwClient.getInstance(host, logger, connection, dispatcher).authentication
@@ -40,7 +41,7 @@ class MwClientIntegrationSpec {
         val logger = LoggerStub()
         val host: String = fixture.fixture()
         val connection = ConnectivityManagerStub()
-        val dispatcher = Dispatchers.Main
+        val dispatcher = { CoroutineScope(Dispatchers.Main) }
 
         // When
         val service = MwClient.getInstance(host, logger, connection, dispatcher).page
@@ -55,7 +56,7 @@ class MwClientIntegrationSpec {
         val logger = LoggerStub()
         val host: String = fixture.fixture()
         val connection = ConnectivityManagerStub()
-        val dispatcher = Dispatchers.Main
+        val dispatcher = { CoroutineScope(Dispatchers.Main) }
 
         // When
         val service = MwClient.getInstance(host, logger, connection, dispatcher).wikibase

@@ -14,9 +14,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.ServiceResponseWrapper
-import tech.antibytes.mediawiki.coroutine.SuspendingFunctionWrapper
 import tech.antibytes.mediawiki.serialization.JsonConfigurator
 import tech.antibytes.mediawiki.serialization.JsonConfiguratorContract
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.util.coroutine.wrapper.SuspendingFunctionWrapper
 
 internal fun resolveMwClientModule(): Module {
     return module {
@@ -32,8 +33,8 @@ internal fun resolveMwClientModule(): Module {
 
         factory<CookiesStorage> { AcceptAllCookiesStorage() }
 
-        factory<MwClientContract.SuspendingFunctionWrapperFactory> {
-            SuspendingFunctionWrapper.Factory()
+        factory<CoroutineWrapperContract.SuspendingFunctionWrapperFactory> {
+            SuspendingFunctionWrapper
         }
 
         single<MwClientContract.ServiceResponseWrapper> {

@@ -6,6 +6,7 @@
 
 package tech.antibytes.integration
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.di.initKoin
@@ -25,7 +26,7 @@ class KoinFactorySpec {
         val logger = LoggerStub()
         val host: String = fixture.fixture()
         val connection = ConnectivityManagerStub()
-        val dispatcher = Dispatchers.Main
+        val dispatcher = { CoroutineScope(Dispatchers.Main) }
 
         // When
         val koin = initKoin(
@@ -46,7 +47,7 @@ class KoinFactorySpec {
         val logger = LoggerStub()
         val host: String = fixture.fixture()
         val connection = ConnectivityManagerStub()
-        val dispatcher = Dispatchers.Main
+        val dispatcher = { CoroutineScope(Dispatchers.Main) }
 
         // When
         val koin = initKoin(
@@ -67,7 +68,7 @@ class KoinFactorySpec {
         val logger = LoggerStub()
         val host: String = fixture.fixture()
         val connection = ConnectivityManagerStub()
-        val dispatcher = Dispatchers.Main
+        val dispatcher = { CoroutineScope(Dispatchers.Main) }
 
         // When
         val koin = initKoin(

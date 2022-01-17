@@ -7,7 +7,7 @@
 package tech.antibytes.mock
 
 import tech.antibytes.mediawiki.MwClientContract
-import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.util.test.MockContract
 
 internal class ServiceResponseWrapperStub : MwClientContract.ServiceResponseWrapper, MockContract.Mock {
@@ -15,7 +15,10 @@ internal class ServiceResponseWrapperStub : MwClientContract.ServiceResponseWrap
 
     override fun <T> warp(
         function: suspend () -> T
-    ): PublicApi.SuspendingFunctionWrapper<T> = SuspendingFunctionWrapperStub(function).also { lastFunction = function }
+    ): CoroutineWrapperContract.SuspendingFunctionWrapper<T> {
+        lastFunction = function
+        return SuspendingFunctionWrapperStub(function)
+    }
 
     override fun clear() {
         lastFunction = null

@@ -6,6 +6,7 @@
 
 package tech.antibytes.mediawiki
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import tech.antibytes.mock.ConnectivityManagerStub
 import tech.antibytes.mock.LoggerStub
@@ -28,7 +29,7 @@ class MwClientSpec {
         val logger = LoggerStub()
         val host: String = fixture.fixture()
         val connection = ConnectivityManagerStub()
-        val dispatcher = Dispatchers.Main
+        val dispatcher = { CoroutineScope(Dispatchers.Main) }
 
         // When
         val client = MwClient.getInstance(host, logger, connection, dispatcher)

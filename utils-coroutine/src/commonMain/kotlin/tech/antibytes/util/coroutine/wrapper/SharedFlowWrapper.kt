@@ -40,7 +40,7 @@ class SharedFlowWrapper<Succ, Err : Throwable> private constructor(
     companion object : CoroutineWrapperContract.SharedFlowWrapperFactory {
         override fun <Success, Error : Throwable> getInstance(
             flow: SharedFlow<ResultContract<Success, Error>>,
-            dispatcher: CoroutineWrapperContract.ScopeDispatcher
+            dispatcher: CoroutineWrapperContract.CoroutineScopeDispatcher
         ): CoroutineWrapperContract.SharedFlowWrapper<Success, Error> {
             return SharedFlowWrapper(
                 flow,

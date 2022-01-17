@@ -8,7 +8,7 @@ package tech.antibytes.mediawiki.core.page
 
 import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 import tech.antibytes.mediawiki.MwClientContract
-import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 
 internal class PageService(
     private val repository: PageContract.Repository,
@@ -26,11 +26,11 @@ internal class PageService(
     override fun randomPage(
         limit: Int,
         namespace: Int?
-    ): PublicApi.SuspendingFunctionWrapper<List<RevisionedPagePointer>> {
+    ): CoroutineWrapperContract.SuspendingFunctionWrapper<List<RevisionedPagePointer>> {
         return wrapper.warp { fetchRandomPage(limit, namespace) }
     }
 
     override fun fetchRestrictions(
         pageTitle: String
-    ): PublicApi.SuspendingFunctionWrapper<List<String>> = wrapper.warp { getRestrictions(pageTitle) }
+    ): CoroutineWrapperContract.SuspendingFunctionWrapper<List<String>> = wrapper.warp { getRestrictions(pageTitle) }
 }

@@ -53,6 +53,7 @@ kotlin {
                 implementation(Dependency.multiplatform.stately.freeze)
 
                 api(project(":mw-client"))
+                implementation(project(":utils-coroutine"))
             }
         }
         val commonTest by getting {

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import tech.antibytes.util.coroutine.result.ResultContract
 
 interface CoroutineWrapperContract {
-    fun interface ScopeDispatcher {
+    fun interface CoroutineScopeDispatcher {
         fun dispatch(): CoroutineScope
     }
 
@@ -28,7 +28,7 @@ interface CoroutineWrapperContract {
     interface SuspendingFunctionWrapperFactory {
         fun <T> getInstance(
             function: suspend () -> T,
-            dispatcher: ScopeDispatcher,
+            dispatcher: CoroutineScopeDispatcher,
         ): SuspendingFunctionWrapper<T>
     }
 
@@ -44,7 +44,7 @@ interface CoroutineWrapperContract {
     interface SharedFlowWrapperFactory {
         fun <Success, Error : Throwable> getInstance(
             flow: SharedFlow<ResultContract<Success, Error>>,
-            dispatcher: ScopeDispatcher
+            dispatcher: CoroutineScopeDispatcher
         ): SharedFlowWrapper<Success, Error>
     }
 }
