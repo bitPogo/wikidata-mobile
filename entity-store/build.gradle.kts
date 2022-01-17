@@ -59,7 +59,8 @@ kotlin {
 
                 implementation(LocalDependency.sqldelight.coroutines)
 
-                api(project(":mw-client"))
+                implementation(project(":mw-client"))
+                implementation(project(":utils-coroutine"))
             }
         }
         val commonTest by getting {

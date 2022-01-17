@@ -6,10 +6,10 @@
 
 package tech.antibytes.mediawiki
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SuspendingFunctionWrapper
 
 typealias EntityId = String
 typealias LanguageTag = String
@@ -23,15 +23,6 @@ interface PublicApi {
         fun info(message: String)
         fun warn(message: String)
         fun error(exception: Throwable, message: String?)
-    }
-
-    interface SuspendingFunctionWrapper<T> {
-        val wrappedFunction: suspend () -> T
-
-        fun subscribe(
-            onSuccess: (item: T) -> Unit,
-            onError: (error: Throwable) -> Unit,
-        ): Job
     }
 
     interface AuthenticationService {
@@ -75,7 +66,7 @@ interface PublicApi {
             host: String,
             logger: Logger,
             connection: ConnectivityManager,
-            dispatcher: CoroutineDispatcher
+            dispatcher: CoroutineWrapperContract.CoroutineScopeDispatcher
         ): Client
     }
 }

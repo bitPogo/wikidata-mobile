@@ -11,8 +11,8 @@ import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.MwClientContract
-import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.core.token.MetaTokenContract
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SuspendingFunctionWrapper
 
 internal class WikibaseService(
     private val wikibaseRepository: WikibaseContract.Repository,
@@ -27,7 +27,7 @@ internal class WikibaseService(
     override fun fetchEntities(
         ids: Set<EntityId>,
         language: LanguageTag?
-    ): PublicApi.SuspendingFunctionWrapper<List<RevisionedEntity>> = wrapper.warp { fetch(ids, language) }
+    ): SuspendingFunctionWrapper<List<RevisionedEntity>> = wrapper.warp { fetch(ids, language) }
 
     private suspend fun search(
         term: String,
@@ -41,7 +41,7 @@ internal class WikibaseService(
         language: LanguageTag,
         type: DataModelContract.EntityType,
         limit: Int
-    ): PublicApi.SuspendingFunctionWrapper<List<DataModelContract.Entity>> {
+    ): SuspendingFunctionWrapper<List<DataModelContract.Entity>> {
         return wrapper.warp { search(term, language, type, limit) }
     }
 
@@ -53,7 +53,7 @@ internal class WikibaseService(
 
     override fun updateEntity(
         entity: RevisionedEntity
-    ): PublicApi.SuspendingFunctionWrapper<RevisionedEntity?> = wrapper.warp { update(entity) }
+    ): SuspendingFunctionWrapper<RevisionedEntity?> = wrapper.warp { update(entity) }
 
     private suspend fun create(
         type: DataModelContract.EntityType,
@@ -67,5 +67,5 @@ internal class WikibaseService(
     override fun createEntity(
         type: DataModelContract.EntityType,
         entity: DataModelContract.BoxedTerms
-    ): PublicApi.SuspendingFunctionWrapper<RevisionedEntity?> = wrapper.warp { create(type, entity) }
+    ): SuspendingFunctionWrapper<RevisionedEntity?> = wrapper.warp { create(type, entity) }
 }

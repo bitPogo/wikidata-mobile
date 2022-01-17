@@ -6,26 +6,24 @@
 
 package tech.antibytes.mock
 
-import kotlinx.coroutines.CoroutineScope
-import tech.antibytes.mediawiki.MwClientContract
-import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 
 internal class SuspendingFunctionWrapperFactoryStub(
-    var getInstance: ((CoroutineScope, suspend () -> Any?) -> PublicApi.SuspendingFunctionWrapper<Any?>)? = null
-) : MwClientContract.SuspendingFunctionWrapperFactory, MockContract.Mock {
+    var getInstance: ((CoroutineWrapperContract.CoroutineScopeDispatcher, suspend () -> Any?) -> CoroutineWrapperContract.SuspendingFunctionWrapper<Any?>)? = null
+) : CoroutineWrapperContract.SuspendingFunctionWrapperFactory, MockContract.Mock {
     @Suppress("UNCHECKED_CAST")
     override fun <T> getInstance(
-        scope: CoroutineScope,
-        function: suspend () -> T
-    ): PublicApi.SuspendingFunctionWrapper<T> {
+        function: suspend () -> T,
+        dispatcher: CoroutineWrapperContract.CoroutineScopeDispatcher,
+    ): CoroutineWrapperContract.SuspendingFunctionWrapper<T> {
         val instance = getInstance?.invoke(
-            scope,
+            dispatcher,
             function
         ) ?: throw MockError.MissingStub("Missing Sideefffect getInstance")
 
-        return instance as PublicApi.SuspendingFunctionWrapper<T>
+        return instance as CoroutineWrapperContract.SuspendingFunctionWrapper<T>
     }
 
     override fun clear() {

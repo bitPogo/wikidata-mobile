@@ -6,7 +6,7 @@
 
 package tech.antibytes.mediawiki.di
 
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
@@ -14,6 +14,7 @@ import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mock.ConnectivityManagerStub
 import tech.antibytes.mock.LoggerStub
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.isNot
@@ -34,7 +35,7 @@ class MwClientParameterKoinSpec {
                     logger,
                     fixture.fixture(),
                     ConnectivityManagerStub(),
-                    Dispatchers.Default
+                    { CoroutineScope(Dispatchers.Default) }
                 ),
             )
         }
@@ -56,7 +57,7 @@ class MwClientParameterKoinSpec {
                     LoggerStub(),
                     host,
                     ConnectivityManagerStub(),
-                    Dispatchers.Default
+                    { CoroutineScope(Dispatchers.Default) }
                 ),
             )
         }
@@ -78,7 +79,7 @@ class MwClientParameterKoinSpec {
                     LoggerStub(),
                     fixture.fixture(),
                     connection,
-                    Dispatchers.Default
+                    { CoroutineScope(Dispatchers.Default) }
                 ),
             )
         }
@@ -89,9 +90,9 @@ class MwClientParameterKoinSpec {
     }
 
     @Test
-    fun `Given resolveMwClientParameterModule is called with its appropriate Parameter it holds a CoroutineDispatcher`() {
+    fun `Given resolveMwClientParameterModule is called with its appropriate Parameter it holds a CoroutineScopeDispatcher`() {
         // Given
-        val dispatcher = Dispatchers.Main
+        val dispatcher = { CoroutineScope(Dispatchers.Main) }
 
         // When
         val koin = koinApplication {
@@ -105,7 +106,7 @@ class MwClientParameterKoinSpec {
             )
         }
 
-        val sut: CoroutineDispatcher = koin.koin.get()
+        val sut: CoroutineWrapperContract.CoroutineScopeDispatcher = koin.koin.get()
 
         sut isNot null
     }

@@ -56,6 +56,8 @@ kotlin {
                 implementation(Dependency.multiplatform.dateTime)
 
                 implementation(Dependency.multiplatform.stately.freeze)
+
+                implementation(project(":utils-coroutine"))
             }
         }
         val commonTest by getting {

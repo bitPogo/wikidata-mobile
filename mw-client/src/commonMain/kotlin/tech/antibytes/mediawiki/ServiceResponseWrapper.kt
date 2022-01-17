@@ -6,9 +6,10 @@
 
 package tech.antibytes.mediawiki
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import tech.antibytes.mediawiki.error.MwClientError
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SuspendingFunctionWrapper
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SuspendingFunctionWrapperFactory
 
 private suspend fun <T> connectionAwareExecution(
     connectivityManager: PublicApi.ConnectivityManager,
@@ -23,12 +24,12 @@ private suspend fun <T> connectionAwareExecution(
 
 internal class ServiceResponseWrapper(
     private val connectivityManager: PublicApi.ConnectivityManager,
-    private val dispatcher: CoroutineDispatcher,
-    private val factory: MwClientContract.SuspendingFunctionWrapperFactory
+    private val dispatcher: CoroutineScopeDispatcher,
+    private val factory: SuspendingFunctionWrapperFactory
 ) : MwClientContract.ServiceResponseWrapper {
-    override fun <T> warp(function: suspend () -> T): PublicApi.SuspendingFunctionWrapper<T> {
-        return factory.getInstance(CoroutineScope(dispatcher)) {
-            connectionAwareExecution(connectivityManager, function)
-        }
+    override fun <T> warp(function: suspend () -> T): SuspendingFunctionWrapper<T> {
+        val connectionAwareFunction = suspend { connectionAwareExecution(connectivityManager, function) }
+
+        return factory.getInstance(connectionAwareFunction, dispatcher)
     }
 }

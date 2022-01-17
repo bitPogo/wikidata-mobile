@@ -6,6 +6,7 @@
 
 package tech.antibytes.mediawiki.e2e
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
@@ -20,7 +21,7 @@ import kotlin.test.Test
 
 @Ignore
 class MwClientE2ESpec {
-    val fixture = kotlinFixture()
+    private val fixture = kotlinFixture()
 
     fun DataModelContract.RevisionedEntity.toTestEntity(): TestEntity {
         return TestEntity(
@@ -69,7 +70,7 @@ class MwClientE2ESpec {
             host,
             LoggerStub(),
             { true },
-            Dispatchers.Default
+            { CoroutineScope(Dispatchers.Default) }
         )
 
         val newEntity = client.wikibase.createEntity(DataModelContract.EntityType.ITEM, entity).wrappedFunction.invoke()
@@ -116,7 +117,7 @@ class MwClientE2ESpec {
             host,
             LoggerStub(),
             { true },
-            Dispatchers.Default
+            { CoroutineScope(Dispatchers.Default) }
         )
 
         client.authentication.login("nop", "nop").wrappedFunction.invoke() mustBe false

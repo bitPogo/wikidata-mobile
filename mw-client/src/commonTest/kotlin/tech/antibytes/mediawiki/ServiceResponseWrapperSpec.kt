@@ -12,11 +12,13 @@ import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mock.ConnectivityManagerStub
 import tech.antibytes.mock.SuspendingFunctionWrapperFactoryStub
 import tech.antibytes.mock.SuspendingFunctionWrapperStub
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
+import tech.antibytes.util.test.sameAs
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -36,7 +38,7 @@ class ServiceResponseWrapperSpec {
     fun `It fulfils ServiceResponseWrapper`() {
         ServiceResponseWrapper(
             connectivityManager,
-            Dispatchers.Default,
+            { CoroutineScope(Dispatchers.Default) },
             functionWrapperFactory
         ) fulfils MwClientContract.ServiceResponseWrapper::class
     }
@@ -45,12 +47,12 @@ class ServiceResponseWrapperSpec {
     fun `Given wrap is called it returns a SuspendingFunctionWrapper`() {
         // Given
         val function = suspend {}
-        val dispatcher = Dispatchers.Default
+        val dispatcher = CoroutineWrapperContract.CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Default) }
 
-        var capturedScope: CoroutineScope? = null
+        var capturedDispatcher: CoroutineWrapperContract.CoroutineScopeDispatcher? = null
 
         functionWrapperFactory.getInstance = { givenScope, givenFunction ->
-            capturedScope = givenScope
+            capturedDispatcher = givenScope
 
             SuspendingFunctionWrapperStub(givenFunction)
         }
@@ -63,8 +65,8 @@ class ServiceResponseWrapperSpec {
         ).warp(function)
 
         // Then
-        wrapped fulfils PublicApi.SuspendingFunctionWrapper::class
-        capturedScope.toString().contains(dispatcher.toString()) mustBe true
+        wrapped fulfils CoroutineWrapperContract.SuspendingFunctionWrapper::class
+        capturedDispatcher sameAs dispatcher
     }
 
     @Test
@@ -72,7 +74,7 @@ class ServiceResponseWrapperSpec {
         // Given
         val expected = fixture.fixture<String>()
         val function = suspend { expected }
-        val dispatcher = Dispatchers.Default
+        val dispatcher = { CoroutineScope(Dispatchers.Default) }
 
         connectivityManager.hasConnection = { true }
         functionWrapperFactory.getInstance = { _, givenFunction ->
@@ -97,7 +99,7 @@ class ServiceResponseWrapperSpec {
         // Given
         val expected = fixture.fixture<String>()
         val function = suspend { expected }
-        val dispatcher = Dispatchers.Default
+        val dispatcher = { CoroutineScope(Dispatchers.Default) }
 
         connectivityManager.hasConnection = { false }
         functionWrapperFactory.getInstance = { _, givenFunction ->

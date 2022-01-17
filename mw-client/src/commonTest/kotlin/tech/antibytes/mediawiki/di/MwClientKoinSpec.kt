@@ -7,7 +7,7 @@
 package tech.antibytes.mediawiki.di
 
 import io.ktor.client.features.cookies.CookiesStorage
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
@@ -19,6 +19,7 @@ import tech.antibytes.mediawiki.serialization.JsonConfiguratorContract
 import tech.antibytes.mock.ConnectivityManagerStub
 import tech.antibytes.mock.SuspendingFunctionWrapperFactoryStub
 import tech.antibytes.mock.serialization.JsonConfiguratorStub
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.isNot
@@ -111,7 +112,7 @@ class MwClientKoinSpec {
             )
         }
 
-        val wrapperFactory: MwClientContract.SuspendingFunctionWrapperFactory = koin.koin.get()
+        val wrapperFactory: CoroutineWrapperContract.SuspendingFunctionWrapperFactory = koin.koin.get()
 
         // Then
         wrapperFactory isNot null
@@ -129,12 +130,12 @@ class MwClientKoinSpec {
                         ConnectivityManagerStub()
                     }
 
-                    single<MwClientContract.SuspendingFunctionWrapperFactory> {
+                    single<CoroutineWrapperContract.SuspendingFunctionWrapperFactory> {
                         SuspendingFunctionWrapperFactoryStub()
                     }
 
-                    single<CoroutineDispatcher> {
-                        Dispatchers.Default
+                    single<CoroutineWrapperContract.CoroutineScopeDispatcher> {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Default) }
                     }
                 }
             )

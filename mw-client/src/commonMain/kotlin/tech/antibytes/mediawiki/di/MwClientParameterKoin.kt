@@ -6,18 +6,18 @@
 
 package tech.antibytes.mediawiki.di
 
-import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.networking.NetworkingContract
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 
 internal fun resolveMwClientParameterModule(
     logger: PublicApi.Logger,
     host: String,
     connectivityManager: PublicApi.ConnectivityManager,
-    dispatcher: CoroutineDispatcher
+    dispatcher: CoroutineWrapperContract.CoroutineScopeDispatcher
 ): Module {
     return module {
         single { logger }

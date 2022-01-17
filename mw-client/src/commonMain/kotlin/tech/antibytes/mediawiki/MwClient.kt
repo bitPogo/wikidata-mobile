@@ -6,9 +6,9 @@
 
 package tech.antibytes.mediawiki
 
-import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.KoinApplication
 import tech.antibytes.mediawiki.di.initKoin
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 
 class MwClient internal constructor(
     koin: KoinApplication
@@ -22,7 +22,7 @@ class MwClient internal constructor(
             host: String,
             logger: PublicApi.Logger,
             connection: PublicApi.ConnectivityManager,
-            dispatcher: CoroutineDispatcher
+            dispatcher: CoroutineWrapperContract.CoroutineScopeDispatcher
         ): PublicApi.Client {
             return MwClient(
                 initKoin(
