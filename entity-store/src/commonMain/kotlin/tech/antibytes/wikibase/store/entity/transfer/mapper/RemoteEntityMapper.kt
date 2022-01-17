@@ -4,11 +4,11 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.entity.data.mapper
+package tech.antibytes.wikibase.store.entity.transfer.mapper
 
 import tech.antibytes.mediawiki.DataModelContract
-import tech.antibytes.wikibase.store.entity.data.dto.LanguageValuePair
-import tech.antibytes.wikibase.store.entity.data.dto.RevisionedEntity
+import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
+import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity

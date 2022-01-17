@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.entity.data.repository
+package tech.antibytes.wikibase.store.entity.transfer.repository
 
 import kotlinx.datetime.Instant
 import tech.antibytes.util.test.coroutine.runBlockingTest
@@ -18,6 +18,7 @@ import tech.antibytes.wikibase.store.entity.domain.DomainContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
+import tech.antibytes.wikibase.store.entity.transfer.repository.LocalRepository
 import tech.antibytes.wikibase.store.mock.EntityQueriesStub
 import tech.antibytes.wikibase.store.mock.QueryStub
 import tech.antibytes.wikibase.store.mock.SqlCursorStub

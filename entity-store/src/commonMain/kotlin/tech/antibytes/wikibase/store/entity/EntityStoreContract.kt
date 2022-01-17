@@ -6,17 +6,19 @@
 
 package tech.antibytes.wikibase.store.entity
 
-import kotlinx.coroutines.flow.Flow
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SharedFlowWrapper
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 
 interface EntityStoreContract {
-    val entity: Flow<EntityModelContract.MonolingualEntity>
+    interface EntityStore {
+        val entity: SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>
 
-    fun setLabel(label: String?)
-    fun setDescription(label: String?)
-    fun setAliases(aliases: List<String>)
+        fun setLabel(label: String?)
+        fun setDescription(label: String?)
+        fun setAliases(aliases: List<String>)
 
-    fun fetchEntity(id: String)
-    fun save()
-    fun rollback()
+        fun fetchEntity(id: String)
+        fun save()
+        fun rollback()
+    }
 }

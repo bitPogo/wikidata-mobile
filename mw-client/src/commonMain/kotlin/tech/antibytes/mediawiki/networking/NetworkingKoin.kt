@@ -13,7 +13,7 @@ import org.koin.dsl.module
 import tech.antibytes.mediawiki.annotation.InternalKoinModuleScope
 import tech.antibytes.mediawiki.networking.plugin.KtorPluginsContract
 
-fun resolveHttpClientModule(): Module {
+internal fun resolveHttpClientModule(): Module {
     return module {
         @InternalKoinModuleScope
         factory(named(NetworkingContract.KoinIdentifier.PLAIN_CLIENT)) { HttpClient() }

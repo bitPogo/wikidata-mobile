@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.entity.data.repository
+package tech.antibytes.wikibase.store.entity.transfer.repository
 
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
@@ -15,12 +15,13 @@ import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
-import tech.antibytes.wikibase.store.entity.data.dto.LanguageValuePair
-import tech.antibytes.wikibase.store.entity.data.dto.RevisionedEntity
+import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
+import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 import tech.antibytes.wikibase.store.entity.domain.DomainContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
+import tech.antibytes.wikibase.store.entity.transfer.repository.RemoteRepository
 import tech.antibytes.wikibase.store.mock.MwClientStub
 import tech.antibytes.wikibase.store.mock.SuspendingFunctionWrapperStub
 import tech.antibytes.wikibase.store.mock.data.mapper.RemoteEntityMapperStub
