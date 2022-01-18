@@ -16,4 +16,11 @@ internal interface DomainContract {
         suspend fun createEntity(entity: MonolingualEntity): MonolingualEntity?
         suspend fun updateEntity(entity: MonolingualEntity): MonolingualEntity?
     }
+
+    enum class DomainKoinIds {
+        REMOTE,
+        LOCAL,
+        PRODUCER_SCOPE,
+        CONSUMER_SCOPE
+    }
 }

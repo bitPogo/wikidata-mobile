@@ -9,9 +9,9 @@ package tech.antibytes.wikibase.store.mock.data.mapper
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
-import tech.antibytes.wikibase.store.entity.data.mapper.MapperContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
+import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
 
 class RemoteEntityMapperStub(
     var toMonolingualEntity: ((LanguageTag, DataModelContract.RevisionedEntity, List<String>) -> EntityModelContract.MonolingualEntity)? = null,

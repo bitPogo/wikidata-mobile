@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.entity.data.mapper
+package tech.antibytes.wikibase.store.entity.transfer.mapper
 
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
@@ -13,10 +13,10 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.wikibase.store.entity.data.dto.LanguageValuePair
-import tech.antibytes.wikibase.store.entity.data.dto.RevisionedEntity
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
+import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
+import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 import kotlin.test.Test
 
 class RemoteEntityMapperSpec {

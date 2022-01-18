@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.entity.data.dto
+package tech.antibytes.wikibase.store.entity.transfer.dto
 
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
