@@ -23,7 +23,7 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class SharedFlowWrapperSpec {
-    val fixture = kotlinFixture()
+    private val fixture = kotlinFixture()
 
     @Test
     fun `It fulfils SharedFlowWrapperFactory`() {
@@ -54,8 +54,13 @@ class SharedFlowWrapperSpec {
         val expected = Success<String, RuntimeException>(fixture.fixture())
         val channel = Channel<ResultContract<String, RuntimeException>>()
 
-        val subscription = { value: ResultContract<String, RuntimeException> ->
-            println("abc")
+        // When
+        val wrapped = SharedFlowWrapper.getInstance(
+            flow,
+            { testScope1 }
+        )
+
+        wrapped.subscribe { value: ResultContract<String, RuntimeException> ->
             testScope1.launch {
                 channel.send(value)
             }
@@ -63,18 +68,10 @@ class SharedFlowWrapperSpec {
             Unit
         }
 
-        // When
-        val wrapped = SharedFlowWrapper.getInstance(
-            flow,
-            { testScope1 }
-        )
-
         runBlockingTest {
-            wrapped.subscribe(subscription)
-        }
-
-        testScope2.launch {
-            flow.emit(expected)
+            testScope2.launch {
+                flow.emit(expected)
+            }.join()
         }
 
         // Then
@@ -97,12 +94,12 @@ class SharedFlowWrapperSpec {
             { testScope1 }
         )
 
-        testScope1.launch {
-            wrapped.subscribe { }
-        }
+        wrapped.subscribe { }
 
-        testScope2.launch {
-            flow.emit(expected)
+        runBlockingTest {
+            testScope2.launch {
+                flow.emit(expected)
+            }.join()
         }
 
         // Then
