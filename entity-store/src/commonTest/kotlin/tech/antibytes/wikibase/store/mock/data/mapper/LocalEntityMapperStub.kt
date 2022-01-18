@@ -9,10 +9,10 @@ package tech.antibytes.wikibase.store.mock.data.mapper
 import kotlinx.datetime.Instant
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
-import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract.EntityType
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract.MonolingualEntity
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
+import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
 
 class LocalEntityMapperStub(
     var toMonolingualEntity: ((String, EntityType, Long, LanguageTag, Instant, Boolean, String?, String?, List<String>) -> MonolingualEntity)? = null,

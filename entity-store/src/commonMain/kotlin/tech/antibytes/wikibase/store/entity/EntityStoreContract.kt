@@ -10,19 +10,28 @@ import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SharedFlowWrapper
 import tech.antibytes.wikibase.store.database.entity.EntityQueries
+import tech.antibytes.wikibase.store.entity.domain.model.EntityId
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
+import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 
 interface EntityStoreContract {
     interface EntityStore {
         val entity: SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>
 
-        fun setLabel(label: String?)
-        fun setDescription(label: String?)
+        fun fetchEntity(id: EntityId, language: LanguageTag)
+
+        fun setLabel(label: String)
+        fun setDescription(description: String)
         fun setAliases(aliases: List<String>)
 
-        fun fetchEntity(id: String)
+        fun create(
+            language: LanguageTag,
+            type: EntityModelContract.EntityType
+        )
+
         fun save()
         fun rollback()
+        fun reset()
     }
 
     interface EntityStoreFactory {

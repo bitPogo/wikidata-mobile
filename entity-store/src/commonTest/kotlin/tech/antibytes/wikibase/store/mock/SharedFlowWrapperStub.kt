@@ -10,11 +10,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharedFlow
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
-import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SharedFlowWrapperFactory
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SharedFlowWrapper
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SharedFlowWrapperFactory
 import tech.antibytes.util.test.MockError
 
-class SharedFlowWrapperStub<Succ, Err: Throwable> : SharedFlowWrapper<Succ, Err> {
+class SharedFlowWrapperStub<Succ, Err : Throwable> : SharedFlowWrapper<Succ, Err> {
     override val wrappedFlow: SharedFlow<ResultContract<Succ, Err>>
         get() = TODO("Not yet implemented")
     override val replayCache: List<ResultContract<Succ, Err>>

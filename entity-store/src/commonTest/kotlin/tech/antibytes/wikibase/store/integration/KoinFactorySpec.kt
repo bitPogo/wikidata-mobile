@@ -8,11 +8,11 @@ package tech.antibytes.wikibase.store.integration
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.qualifier.named
 import tech.antibytes.util.coroutine.result.ResultContract
-import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SharedFlowWrapper
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.SharedFlowWrapper
 import tech.antibytes.util.test.isNot
 import tech.antibytes.util.test.sameAs
 import tech.antibytes.wikibase.store.entity.di.initKoin
@@ -68,7 +68,7 @@ class KoinFactorySpec {
         )
 
         // When
-        val flow: MutableSharedFlow<ResultContract<MonolingualEntity, Exception>> = koin.koin.get()
+        val flow: MutableStateFlow<ResultContract<MonolingualEntity, Exception>> = koin.koin.get()
 
         // Then
         flow isNot null

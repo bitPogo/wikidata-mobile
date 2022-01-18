@@ -8,11 +8,11 @@ package tech.antibytes.wikibase.store.entity.transfer.repository
 
 import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
 import tech.antibytes.mediawiki.PublicApi
-import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
 import tech.antibytes.wikibase.store.entity.domain.DomainContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityId
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
+import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
 
 internal class RemoteRepository(
     private val client: PublicApi.Client,

@@ -10,8 +10,6 @@ import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.annotation.InternalKoinModuleScope
-import tech.antibytes.wikibase.store.database.entity.EntityQueries
-import tech.antibytes.wikibase.store.database.entity.WikibaseDataBase
 import tech.antibytes.wikibase.store.entity.domain.DomainContract
 import tech.antibytes.wikibase.store.entity.transfer.mapper.LocalEntityMapper
 import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract

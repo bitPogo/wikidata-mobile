@@ -13,12 +13,10 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
-import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
-import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
-import tech.antibytes.wikibase.store.entity.transfer.mapper.RemoteEntityMapper
+import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
+import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 import kotlin.test.Test
 
 class RemoteEntityMapperSpec {

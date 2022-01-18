@@ -7,26 +7,16 @@
 package tech.antibytes.wikibase.store.entity.transfer.repository
 
 import tech.antibytes.wikibase.store.database.entity.EntityQueries
-import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
 import tech.antibytes.wikibase.store.entity.domain.DomainContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityId
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
+import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
 
 internal class LocalRepository(
     private val database: EntityQueries,
     private val mapper: MapperContract.LocalEntityMapper
 ) : DomainContract.Repository {
-    private fun fetchPartialEntity(entityId: EntityId, language: LanguageTag): EntityModelContract.MonolingualEntity? {
-        val entity = database.selectEntityById(
-            entityId
-        ) { id, type, revision, lastModified, edibility ->
-            mapper.toMonolingualEntity(id, type, revision, language, lastModified, edibility)
-        }
-
-        return entity.executeAsOneOrNull()
-    }
-
     private fun fetchFullEntity(entityId: EntityId, language: LanguageTag): EntityModelContract.MonolingualEntity? {
         return database.selectMonoligualEntityById(
             entityId,
@@ -46,10 +36,11 @@ internal class LocalRepository(
         }.executeAsOneOrNull()
     }
 
-    override suspend fun fetchEntity(id: EntityId, language: LanguageTag): EntityModelContract.MonolingualEntity? {
-        val entity = fetchFullEntity(id, language)
-
-        return entity ?: fetchPartialEntity(id, language)
+    override suspend fun fetchEntity(
+        id: EntityId,
+        language: LanguageTag
+    ): EntityModelContract.MonolingualEntity? {
+        return fetchFullEntity(id, language)
     }
 
     private fun isEmptyTerm(
@@ -144,7 +135,6 @@ internal class LocalRepository(
                     aliases = aliases
                 )
             }
-            hasTerm && isEmptyTerm -> database.deleteTerm(entity.id, entity.language)
         }
     }
 

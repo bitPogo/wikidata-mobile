@@ -7,11 +7,11 @@
 package tech.antibytes.wikibase.store.entity.transfer.mapper
 
 import tech.antibytes.mediawiki.DataModelContract
-import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
-import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
+import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
+import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 
 internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
     private fun mapAliases(

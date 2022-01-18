@@ -13,8 +13,6 @@ import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
-import tech.antibytes.wikibase.store.entity.transfer.mapper.LocalEntityMapper
-import tech.antibytes.wikibase.store.entity.transfer.mapper.MapperContract
 import kotlin.test.Test
 
 class LocalEntityMapperSpec {

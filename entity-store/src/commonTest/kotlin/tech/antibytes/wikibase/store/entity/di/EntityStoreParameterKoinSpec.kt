@@ -8,16 +8,13 @@ package tech.antibytes.wikibase.store.entity.di
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
 import tech.antibytes.mediawiki.PublicApi
-import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.util.test.sameAs
 import tech.antibytes.wikibase.store.database.entity.EntityQueries
 import tech.antibytes.wikibase.store.entity.domain.DomainContract
-import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.mock.EntityQueriesStub
 import tech.antibytes.wikibase.store.mock.MwClientStub
 import kotlin.test.Test

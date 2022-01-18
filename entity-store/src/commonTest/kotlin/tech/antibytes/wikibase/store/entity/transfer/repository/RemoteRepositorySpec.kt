@@ -15,13 +15,12 @@ import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
-import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
-import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 import tech.antibytes.wikibase.store.entity.domain.DomainContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
-import tech.antibytes.wikibase.store.entity.transfer.repository.RemoteRepository
+import tech.antibytes.wikibase.store.entity.transfer.dto.LanguageValuePair
+import tech.antibytes.wikibase.store.entity.transfer.dto.RevisionedEntity
 import tech.antibytes.wikibase.store.mock.MwClientStub
 import tech.antibytes.wikibase.store.mock.SuspendingFunctionWrapperStub
 import tech.antibytes.wikibase.store.mock.data.mapper.RemoteEntityMapperStub
