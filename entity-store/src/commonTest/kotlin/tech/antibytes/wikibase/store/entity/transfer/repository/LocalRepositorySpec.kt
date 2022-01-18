@@ -62,10 +62,11 @@ class LocalRepositorySpec {
     }
 
     @Test
-    fun `It fulfils Repository`() {
+    fun `It fulfils LocalRepository`() {
         LocalRepository(database, mapper) fulfils DomainContract.Repository::class
     }
 
+    // region:fetch
     @Test
     fun `Given fetchEntity is called with an EntityId and a Language it returns null if no Entity is stored`() = runBlockingTest {
         // Given
@@ -184,48 +185,9 @@ class LocalRepositorySpec {
         ) sameAs proofDummy
     }
 
+    // region:create
     @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding a Entity Entry`() = runBlockingTest {
-        // Given
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = null,
-            description = null,
-            aliases = emptyList(),
-        )
-
-        var capturedId: String? = null
-        var capturedType: EntityModelContract.EntityType? = null
-        var capturedRevision: Long? = null
-        var capturedModification: Instant? = null
-        var capturedEditability: Boolean? = null
-        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
-            capturedId = givenId
-            capturedType = givenType
-            capturedRevision = givenRevision
-            capturedModification = givenModification
-            capturedEditability = givenEditability
-        }
-
-        // When
-        val result = LocalRepository(database, mapper).createEntity(expected)
-
-        // Then
-        result sameAs expected
-        capturedId mustBe expected.id
-        capturedType mustBe expected.type
-        capturedRevision mustBe expected.revision
-        capturedModification sameAs expected.lastModification
-        capturedEditability mustBe expected.isEditable
-    }
-
-    @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding a Entity and Term Entry, if a label is present`() = runBlockingTest {
+    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding a Entity and Term Entry`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -285,7 +247,7 @@ class LocalRepositorySpec {
     }
 
     @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding a Entity and Term Entry, if a description is present`() = runBlockingTest {
+    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding a cleaned Term Entry, since the Label is empty`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -294,8 +256,8 @@ class LocalRepositorySpec {
             language = fixture.fixture(),
             lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
-            label = null,
-            description = fixture.fixture(),
+            label = "",
+            description = null,
             aliases = emptyList(),
         )
 
@@ -314,8 +276,128 @@ class LocalRepositorySpec {
 
         var capturedIdAddTerm: String? = null
         var capturedLanguage: LanguageTag? = null
-        var capturedLabel: String? = fixture.fixture<String>()
-        var capturedDescription: String? = null
+        var capturedLabel: String? = null
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedIdAddTerm = givenId
+            capturedLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).createEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedIdAddEntity mustBe expected.id
+        capturedType mustBe expected.type
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedIdAddTerm mustBe expected.id
+        capturedLanguage mustBe expected.language
+        capturedLabel mustBe null
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe expected.aliases
+    }
+
+    @Test
+    fun `Given createEntity is called with an MonolingualEntity, it returns it while cleaning the Term Entry, since the Label has a blank value`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = " ",
+            description = null,
+            aliases = emptyList(),
+        )
+
+        var capturedIdAddEntity: String? = null
+        var capturedType: EntityModelContract.EntityType? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
+            capturedIdAddEntity = givenId
+            capturedType = givenType
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        var capturedIdAddTerm: String? = null
+        var capturedLanguage: LanguageTag? = null
+        var capturedLabel: String? = null
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedIdAddTerm = givenId
+            capturedLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).createEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedIdAddEntity mustBe expected.id
+        capturedType mustBe expected.type
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedIdAddTerm mustBe expected.id
+        capturedLanguage mustBe expected.language
+        capturedLabel mustBe null
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe expected.aliases
+    }
+
+    @Test
+    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding a cleaned Term Entry, since the Description is empty`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = null,
+            description = "",
+            aliases = emptyList(),
+        )
+
+        var capturedIdAddEntity: String? = null
+        var capturedType: EntityModelContract.EntityType? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
+            capturedIdAddEntity = givenId
+            capturedType = givenType
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        var capturedIdAddTerm: String? = null
+        var capturedLanguage: LanguageTag? = null
+        var capturedLabel: String? = null
+        var capturedDescription: String? = fixture.fixture<String>()
         var capturedAliases: List<String>? = null
         database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
             capturedIdAddTerm = givenId
@@ -340,12 +422,12 @@ class LocalRepositorySpec {
         capturedIdAddTerm mustBe expected.id
         capturedLanguage mustBe expected.language
         capturedLabel mustBe expected.label
-        capturedDescription mustBe expected.description
+        capturedDescription mustBe null
         capturedAliases mustBe expected.aliases
     }
 
     @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding a Entity and Term Entry, if Aliases are present`() = runBlockingTest {
+    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding cleaned Term Entry, since the Description has a blank value`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -355,8 +437,8 @@ class LocalRepositorySpec {
             lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
             isEditable = fixture.fixture(),
             label = null,
-            description = null,
-            aliases = fixture.listFixture(),
+            description = "  ",
+            aliases = emptyList(),
         )
 
         var capturedIdAddEntity: String? = null
@@ -374,7 +456,67 @@ class LocalRepositorySpec {
 
         var capturedIdAddTerm: String? = null
         var capturedLanguage: LanguageTag? = null
-        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedLabel: String? = null
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedIdAddTerm = givenId
+            capturedLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).createEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedIdAddEntity mustBe expected.id
+        capturedType mustBe expected.type
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedIdAddTerm mustBe expected.id
+        capturedLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe null
+        capturedAliases mustBe expected.aliases
+    }
+
+    @Test
+    fun `Given createEntity is called with an MonolingualEntity, it returns it while cleaning the Term Entry, since the Aliases have only empty values`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = null,
+            description = null,
+            aliases = listOf(""),
+        )
+
+        var capturedIdAddEntity: String? = null
+        var capturedType: EntityModelContract.EntityType? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
+            capturedIdAddEntity = givenId
+            capturedType = givenType
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        var capturedIdAddTerm: String? = null
+        var capturedLanguage: LanguageTag? = null
+        var capturedLabel: String? = null
         var capturedDescription: String? = fixture.fixture<String>()
         var capturedAliases: List<String>? = null
         database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
@@ -401,211 +543,11 @@ class LocalRepositorySpec {
         capturedLanguage mustBe expected.language
         capturedLabel mustBe expected.label
         capturedDescription mustBe expected.description
-        capturedAliases mustBe expected.aliases
+        capturedAliases mustBe emptyList()
     }
 
     @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding only a Entity Entry, since the Label is empty`() = runBlockingTest {
-        // Given
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = "",
-            description = null,
-            aliases = emptyList(),
-        )
-
-        var capturedId: String? = null
-        var capturedType: EntityModelContract.EntityType? = null
-        var capturedRevision: Long? = null
-        var capturedModification: Instant? = null
-        var capturedEditability: Boolean? = null
-        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
-            capturedId = givenId
-            capturedType = givenType
-            capturedRevision = givenRevision
-            capturedModification = givenModification
-            capturedEditability = givenEditability
-        }
-
-        // When
-        val result = LocalRepository(database, mapper).createEntity(expected)
-
-        // Then
-        result sameAs expected
-        capturedId mustBe expected.id
-        capturedType mustBe expected.type
-        capturedRevision mustBe expected.revision
-        capturedModification sameAs expected.lastModification
-        capturedEditability mustBe expected.isEditable
-    }
-
-    @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding only a Entity Entry, since the Label has a blank value`() = runBlockingTest {
-        // Given
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = " ",
-            description = null,
-            aliases = emptyList(),
-        )
-
-        var capturedId: String? = null
-        var capturedType: EntityModelContract.EntityType? = null
-        var capturedRevision: Long? = null
-        var capturedModification: Instant? = null
-        var capturedEditability: Boolean? = null
-        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
-            capturedId = givenId
-            capturedType = givenType
-            capturedRevision = givenRevision
-            capturedModification = givenModification
-            capturedEditability = givenEditability
-        }
-
-        // When
-        val result = LocalRepository(database, mapper).createEntity(expected)
-
-        // Then
-        result sameAs expected
-        capturedId mustBe expected.id
-        capturedType mustBe expected.type
-        capturedRevision mustBe expected.revision
-        capturedModification sameAs expected.lastModification
-        capturedEditability mustBe expected.isEditable
-    }
-
-    @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding only a Entity Entry, since the Description is empty`() = runBlockingTest {
-        // Given
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = null,
-            description = "",
-            aliases = emptyList(),
-        )
-
-        var capturedId: String? = null
-        var capturedType: EntityModelContract.EntityType? = null
-        var capturedRevision: Long? = null
-        var capturedModification: Instant? = null
-        var capturedEditability: Boolean? = null
-        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
-            capturedId = givenId
-            capturedType = givenType
-            capturedRevision = givenRevision
-            capturedModification = givenModification
-            capturedEditability = givenEditability
-        }
-
-        // When
-        val result = LocalRepository(database, mapper).createEntity(expected)
-
-        // Then
-        result sameAs expected
-        capturedId mustBe expected.id
-        capturedType mustBe expected.type
-        capturedRevision mustBe expected.revision
-        capturedModification sameAs expected.lastModification
-        capturedEditability mustBe expected.isEditable
-    }
-
-    @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding only a Entity Entry, since the Description has a blank value`() = runBlockingTest {
-        // Given
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = null,
-            description = "  ",
-            aliases = emptyList(),
-        )
-
-        var capturedId: String? = null
-        var capturedType: EntityModelContract.EntityType? = null
-        var capturedRevision: Long? = null
-        var capturedModification: Instant? = null
-        var capturedEditability: Boolean? = null
-        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
-            capturedId = givenId
-            capturedType = givenType
-            capturedRevision = givenRevision
-            capturedModification = givenModification
-            capturedEditability = givenEditability
-        }
-
-        // When
-        val result = LocalRepository(database, mapper).createEntity(expected)
-
-        // Then
-        result sameAs expected
-        capturedId mustBe expected.id
-        capturedType mustBe expected.type
-        capturedRevision mustBe expected.revision
-        capturedModification sameAs expected.lastModification
-        capturedEditability mustBe expected.isEditable
-    }
-
-    @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding only a Entity Entry, since the Aliases have only empty values`() = runBlockingTest {
-        // Given
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = null,
-            description = null,
-            aliases = listOf(""),
-        )
-
-        var capturedId: String? = null
-        var capturedType: EntityModelContract.EntityType? = null
-        var capturedRevision: Long? = null
-        var capturedModification: Instant? = null
-        var capturedEditability: Boolean? = null
-        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
-            capturedId = givenId
-            capturedType = givenType
-            capturedRevision = givenRevision
-            capturedModification = givenModification
-            capturedEditability = givenEditability
-        }
-
-        // When
-        val result = LocalRepository(database, mapper).createEntity(expected)
-
-        // Then
-        result sameAs expected
-        capturedId mustBe expected.id
-        capturedType mustBe expected.type
-        capturedRevision mustBe expected.revision
-        capturedModification sameAs expected.lastModification
-        capturedEditability mustBe expected.isEditable
-    }
-
-    @Test
-    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding only a Entity Entry, since the Aliases have only blank values`() = runBlockingTest {
+    fun `Given createEntity is called with an MonolingualEntity, it returns it while adding a cleaned Term Entry, since the Aliases have only blank values`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -619,17 +561,30 @@ class LocalRepositorySpec {
             aliases = listOf("  "),
         )
 
-        var capturedId: String? = null
+        var capturedIdAddEntity: String? = null
         var capturedType: EntityModelContract.EntityType? = null
         var capturedRevision: Long? = null
         var capturedModification: Instant? = null
         var capturedEditability: Boolean? = null
         database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
-            capturedId = givenId
+            capturedIdAddEntity = givenId
             capturedType = givenType
             capturedRevision = givenRevision
             capturedModification = givenModification
             capturedEditability = givenEditability
+        }
+
+        var capturedIdAddTerm: String? = null
+        var capturedLanguage: LanguageTag? = null
+        var capturedLabel: String? = null
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedIdAddTerm = givenId
+            capturedLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
         }
 
         // When
@@ -637,11 +592,95 @@ class LocalRepositorySpec {
 
         // Then
         result sameAs expected
-        capturedId mustBe expected.id
+
+        capturedIdAddEntity mustBe expected.id
         capturedType mustBe expected.type
         capturedRevision mustBe expected.revision
         capturedModification sameAs expected.lastModification
         capturedEditability mustBe expected.isEditable
+
+        capturedIdAddTerm mustBe expected.id
+        capturedLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe emptyList()
+    }
+
+    // region:update
+    @Test
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while adding a Entity and Term Entry, if the Entity was not stored previously`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = null,
+            aliases = emptyList(),
+        )
+
+        val nexts = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nexts.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 0 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
+        var capturedIdAddEntity: String? = null
+        var capturedType: EntityModelContract.EntityType? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.addEntity = { givenId, givenType, givenRevision, givenModification, givenEditability ->
+            capturedIdAddEntity = givenId
+            capturedType = givenType
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        var capturedIdAddTerm: String? = null
+        var capturedLanguage: LanguageTag? = null
+        var capturedLabel: String? = null
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedIdAddTerm = givenId
+            capturedLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).updateEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
+
+        capturedIdAddEntity mustBe expected.id
+        capturedType mustBe expected.type
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedIdAddTerm mustBe expected.id
+        capturedLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe expected.aliases
     }
 
     @Test
@@ -658,6 +697,20 @@ class LocalRepositorySpec {
             description = null,
             aliases = emptyList(),
         )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
 
         var capturedIdUpdateEntity: String? = null
         var capturedRevision: Long? = null
@@ -705,6 +758,8 @@ class LocalRepositorySpec {
         // Then
         result sameAs expected
 
+        capturedHasEntityId mustBe expected.id
+
         capturedIdUpdateEntity mustBe expected.id
         capturedRevision mustBe expected.revision
         capturedModification sameAs expected.lastModification
@@ -721,7 +776,7 @@ class LocalRepositorySpec {
     }
 
     @Test
-    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and updates a Term Entry, if the Term is already stored`() = runBlockingTest {
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and a Term Entry, if the Term is already stored`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -734,6 +789,20 @@ class LocalRepositorySpec {
             description = null,
             aliases = emptyList(),
         )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
 
         var capturedIdUpdateEntity: String? = null
         var capturedRevision: Long? = null
@@ -780,6 +849,8 @@ class LocalRepositorySpec {
 
         // Then
         result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
 
         capturedIdUpdateEntity mustBe expected.id
         capturedRevision mustBe expected.revision
@@ -864,65 +935,9 @@ class LocalRepositorySpec {
         capturedDeleteLanguage mustBe expected.language
     }
 
+    // update & update
     @Test
-    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity, if the Term is not stored and the given Term is empty`() = runBlockingTest {
-        // Given
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = null,
-            description = null,
-            aliases = emptyList(),
-        )
-
-        var capturedIdUpdateEntity: String? = null
-        var capturedRevision: Long? = null
-        var capturedModification: Instant? = null
-        var capturedEditability: Boolean? = null
-        database.updateEntity = { givenRevision, givenModification, givenEditability, givenWhereId ->
-            capturedIdUpdateEntity = givenWhereId
-            capturedRevision = givenRevision
-            capturedModification = givenModification
-            capturedEditability = givenEditability
-        }
-
-        val nexts = mutableListOf(true, false)
-        val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
-        val selectHasTermQuery = QueryStub<Long>(
-            { 0 },
-            { selectHasTermCursor }
-        )
-
-        var capturedHasId: String? = null
-        var capturedHasLanguage: String? = null
-        database.hasTerm = { givenId, givenLanguage ->
-            capturedHasId = givenId
-            capturedHasLanguage = givenLanguage
-
-            selectHasTermQuery
-        }
-
-        // When
-        val result = LocalRepository(database, mapper).updateEntity(expected)
-
-        // Then
-        result sameAs expected
-
-        capturedIdUpdateEntity mustBe expected.id
-        capturedRevision mustBe expected.revision
-        capturedModification sameAs expected.lastModification
-        capturedEditability mustBe expected.isEditable
-
-        capturedHasId mustBe expected.id
-        capturedHasLanguage mustBe expected.language
-    }
-
-    @Test
-    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity, if the Term is not stored and the given Term Label is empty`() = runBlockingTest {
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and cleaning Term since the Label was empty`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -936,6 +951,20 @@ class LocalRepositorySpec {
             aliases = emptyList(),
         )
 
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
         var capturedIdUpdateEntity: String? = null
         var capturedRevision: Long? = null
         var capturedModification: Instant? = null
@@ -950,7 +979,7 @@ class LocalRepositorySpec {
         val nexts = mutableListOf(true, false)
         val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
         val selectHasTermQuery = QueryStub<Long>(
-            { 0 },
+            { 1 },
             { selectHasTermCursor }
         )
 
@@ -963,11 +992,26 @@ class LocalRepositorySpec {
             selectHasTermQuery
         }
 
+        var capturedIdUpdateTerm: String? = null
+        var capturedUpdateLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.updateTerm = { givenLabel, givenDescription, givenAliases, givenId, givenLanguage ->
+            capturedIdUpdateTerm = givenId
+            capturedUpdateLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
         // When
         val result = LocalRepository(database, mapper).updateEntity(expected)
 
         // Then
         result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
 
         capturedIdUpdateEntity mustBe expected.id
         capturedRevision mustBe expected.revision
@@ -976,10 +1020,16 @@ class LocalRepositorySpec {
 
         capturedHasId mustBe expected.id
         capturedHasLanguage mustBe expected.language
+
+        capturedIdUpdateTerm mustBe expected.id
+        capturedUpdateLanguage mustBe expected.language
+        capturedLabel mustBe null
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe expected.aliases
     }
 
     @Test
-    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity, if the Term is not stored and the given Term Label is blank`() = runBlockingTest {
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and cleaning the Terms Label since it is blank`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -993,6 +1043,20 @@ class LocalRepositorySpec {
             aliases = emptyList(),
         )
 
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
         var capturedIdUpdateEntity: String? = null
         var capturedRevision: Long? = null
         var capturedModification: Instant? = null
@@ -1007,7 +1071,7 @@ class LocalRepositorySpec {
         val nexts = mutableListOf(true, false)
         val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
         val selectHasTermQuery = QueryStub<Long>(
-            { 0 },
+            { 1 },
             { selectHasTermCursor }
         )
 
@@ -1020,11 +1084,26 @@ class LocalRepositorySpec {
             selectHasTermQuery
         }
 
+        var capturedIdUpdateTerm: String? = null
+        var capturedUpdateLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.updateTerm = { givenLabel, givenDescription, givenAliases, givenId, givenLanguage ->
+            capturedIdUpdateTerm = givenId
+            capturedUpdateLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
         // When
         val result = LocalRepository(database, mapper).updateEntity(expected)
 
         // Then
         result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
 
         capturedIdUpdateEntity mustBe expected.id
         capturedRevision mustBe expected.revision
@@ -1033,10 +1112,16 @@ class LocalRepositorySpec {
 
         capturedHasId mustBe expected.id
         capturedHasLanguage mustBe expected.language
+
+        capturedIdUpdateTerm mustBe expected.id
+        capturedUpdateLanguage mustBe expected.language
+        capturedLabel mustBe null
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe expected.aliases
     }
 
     @Test
-    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity, if the Term is not stored and the given Term Description is empty`() = runBlockingTest {
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and cleaning the Terms Description since it is empty`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -1050,6 +1135,20 @@ class LocalRepositorySpec {
             aliases = emptyList(),
         )
 
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
         var capturedIdUpdateEntity: String? = null
         var capturedRevision: Long? = null
         var capturedModification: Instant? = null
@@ -1064,7 +1163,7 @@ class LocalRepositorySpec {
         val nexts = mutableListOf(true, false)
         val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
         val selectHasTermQuery = QueryStub<Long>(
-            { 0 },
+            { 1 },
             { selectHasTermCursor }
         )
 
@@ -1077,11 +1176,26 @@ class LocalRepositorySpec {
             selectHasTermQuery
         }
 
+        var capturedIdUpdateTerm: String? = null
+        var capturedUpdateLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.updateTerm = { givenLabel, givenDescription, givenAliases, givenId, givenLanguage ->
+            capturedIdUpdateTerm = givenId
+            capturedUpdateLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
         // When
         val result = LocalRepository(database, mapper).updateEntity(expected)
 
         // Then
         result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
 
         capturedIdUpdateEntity mustBe expected.id
         capturedRevision mustBe expected.revision
@@ -1090,10 +1204,16 @@ class LocalRepositorySpec {
 
         capturedHasId mustBe expected.id
         capturedHasLanguage mustBe expected.language
+
+        capturedIdUpdateTerm mustBe expected.id
+        capturedUpdateLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe null
+        capturedAliases mustBe expected.aliases
     }
 
     @Test
-    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity, if the Term is not stored and the given Term Description is blank`() = runBlockingTest {
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and cleaning the Terms Description since it was blank`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -1107,6 +1227,20 @@ class LocalRepositorySpec {
             aliases = emptyList(),
         )
 
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
         var capturedIdUpdateEntity: String? = null
         var capturedRevision: Long? = null
         var capturedModification: Instant? = null
@@ -1121,7 +1255,7 @@ class LocalRepositorySpec {
         val nexts = mutableListOf(true, false)
         val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
         val selectHasTermQuery = QueryStub<Long>(
-            { 0 },
+            { 1 },
             { selectHasTermCursor }
         )
 
@@ -1134,11 +1268,26 @@ class LocalRepositorySpec {
             selectHasTermQuery
         }
 
+        var capturedIdUpdateTerm: String? = null
+        var capturedUpdateLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.updateTerm = { givenLabel, givenDescription, givenAliases, givenId, givenLanguage ->
+            capturedIdUpdateTerm = givenId
+            capturedUpdateLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
         // When
         val result = LocalRepository(database, mapper).updateEntity(expected)
 
         // Then
         result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
 
         capturedIdUpdateEntity mustBe expected.id
         capturedRevision mustBe expected.revision
@@ -1147,10 +1296,16 @@ class LocalRepositorySpec {
 
         capturedHasId mustBe expected.id
         capturedHasLanguage mustBe expected.language
+
+        capturedIdUpdateTerm mustBe expected.id
+        capturedUpdateLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe null
+        capturedAliases mustBe expected.aliases
     }
 
     @Test
-    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity, if the Term is not stored and the given Term Aliases are empty`() = runBlockingTest {
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and cleaning the Terms Aliases since they are empty`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -1161,8 +1316,22 @@ class LocalRepositorySpec {
             isEditable = fixture.fixture(),
             label = null,
             description = null,
-            aliases = listOf(""),
+            aliases = listOf("", ""),
         )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
 
         var capturedIdUpdateEntity: String? = null
         var capturedRevision: Long? = null
@@ -1178,7 +1347,7 @@ class LocalRepositorySpec {
         val nexts = mutableListOf(true, false)
         val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
         val selectHasTermQuery = QueryStub<Long>(
-            { 0 },
+            { 1 },
             { selectHasTermCursor }
         )
 
@@ -1191,11 +1360,26 @@ class LocalRepositorySpec {
             selectHasTermQuery
         }
 
+        var capturedIdUpdateTerm: String? = null
+        var capturedUpdateLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.updateTerm = { givenLabel, givenDescription, givenAliases, givenId, givenLanguage ->
+            capturedIdUpdateTerm = givenId
+            capturedUpdateLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
         // When
         val result = LocalRepository(database, mapper).updateEntity(expected)
 
         // Then
         result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
 
         capturedIdUpdateEntity mustBe expected.id
         capturedRevision mustBe expected.revision
@@ -1204,10 +1388,16 @@ class LocalRepositorySpec {
 
         capturedHasId mustBe expected.id
         capturedHasLanguage mustBe expected.language
+
+        capturedIdUpdateTerm mustBe expected.id
+        capturedUpdateLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe emptyList()
     }
 
     @Test
-    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity, if the Term is not stored and the given Term Aliases are blank`() = runBlockingTest {
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entit and cleaning the Terms Aliases since they are blank`() = runBlockingTest {
         // Given
         val expected = MonolingualEntity(
             id = fixture.fixture(),
@@ -1218,8 +1408,115 @@ class LocalRepositorySpec {
             isEditable = fixture.fixture(),
             label = null,
             description = null,
-            aliases = listOf("  "),
+            aliases = listOf("  ", " "),
         )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
+        var capturedIdUpdateEntity: String? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.updateEntity = { givenRevision, givenModification, givenEditability, givenWhereId ->
+            capturedIdUpdateEntity = givenWhereId
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        val nexts = mutableListOf(true, false)
+        val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
+        val selectHasTermQuery = QueryStub<Long>(
+            { 1 },
+            { selectHasTermCursor }
+        )
+
+        var capturedHasId: String? = null
+        var capturedHasLanguage: String? = null
+        database.hasTerm = { givenId, givenLanguage ->
+            capturedHasId = givenId
+            capturedHasLanguage = givenLanguage
+
+            selectHasTermQuery
+        }
+
+        var capturedIdUpdateTerm: String? = null
+        var capturedUpdateLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.updateTerm = { givenLabel, givenDescription, givenAliases, givenId, givenLanguage ->
+            capturedIdUpdateTerm = givenId
+            capturedUpdateLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).updateEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
+
+        capturedIdUpdateEntity mustBe expected.id
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedHasId mustBe expected.id
+        capturedHasLanguage mustBe expected.language
+
+        capturedIdUpdateTerm mustBe expected.id
+        capturedUpdateLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe emptyList()
+    }
+
+    // update & add
+    @Test
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and adding a cleaned Term since the Label was empty`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = "",
+            description = null,
+            aliases = emptyList(),
+        )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
 
         var capturedIdUpdateEntity: String? = null
         var capturedRevision: Long? = null
@@ -1248,11 +1545,26 @@ class LocalRepositorySpec {
             selectHasTermQuery
         }
 
+        var capturedAddTermId: String? = null
+        var capturedAddTermLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedAddTermId = givenId
+            capturedAddTermLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
         // When
         val result = LocalRepository(database, mapper).updateEntity(expected)
 
         // Then
         result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
 
         capturedIdUpdateEntity mustBe expected.id
         capturedRevision mustBe expected.revision
@@ -1261,5 +1573,471 @@ class LocalRepositorySpec {
 
         capturedHasId mustBe expected.id
         capturedHasLanguage mustBe expected.language
+
+        capturedAddTermId mustBe expected.id
+        capturedAddTermLanguage mustBe expected.language
+        capturedLabel mustBe null
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe expected.aliases
+    }
+
+    @Test
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and adding a cleaned Term since the Label was blank`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = " ",
+            description = null,
+            aliases = emptyList(),
+        )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
+        var capturedIdUpdateEntity: String? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.updateEntity = { givenRevision, givenModification, givenEditability, givenWhereId ->
+            capturedIdUpdateEntity = givenWhereId
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        val nexts = mutableListOf(true, false)
+        val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
+        val selectHasTermQuery = QueryStub<Long>(
+            { 0 },
+            { selectHasTermCursor }
+        )
+
+        var capturedHasId: String? = null
+        var capturedHasLanguage: String? = null
+        database.hasTerm = { givenId, givenLanguage ->
+            capturedHasId = givenId
+            capturedHasLanguage = givenLanguage
+
+            selectHasTermQuery
+        }
+
+        var capturedAddTermId: String? = null
+        var capturedAddTermLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedAddTermId = givenId
+            capturedAddTermLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).updateEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
+
+        capturedIdUpdateEntity mustBe expected.id
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedHasId mustBe expected.id
+        capturedHasLanguage mustBe expected.language
+
+        capturedAddTermId mustBe expected.id
+        capturedAddTermLanguage mustBe expected.language
+        capturedLabel mustBe null
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe expected.aliases
+    }
+
+    @Test
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and adding a cleaned Term since the Description was empty`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = null,
+            description = "",
+            aliases = emptyList(),
+        )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
+        var capturedIdUpdateEntity: String? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.updateEntity = { givenRevision, givenModification, givenEditability, givenWhereId ->
+            capturedIdUpdateEntity = givenWhereId
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        val nexts = mutableListOf(true, false)
+        val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
+        val selectHasTermQuery = QueryStub<Long>(
+            { 0 },
+            { selectHasTermCursor }
+        )
+
+        var capturedHasId: String? = null
+        var capturedHasLanguage: String? = null
+        database.hasTerm = { givenId, givenLanguage ->
+            capturedHasId = givenId
+            capturedHasLanguage = givenLanguage
+
+            selectHasTermQuery
+        }
+
+        var capturedAddTermId: String? = null
+        var capturedAddTermLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedAddTermId = givenId
+            capturedAddTermLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).updateEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
+
+        capturedIdUpdateEntity mustBe expected.id
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedHasId mustBe expected.id
+        capturedHasLanguage mustBe expected.language
+
+        capturedAddTermId mustBe expected.id
+        capturedAddTermLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe null
+        capturedAliases mustBe expected.aliases
+    }
+
+    @Test
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and adding a cleaned Term since the Description was blank`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = null,
+            description = "  ",
+            aliases = emptyList(),
+        )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
+        var capturedIdUpdateEntity: String? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.updateEntity = { givenRevision, givenModification, givenEditability, givenWhereId ->
+            capturedIdUpdateEntity = givenWhereId
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        val nexts = mutableListOf(true, false)
+        val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
+        val selectHasTermQuery = QueryStub<Long>(
+            { 0 },
+            { selectHasTermCursor }
+        )
+
+        var capturedHasId: String? = null
+        var capturedHasLanguage: String? = null
+        database.hasTerm = { givenId, givenLanguage ->
+            capturedHasId = givenId
+            capturedHasLanguage = givenLanguage
+
+            selectHasTermQuery
+        }
+
+        var capturedAddTermId: String? = null
+        var capturedAddTermLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedAddTermId = givenId
+            capturedAddTermLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).updateEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
+
+        capturedIdUpdateEntity mustBe expected.id
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedHasId mustBe expected.id
+        capturedHasLanguage mustBe expected.language
+
+        capturedAddTermId mustBe expected.id
+        capturedAddTermLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe null
+        capturedAliases mustBe expected.aliases
+    }
+
+    @Test
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and adding a cleaned Term since the Aliases were empty`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = null,
+            description = null,
+            aliases = listOf("", ""),
+        )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
+        var capturedIdUpdateEntity: String? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.updateEntity = { givenRevision, givenModification, givenEditability, givenWhereId ->
+            capturedIdUpdateEntity = givenWhereId
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        val nexts = mutableListOf(true, false)
+        val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
+        val selectHasTermQuery = QueryStub<Long>(
+            { 0 },
+            { selectHasTermCursor }
+        )
+
+        var capturedHasId: String? = null
+        var capturedHasLanguage: String? = null
+        database.hasTerm = { givenId, givenLanguage ->
+            capturedHasId = givenId
+            capturedHasLanguage = givenLanguage
+
+            selectHasTermQuery
+        }
+
+        var capturedAddTermId: String? = null
+        var capturedAddTermLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedAddTermId = givenId
+            capturedAddTermLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).updateEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
+
+        capturedIdUpdateEntity mustBe expected.id
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedHasId mustBe expected.id
+        capturedHasLanguage mustBe expected.language
+
+        capturedAddTermId mustBe expected.id
+        capturedAddTermLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe emptyList()
+    }
+
+    @Test
+    fun `Given updateEntity is called with an MonolingualEntity, it returns it while updating the stored Entity and adding a cleaned Term since the Aliases were blank`() = runBlockingTest {
+        // Given
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = null,
+            description = null,
+            aliases = listOf(" ", "    \n"),
+        )
+
+        val nextHasEntity = mutableListOf(true, false)
+        val hasEntityCursor = SqlCursorStub { nextHasEntity.removeFirst() }
+        val hasEntityQuery = QueryStub<Long>(
+            { 1 },
+            { hasEntityCursor }
+        )
+
+        var capturedHasEntityId: String? = null
+        database.hasEntity = { givenId ->
+            capturedHasEntityId = givenId
+
+            hasEntityQuery
+        }
+
+        var capturedIdUpdateEntity: String? = null
+        var capturedRevision: Long? = null
+        var capturedModification: Instant? = null
+        var capturedEditability: Boolean? = null
+        database.updateEntity = { givenRevision, givenModification, givenEditability, givenWhereId ->
+            capturedIdUpdateEntity = givenWhereId
+            capturedRevision = givenRevision
+            capturedModification = givenModification
+            capturedEditability = givenEditability
+        }
+
+        val nexts = mutableListOf(true, false)
+        val selectHasTermCursor = SqlCursorStub { nexts.removeFirst() }
+        val selectHasTermQuery = QueryStub<Long>(
+            { 0 },
+            { selectHasTermCursor }
+        )
+
+        var capturedHasId: String? = null
+        var capturedHasLanguage: String? = null
+        database.hasTerm = { givenId, givenLanguage ->
+            capturedHasId = givenId
+            capturedHasLanguage = givenLanguage
+
+            selectHasTermQuery
+        }
+
+        var capturedAddTermId: String? = null
+        var capturedAddTermLanguage: LanguageTag? = null
+        var capturedLabel: String? = fixture.fixture<String>()
+        var capturedDescription: String? = fixture.fixture<String>()
+        var capturedAliases: List<String>? = null
+        database.addTerm = { givenId, givenLanguage, givenLabel, givenDescription, givenAliases ->
+            capturedAddTermId = givenId
+            capturedAddTermLanguage = givenLanguage
+            capturedLabel = givenLabel
+            capturedDescription = givenDescription
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val result = LocalRepository(database, mapper).updateEntity(expected)
+
+        // Then
+        result sameAs expected
+
+        capturedHasEntityId mustBe expected.id
+
+        capturedIdUpdateEntity mustBe expected.id
+        capturedRevision mustBe expected.revision
+        capturedModification sameAs expected.lastModification
+        capturedEditability mustBe expected.isEditable
+
+        capturedHasId mustBe expected.id
+        capturedHasLanguage mustBe expected.language
+
+        capturedAddTermId mustBe expected.id
+        capturedAddTermLanguage mustBe expected.language
+        capturedLabel mustBe expected.label
+        capturedDescription mustBe expected.description
+        capturedAliases mustBe emptyList()
     }
 }
