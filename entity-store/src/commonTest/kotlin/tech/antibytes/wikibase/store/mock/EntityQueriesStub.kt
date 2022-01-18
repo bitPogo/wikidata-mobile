@@ -20,6 +20,7 @@ import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 class EntityQueriesStub(
     var selectEntityById: ((String, (String, EntityModelContract.EntityType, Long, Instant, Boolean) -> EntityModelContract.MonolingualEntity) -> Query<EntityModelContract.MonolingualEntity>)? = null,
     var selectMonoligualEntityById: ((String, String, (String, EntityModelContract.EntityType, Long, Instant, Boolean, String?, String?, List<String>) -> EntityModelContract.MonolingualEntity) -> Query<EntityModelContract.MonolingualEntity>)? = null,
+    var hasEntity: ((String) -> Query<Long>)? = null,
     var addEntity: ((String, EntityModelContract.EntityType, Long, Instant, Boolean) -> Unit)? = null,
     var updateEntity: ((Long, Instant, Boolean, String) -> Unit)? = null,
     var hasTerm: ((String, String) -> Query<Long>)? = null,
@@ -27,6 +28,11 @@ class EntityQueriesStub(
     var updateTerm: ((String?, String?, List<String>, String, String) -> Unit)? = null,
     var deleteTerm: ((String, String) -> Unit)? = null
 ) : EntityQueries, MockContract.Mock {
+    override fun hasEntity(whereId: String): Query<Long> {
+        return hasEntity?.invoke(whereId)
+            ?: throw MockError.MissingStub("Missing Sideeffect hasEntity")
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> selectEntityById(
         whereId: String,

@@ -20,6 +20,11 @@ CREATE TABLE Term (
     CONSTRAINT monoligualEntitId PRIMARY KEY (entityId, language)
 );
 
+hasEntity:
+SELECT COUNT(1)
+FROM Entity
+WHERE id = :whereId;
+
 selectEntityById:
 SELECT *
 FROM Entity
@@ -33,7 +38,7 @@ WHERE entityId = :whereId AND language = :whereLanguage;
 selectMonoligualEntityById:
 SELECT id, type, revision, lastModified, edibility, label, description, aliases
 FROM Entity, Term
-WHERE entityId = :whereId AND language = :whereLanguage;
+WHERE entityId = :whereId AND language = :whereLanguage AND id = :whereId;
 
 addEntity:
 INSERT INTO Entity(id, type, revision, lastModified, edibility)
