@@ -7,7 +7,6 @@
 package tech.antibytes.wikibase.store.integration
 
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.Instant
@@ -20,9 +19,7 @@ import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
-import tech.antibytes.util.test.isNot
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.util.test.sameAs
 import tech.antibytes.wikibase.store.database.entity.WikibaseDataBase
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.database.DatabaseDriver
@@ -70,9 +67,10 @@ class EntityStoreSpec {
     @Test
     fun `It fetches a Entities`() {
         // Given
+        val actual = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
         val id1: EntityId = fixture.fixture()
         val language1: EntityId = fixture.fixture()
-        val actual = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
         val expected = MonolingualEntity(
             id = id1,
@@ -146,13 +144,19 @@ class EntityStoreSpec {
             }
         }
 
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().error!! fulfils EntityStoreError.InitialState::class
+            }
+        }
+
         // When
         entityStore.fetchEntity(id1, language1)
 
         // Then
         runBlockingTest {
             withTimeout(2000) {
-                actual.receive().error!! fulfils EntityStoreError.InitialState::class
                 actual.receive().unwrap() mustBe expected
             }
         }
@@ -174,6 +178,329 @@ class EntityStoreSpec {
         runBlockingTest {
             withTimeout(2000) {
                 actual.receive().unwrap() mustBe expected
+            }
+        }
+    }
+
+    @Test
+    fun `It creates Entities`() {
+        // Given
+        val actual = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val id: EntityId = fixture.fixture()
+        val language: EntityId = fixture.fixture()
+        val type = EntityModelContract.EntityType.ITEM
+
+        val expected = MonolingualEntity(
+            id = id,
+            type = type,
+            revision = fixture.fixture(),
+            language = language,
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = true,
+            label = fixture.fixture<String>(),
+            description = fixture.fixture<String>(),
+            aliases = listOf(fixture.fixture(), fixture.fixture()),
+        )
+
+        val expectedEntity = RevisionedEntity(
+            id = id,
+            type = DataModelContract.EntityType.valueOf(type.name),
+            revision = expected.revision,
+            lastModification = expected.lastModification,
+            labels = mapOf(
+                language to LanguageValuePair(language, expected.label!!)
+            ),
+            descriptions = mapOf(
+                language to LanguageValuePair(language, expected.description!!)
+            ),
+            aliases = mapOf(
+                language to listOf(
+                    LanguageValuePair(language, expected.aliases.first()),
+                    LanguageValuePair(language, expected.aliases.last())
+                )
+            )
+        )
+
+        val remoteEntities = mutableListOf(
+            listOf(expectedEntity)
+        )
+
+        var capturedRevision: DataModelContract.RevisionedEntity? = null
+        client.wikibase.createEntity = { _, givenEntity ->
+            capturedRevision = givenEntity as DataModelContract.RevisionedEntity
+
+            SuspendingFunctionWrapperStub { remoteEntities.removeFirst().first() }
+        }
+
+        // When
+        entityStore.entity.subscribe { result ->
+            testScope2.launch {
+                actual.send(result)
+            }
+        }
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().error!! fulfils EntityStoreError.InitialState::class
+            }
+        }
+
+        // When
+        entityStore.create(language, type)
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe MonolingualEntity(
+                    id = "",
+                    type = type,
+                    revision = 0,
+                    language = language,
+                    lastModification = Instant.DISTANT_PAST,
+                    isEditable = true,
+                    label = null,
+                    description = null,
+                    aliases = emptyList(),
+                )
+            }
+        }
+
+        // When
+        entityStore.setLabel(expected.label)
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe MonolingualEntity(
+                    id = "",
+                    type = type,
+                    revision = 0,
+                    language = language,
+                    lastModification = Instant.DISTANT_PAST,
+                    isEditable = true,
+                    label = expected.label,
+                    description = null,
+                    aliases = emptyList(),
+                )
+            }
+        }
+
+        // When
+        entityStore.setDescription(expected.description)
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe MonolingualEntity(
+                    id = "",
+                    type = type,
+                    revision = 0,
+                    language = language,
+                    lastModification = Instant.DISTANT_PAST,
+                    isEditable = true,
+                    label = expected.label,
+                    description = expected.description,
+                    aliases = emptyList(),
+                )
+            }
+        }
+
+        // When
+        entityStore.setAliases(expected.aliases)
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe MonolingualEntity(
+                    id = "",
+                    type = type,
+                    revision = 0,
+                    language = language,
+                    lastModification = Instant.DISTANT_PAST,
+                    isEditable = true,
+                    label = expected.label,
+                    description = expected.description,
+                    aliases = expected.aliases,
+                )
+            }
+        }
+
+        // When
+        entityStore.save()
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe expected
+                capturedRevision mustBe expectedEntity.copy(
+                    id = "",
+                    revision = 0,
+                    lastModification = Instant.DISTANT_PAST
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `It fetches, changes and updates Entities`() {
+        // Given
+        val actual = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val id: EntityId = fixture.fixture()
+        val language: EntityId = fixture.fixture()
+
+        val expected = MonolingualEntity(
+            id = id,
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = language,
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = true,
+            label = fixture.fixture<String>(),
+            description = fixture.fixture<String>(),
+            aliases = listOf(fixture.fixture(), fixture.fixture()),
+        )
+
+        val fetchedEntity = RevisionedEntity(
+            id = id,
+            type = DataModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            labels = emptyMap(),
+            descriptions = emptyMap(),
+            aliases = emptyMap()
+        )
+
+        val updatedEntity = RevisionedEntity(
+            id = id,
+            type = DataModelContract.EntityType.ITEM,
+            revision = expected.revision,
+            lastModification = expected.lastModification,
+            labels = mapOf(
+                language to LanguageValuePair(
+                    language,
+                    expected.label!!
+                )
+            ),
+            descriptions = mapOf(
+                language to LanguageValuePair(
+                    language,
+                    expected.description!!
+                )
+            ),
+            aliases = mapOf(
+                language to listOf(
+                    LanguageValuePair(
+                        language,
+                        expected.aliases.first()
+                    ),
+                    LanguageValuePair(
+                        language,
+                        expected.aliases.last()
+                    )
+                )
+            )
+        )
+
+        val remoteEntities = mutableListOf(
+            listOf(fetchedEntity),
+            listOf(updatedEntity)
+        )
+
+        client.wikibase.fetchEntities = { _, _ ->
+            SuspendingFunctionWrapperStub { remoteEntities.removeFirst() }
+        }
+
+        var capturedRevision: DataModelContract.RevisionedEntity? = null
+        client.wikibase.updateEntity = { givenEntity ->
+            capturedRevision = givenEntity
+
+            SuspendingFunctionWrapperStub { remoteEntities.removeFirst().first() }
+        }
+
+        client.page.fetchRestrictions = {
+            SuspendingFunctionWrapperStub { emptyList() }
+        }
+
+        // When
+        entityStore.entity.subscribe { result ->
+            testScope2.launch {
+                actual.send(result)
+            }
+        }
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().error!! fulfils EntityStoreError.InitialState::class
+            }
+        }
+
+        // When
+        entityStore.fetchEntity(id, language)
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().isSuccess() mustBe true
+            }
+        }
+
+        // When
+        entityStore.setLabel(expected.label)
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe expected.copy(
+                    revision = fetchedEntity.revision,
+                    lastModification = fetchedEntity.lastModification,
+                    description = null,
+                    aliases = emptyList()
+                )
+            }
+        }
+
+        // When
+        entityStore.setDescription(expected.description)
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe expected.copy(
+                    revision = fetchedEntity.revision,
+                    lastModification = fetchedEntity.lastModification,
+                    aliases = emptyList()
+                )
+            }
+        }
+
+        // When
+        entityStore.setAliases(expected.aliases)
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe expected.copy(
+                    revision = fetchedEntity.revision,
+                    lastModification = fetchedEntity.lastModification,
+                )
+            }
+        }
+
+        // When
+        entityStore.save()
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                actual.receive().unwrap() mustBe expected
+                capturedRevision mustBe updatedEntity.copy(
+                    revision = fetchedEntity.revision,
+                    lastModification = fetchedEntity.lastModification,
+                )
             }
         }
     }
