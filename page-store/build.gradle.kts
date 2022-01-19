@@ -16,6 +16,12 @@ plugins {
 
     id("tech.antibytes.gradle.configuration")
     id("tech.antibytes.gradle.coverage")
+
+    // SqlDelight
+    id("com.squareup.sqldelight")
+
+    // Serialization
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 kotlin {
@@ -27,6 +33,8 @@ kotlin {
         all {
             languageSettings.apply {
                 optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+                optIn("kotlinx.serialization.InternalSerializationApi")
+                optIn("kotlinx.serialization.ExperimentalSerializationApi")
                 optIn("kotlinx.coroutines.DelicateCoroutinesApi")
             }
         }
@@ -49,6 +57,8 @@ kotlin {
 
                 implementation(Dependency.multiplatform.stately.freeze)
 
+                implementation(LocalDependency.sqldelight.coroutines)
+
                 implementation(project(":mw-client"))
                 implementation(project(":utils-coroutine"))
             }
@@ -68,6 +78,7 @@ kotlin {
             dependencies {
                implementation(Dependency.multiplatform.kotlin.android)
                 implementation(Dependency.multiplatform.coroutines.android)
+                implementation(LocalDependency.sqldelight.android)
             }
         }
         val androidTest by getting {
@@ -86,6 +97,7 @@ kotlin {
             dependencies {
                 implementation(Dependency.multiplatform.kotlin.jdk8)
                 implementation(Dependency.multiplatform.coroutines.common)
+                implementation(LocalDependency.sqldelight.jvm)
             }
         }
         val jvmTest by getting {
@@ -110,5 +122,13 @@ android {
 tasks.withType(Test::class.java) {
     testLogging {
         events(FAILED)
+    }
+}
+
+sqldelight {
+    database("WikibaseDataBase") {
+        packageName = "tech.antibytes.wikibase.store.database.page"
+        sourceFolders = listOf("database")
+        verifyMigrations = true
     }
 }
