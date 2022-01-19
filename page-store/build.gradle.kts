@@ -19,9 +19,6 @@ plugins {
 
     // SqlDelight
     id("com.squareup.sqldelight")
-
-    // Serialization
-    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 kotlin {
@@ -33,8 +30,6 @@ kotlin {
         all {
             languageSettings.apply {
                 optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-                optIn("kotlinx.serialization.InternalSerializationApi")
-                optIn("kotlinx.serialization.ExperimentalSerializationApi")
                 optIn("kotlinx.coroutines.DelicateCoroutinesApi")
             }
         }
@@ -50,10 +45,6 @@ kotlin {
                 }
 
                 implementation(Dependency.multiplatform.coroutines.common)
-
-                implementation(Dependency.multiplatform.serialization.common)
-                implementation(Dependency.multiplatform.serialization.json)
-                implementation(Dependency.multiplatform.dateTime)
 
                 implementation(Dependency.multiplatform.stately.freeze)
 
