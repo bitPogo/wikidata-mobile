@@ -247,6 +247,7 @@ class WikibaseApiServiceSpec {
         requestBuilder.delegatedParameter mustBe mapOf(
             "action" to "wbsearchentities",
             "format" to "json",
+            "strictlanguage" to "",
             "search" to searchTerm,
             "language" to languageTag,
             "type" to type.name.lowercase(),
