@@ -8,7 +8,6 @@ package tech.antibytes.mediawiki.e2e
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.MwClient

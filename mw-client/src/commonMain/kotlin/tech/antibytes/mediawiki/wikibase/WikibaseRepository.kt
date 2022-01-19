@@ -90,9 +90,10 @@ internal class WikibaseRepository(
         term: String,
         language: LanguageTag,
         type: EntityType,
-        limit: Int
+        limit: Int,
+        page: Int
     ): List<DataModelContract.Entity> {
-        val response = apiService.search(term, language, type, limit)
+        val response = apiService.search(term, language, type, limit, page)
 
         return response.returnListOnSuccess {
             mapSearchEntities(response.search, language, type)

@@ -173,6 +173,7 @@ class WikibaseApiServiceSpec {
         val languageTag: String = fixture.fixture()
         val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
+        val page: Int = fixture.fixture()
 
         val client = KtorMockClientFactory.createObjectMockClient { scope, _ ->
             return@createObjectMockClient scope.respond(
@@ -190,7 +191,7 @@ class WikibaseApiServiceSpec {
         // Then
         val error = assertFailsWith<MwClientError.ResponseTransformFailure> {
             // When
-            WikibaseApiService(requestBuilderFactory).search(searchTerm, languageTag, type, limit)
+            WikibaseApiService(requestBuilderFactory).search(searchTerm, languageTag, type, limit, page)
         }
 
         assertEquals(
@@ -200,12 +201,13 @@ class WikibaseApiServiceSpec {
     }
 
     @Test
-    fun `Given search is called with a SearchTerm, LanguageTag, EntityType and a Limit it returns a SearchEntityResponse`() = runBlockingTest {
+    fun `Given search is called with a SearchTerm, LanguageTag, EntityType, a Limit and PageIndex it returns a SearchEntityResponse`() = runBlockingTest {
         // Given
         val searchTerm: String = fixture.fixture()
         val languageTag: String = fixture.fixture()
         val type = DataModelContract.EntityType.PROPERTY
         val limit: Int = fixture.fixture()
+        val page: Int = fixture.fixture()
 
         val expectedResponse = SearchEntityResponse(
             search = listOf(
@@ -238,7 +240,7 @@ class WikibaseApiServiceSpec {
         }
 
         // When
-        val result = WikibaseApiService(requestBuilderFactory).search(searchTerm, languageTag, type, limit)
+        val result = WikibaseApiService(requestBuilderFactory).search(searchTerm, languageTag, type, limit, page)
 
         // Then
         result mustBe expectedResponse
@@ -251,7 +253,8 @@ class WikibaseApiServiceSpec {
             "search" to searchTerm,
             "language" to languageTag,
             "type" to type.name.lowercase(),
-            "limit" to limit
+            "limit" to limit,
+            "continue" to page
         )
     }
 

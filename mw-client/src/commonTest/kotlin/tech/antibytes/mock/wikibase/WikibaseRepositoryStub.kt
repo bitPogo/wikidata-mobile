@@ -19,7 +19,7 @@ import tech.antibytes.util.test.MockError
 
 internal class WikibaseRepositoryStub(
     var fetch: ((Set<EntityId>, LanguageTag?) -> List<Entity>)? = null,
-    var search: ((String, LanguageTag, EntityType, Int) -> List<Entity>)? = null,
+    var search: ((String, LanguageTag, EntityType, Int, Int) -> List<Entity>)? = null,
     var update: ((RevisionedEntity, MetaToken) -> RevisionedEntity?)? = null,
     var create: ((EntityType, BoxedTerms, MetaToken) -> RevisionedEntity?)? = null
 ) : WikibaseContract.Repository, MockContract.Mock {
@@ -32,9 +32,10 @@ internal class WikibaseRepositoryStub(
         term: String,
         language: LanguageTag,
         type: EntityType,
-        limit: Int
+        limit: Int,
+        page: Int
     ): List<Entity> {
-        return search?.invoke(term, language, type, limit)
+        return search?.invoke(term, language, type, limit, page)
             ?: throw MockError.MissingStub("Missing Sideeffect search")
     }
 

@@ -65,7 +65,8 @@ class WikibaseStub : PublicApi.WikibaseService {
         term: String,
         language: LanguageTag,
         type: EntityType,
-        limit: Int
+        limit: Int,
+        page: Int
     ): SuspendingFunctionWrapper<List<DataModelContract.Entity>> {
         TODO("Not yet implemented")
     }

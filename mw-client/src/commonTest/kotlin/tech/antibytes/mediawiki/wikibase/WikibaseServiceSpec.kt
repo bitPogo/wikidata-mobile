@@ -24,6 +24,7 @@ import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
+import kotlin.math.absoluteValue
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -115,12 +116,14 @@ class WikibaseServiceSpec {
         var capturedLanguageTag: LanguageTag? = null
         var capturedEntityType: DataModelContract.EntityType? = null
         var capturedLimit: Int? = null
+        var capturedPageIdx: Int? = null
 
-        wikibaseRepository.search = { givenTerm, givenTag, givenType, givenLimit ->
+        wikibaseRepository.search = { givenTerm, givenTag, givenType, givenLimit, givenPageIdx ->
             capturedTerm = givenTerm
             capturedLanguageTag = givenTag
             capturedEntityType = givenType
             capturedLimit = givenLimit
+            capturedPageIdx = givenPageIdx
 
             response
         }
@@ -139,6 +142,95 @@ class WikibaseServiceSpec {
         capturedLanguageTag mustBe languageTag
         capturedEntityType mustBe type
         capturedLimit mustBe limit
+        capturedPageIdx mustBe 0
+    }
+
+    @Test
+    fun `Given searchForEntities is called with a SearchTerm, LanguageTag, EntityType, Limit and a PageIndex, it delegates the call to the Repository and returns its result`() = runBlockingTest {
+        // Given
+        val searchTerm: String = fixture.fixture()
+        val languageTag: String = fixture.fixture()
+        val type = DataModelContract.EntityType.PROPERTY
+        val limit: Int = fixture.fixture()
+        val page: Int = fixture.fixture<Int>().absoluteValue
+
+        val response = listOf(q42)
+
+        var capturedTerm: String? = null
+        var capturedLanguageTag: LanguageTag? = null
+        var capturedEntityType: DataModelContract.EntityType? = null
+        var capturedLimit: Int? = null
+        var capturedPageIdx: Int? = null
+
+        wikibaseRepository.search = { givenTerm, givenTag, givenType, givenLimit, givenPageIdx ->
+            capturedTerm = givenTerm
+            capturedLanguageTag = givenTag
+            capturedEntityType = givenType
+            capturedLimit = givenLimit
+            capturedPageIdx = givenPageIdx
+
+            response
+        }
+        // When
+        val result = WikibaseService(
+            wikibaseRepository,
+            tokenRepository,
+            serviceWrapper
+        ).searchForEntities(searchTerm, languageTag, type, limit, page)
+
+        // Then
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
+        capturedTerm mustBe searchTerm
+        capturedLanguageTag mustBe languageTag
+        capturedEntityType mustBe type
+        capturedLimit mustBe limit
+        capturedPageIdx mustBe page
+    }
+
+    @Test
+    fun `Given searchForEntities is called with a SearchTerm, LanguageTag, EntityType, Limit and a PageIndex, it filters the Index and delegates the call to the Repository and returns its result`() = runBlockingTest {
+        // Given
+        val searchTerm: String = fixture.fixture()
+        val languageTag: String = fixture.fixture()
+        val type = DataModelContract.EntityType.PROPERTY
+        val limit: Int = fixture.fixture()
+        val page: Int = -1 * fixture.fixture<Int>().absoluteValue
+
+        val response = listOf(q42)
+
+        var capturedTerm: String? = null
+        var capturedLanguageTag: LanguageTag? = null
+        var capturedEntityType: DataModelContract.EntityType? = null
+        var capturedLimit: Int? = null
+        var capturedPageIdx: Int? = null
+
+        wikibaseRepository.search = { givenTerm, givenTag, givenType, givenLimit, givenPageIdx ->
+            capturedTerm = givenTerm
+            capturedLanguageTag = givenTag
+            capturedEntityType = givenType
+            capturedLimit = givenLimit
+            capturedPageIdx = givenPageIdx
+
+            response
+        }
+        // When
+        val result = WikibaseService(
+            wikibaseRepository,
+            tokenRepository,
+            serviceWrapper
+        ).searchForEntities(searchTerm, languageTag, type, limit, page)
+
+        // Then
+        result.wrappedFunction.invoke() mustBe response
+
+        serviceWrapper.lastFunction sameAs result.wrappedFunction
+        capturedTerm mustBe searchTerm
+        capturedLanguageTag mustBe languageTag
+        capturedEntityType mustBe type
+        capturedLimit mustBe limit
+        capturedPageIdx mustBe 0
     }
 
     @Test

@@ -33,16 +33,34 @@ internal class WikibaseService(
         term: String,
         language: LanguageTag,
         type: DataModelContract.EntityType,
-        limit: Int
-    ): List<DataModelContract.Entity> = wikibaseRepository.search(term, language, type, limit)
+        limit: Int,
+        page: Int
+    ): List<DataModelContract.Entity> = wikibaseRepository.search(term, language, type, limit, page)
+
+    private fun guardPageIndex(index: Int): Int {
+        return if (index < 0) {
+            0
+        } else {
+            index
+        }
+    }
 
     override fun searchForEntities(
         term: String,
         language: LanguageTag,
         type: DataModelContract.EntityType,
-        limit: Int
+        limit: Int,
+        page: Int
     ): SuspendingFunctionWrapper<List<DataModelContract.Entity>> {
-        return wrapper.warp { search(term, language, type, limit) }
+        return wrapper.warp {
+            search(
+                term,
+                language,
+                type,
+                limit,
+                guardPageIndex(page)
+            )
+        }
     }
 
     private suspend fun update(entity: RevisionedEntity): RevisionedEntity? {

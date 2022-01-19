@@ -55,7 +55,8 @@ internal class WikibaseApiService(
         term: String,
         language: LanguageTag,
         type: DataModelContract.EntityType,
-        limit: Int
+        limit: Int,
+        page: Int,
     ): SearchEntityResponse {
         val request = requestBuilder
             .create()
@@ -67,7 +68,8 @@ internal class WikibaseApiService(
                     "search" to term,
                     "language" to language,
                     "type" to type.name.lowercase(),
-                    "limit" to limit
+                    "limit" to limit,
+                    "continue" to page
                 )
             ).prepare(
                 NetworkingContract.Method.GET,
