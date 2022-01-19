@@ -16,6 +16,7 @@ import tech.antibytes.util.test.annotations.RobolectricConfig
 import tech.antibytes.util.test.annotations.RobolectricTestRunner
 import tech.antibytes.util.test.annotations.RunWithRobolectricTestRunner
 import tech.antibytes.util.test.coroutine.runBlockingTest
+import tech.antibytes.util.test.coroutine.runBlockingTestWithTimeout
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
@@ -145,20 +146,16 @@ class EntityStoreSpec {
         }
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().error!! fulfils EntityStoreError.InitialState::class
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().error!! fulfils EntityStoreError.InitialState::class
         }
 
         // When
         entityStore.fetchEntity(id1, language1)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe expected
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe expected
         }
 
         // When
@@ -175,10 +172,8 @@ class EntityStoreSpec {
         entityStore.fetchEntity(id1, language1)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe expected
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe expected
         }
     }
 
@@ -241,105 +236,93 @@ class EntityStoreSpec {
         }
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().error!! fulfils EntityStoreError.InitialState::class
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().error!! fulfils EntityStoreError.InitialState::class
         }
 
         // When
         entityStore.create(language, type)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe MonolingualEntity(
-                    id = "",
-                    type = type,
-                    revision = 0,
-                    language = language,
-                    lastModification = Instant.DISTANT_PAST,
-                    isEditable = true,
-                    label = null,
-                    description = null,
-                    aliases = emptyList(),
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe MonolingualEntity(
+                id = "",
+                type = type,
+                revision = 0,
+                language = language,
+                lastModification = Instant.DISTANT_PAST,
+                isEditable = true,
+                label = null,
+                description = null,
+                aliases = emptyList(),
+            )
         }
 
         // When
         entityStore.setLabel(expected.label)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe MonolingualEntity(
-                    id = "",
-                    type = type,
-                    revision = 0,
-                    language = language,
-                    lastModification = Instant.DISTANT_PAST,
-                    isEditable = true,
-                    label = expected.label,
-                    description = null,
-                    aliases = emptyList(),
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe MonolingualEntity(
+                id = "",
+                type = type,
+                revision = 0,
+                language = language,
+                lastModification = Instant.DISTANT_PAST,
+                isEditable = true,
+                label = expected.label,
+                description = null,
+                aliases = emptyList(),
+            )
         }
 
         // When
         entityStore.setDescription(expected.description)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe MonolingualEntity(
-                    id = "",
-                    type = type,
-                    revision = 0,
-                    language = language,
-                    lastModification = Instant.DISTANT_PAST,
-                    isEditable = true,
-                    label = expected.label,
-                    description = expected.description,
-                    aliases = emptyList(),
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe MonolingualEntity(
+                id = "",
+                type = type,
+                revision = 0,
+                language = language,
+                lastModification = Instant.DISTANT_PAST,
+                isEditable = true,
+                label = expected.label,
+                description = expected.description,
+                aliases = emptyList(),
+            )
         }
 
         // When
         entityStore.setAliases(expected.aliases)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe MonolingualEntity(
-                    id = "",
-                    type = type,
-                    revision = 0,
-                    language = language,
-                    lastModification = Instant.DISTANT_PAST,
-                    isEditable = true,
-                    label = expected.label,
-                    description = expected.description,
-                    aliases = expected.aliases,
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe MonolingualEntity(
+                id = "",
+                type = type,
+                revision = 0,
+                language = language,
+                lastModification = Instant.DISTANT_PAST,
+                isEditable = true,
+                label = expected.label,
+                description = expected.description,
+                aliases = expected.aliases,
+            )
         }
 
         // When
         entityStore.save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe expected
-                capturedRevision mustBe expectedEntity.copy(
-                    id = "",
-                    revision = 0,
-                    lastModification = Instant.DISTANT_PAST
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe expected
+            capturedRevision mustBe expectedEntity.copy(
+                id = "",
+                revision = 0,
+                lastModification = Instant.DISTANT_PAST
+            )
         }
     }
 
@@ -432,76 +415,64 @@ class EntityStoreSpec {
         }
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().error!! fulfils EntityStoreError.InitialState::class
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().error!! fulfils EntityStoreError.InitialState::class
         }
 
         // When
         entityStore.fetchEntity(id, language)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().isSuccess() mustBe true
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().isSuccess() mustBe true
         }
 
         // When
         entityStore.setLabel(expected.label)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe expected.copy(
-                    revision = fetchedEntity.revision,
-                    lastModification = fetchedEntity.lastModification,
-                    description = null,
-                    aliases = emptyList()
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe expected.copy(
+                revision = fetchedEntity.revision,
+                lastModification = fetchedEntity.lastModification,
+                description = null,
+                aliases = emptyList()
+            )
         }
 
         // When
         entityStore.setDescription(expected.description)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe expected.copy(
-                    revision = fetchedEntity.revision,
-                    lastModification = fetchedEntity.lastModification,
-                    aliases = emptyList()
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe expected.copy(
+                revision = fetchedEntity.revision,
+                lastModification = fetchedEntity.lastModification,
+                aliases = emptyList()
+            )
         }
 
         // When
         entityStore.setAliases(expected.aliases)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe expected.copy(
-                    revision = fetchedEntity.revision,
-                    lastModification = fetchedEntity.lastModification,
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe expected.copy(
+                revision = fetchedEntity.revision,
+                lastModification = fetchedEntity.lastModification,
+            )
         }
 
         // When
         entityStore.save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                actual.receive().unwrap() mustBe expected
-                capturedRevision mustBe updatedEntity.copy(
-                    revision = fetchedEntity.revision,
-                    lastModification = fetchedEntity.lastModification,
-                )
-            }
+        runBlockingTestWithTimeout {
+            actual.receive().unwrap() mustBe expected
+            capturedRevision mustBe updatedEntity.copy(
+                revision = fetchedEntity.revision,
+                lastModification = fetchedEntity.lastModification,
+            )
         }
     }
 }
