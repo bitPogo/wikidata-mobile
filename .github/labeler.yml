@@ -27,6 +27,9 @@ entity-store:
 user-store:
   - user-store/**/*
 
+page-store:
+  - page-store/**/*
+
 utils-coroutine:
   - utils-coroutine/**/*
 
