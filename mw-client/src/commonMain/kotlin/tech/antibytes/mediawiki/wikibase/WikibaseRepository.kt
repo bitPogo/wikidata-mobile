@@ -55,32 +55,55 @@ internal class WikibaseRepository(
         }
     }
 
-    private fun mapAliases(
-        searchAliases: List<String>,
+    private fun mapAlias(
+        aliases: List<String>,
         language: LanguageTag
     ): List<LanguageValuePair> {
-        return searchAliases.map { searchAlias ->
-            LanguageValuePair(language = language, value = searchAlias)
+        return aliases.map { alias ->
+            LanguageValuePair(language = language, value = alias)
+        }
+    }
+
+    private fun mapAliases(
+        aliases: List<String>,
+        language: LanguageTag
+    ): Map<LanguageTag, List<LanguageValuePair>> {
+        return if (aliases.isEmpty()) {
+            emptyMap()
+        } else {
+            mapOf(language to mapAlias(aliases, language))
+        }
+    }
+
+    private fun mapValue(
+        value: String,
+        language: LanguageTag
+    ): Map<LanguageTag, LanguageValuePair> {
+        return if (value.isEmpty()) {
+            emptyMap()
+        } else {
+            mapOf(
+                language to LanguageValuePair(
+                    language = language,
+                    value = value
+                )
+            )
         }
     }
 
     private fun mapSearchEntities(
         entities: List<SearchEntity>,
-        language: LanguageTag,
         type: EntityType
     ): List<DataModelContract.Entity> {
         return entities.map { search ->
             Entity(
                 id = search.id,
                 type = type,
-                labels = mapOf(
-                    language to LanguageValuePair(language = language, value = search.label)
-                ),
-                descriptions = mapOf(
-                    language to LanguageValuePair(language = language, value = search.description)
-                ),
-                aliases = mapOf(
-                    language to mapAliases(search.aliases, language)
+                labels = mapValue(search.label, search.match.language),
+                descriptions = mapValue(search.description, search.match.language),
+                aliases = mapAliases(
+                    language = search.match.language,
+                    aliases = search.aliases,
                 )
             )
         }
@@ -96,7 +119,7 @@ internal class WikibaseRepository(
         val response = apiService.search(term, language, type, limit, page)
 
         return response.returnListOnSuccess {
-            mapSearchEntities(response.search, language, type)
+            mapSearchEntities(response.search, type)
         }
     }
 

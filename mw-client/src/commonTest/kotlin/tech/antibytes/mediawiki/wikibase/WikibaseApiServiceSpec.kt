@@ -217,6 +217,7 @@ class WikibaseApiServiceSpec {
                     description = fixture.fixture(),
                     aliases = fixture.listFixture(),
                     match = Match(
+                        language = languageTag,
                         type = MatchTypes.ALIAS
                     )
                 )
