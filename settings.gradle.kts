@@ -21,6 +21,7 @@ include(
     "mw-client",
     "mw-client-e2e",
     "entity-store",
+    "user-store",
     "utils-coroutine"
 )
 

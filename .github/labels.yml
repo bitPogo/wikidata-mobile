@@ -67,6 +67,10 @@
   description: Storage for Entities
   color: 000080
 
+- name: user-store
+  description: Storage for User Data
+  color: 000080
+
 - name: utils-coroutine
   description: Wrappers for Coroutines
   color: 000080
