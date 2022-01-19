@@ -22,6 +22,7 @@ import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.util.test.coroutine.runBlockingTest
+import tech.antibytes.util.test.coroutine.runBlockingTestWithTimeout
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
@@ -136,12 +137,10 @@ class EntityStoreSpec {
         EntityStore(koin).fetchEntity(id, language)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() mustBe expected
-                capturedId mustBe id
-                capturedLanguage mustBe language
-            }
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe expected
+            capturedId mustBe id
+            capturedLanguage mustBe language
         }
     }
 
@@ -236,15 +235,13 @@ class EntityStoreSpec {
         EntityStore(koin).fetchEntity(id, language)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() mustBe expected
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe expected
 
-                capturedEntity mustBe remoteEntity
+            capturedEntity mustBe remoteEntity
 
-                capturedId mustBe id
-                capturedLanguage mustBe language
-            }
+            capturedId mustBe id
+            capturedLanguage mustBe language
         }
     }
 
@@ -301,14 +298,12 @@ class EntityStoreSpec {
         EntityStore(koin).fetchEntity(id, language)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.MissingEntity> {
-                    result.receive().unwrap()
-                }
-
-                error.message mustBe "Entity ($id) in Language ($language) not found."
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.MissingEntity> {
+                result.receive().unwrap()
             }
+
+            error.message mustBe "Entity ($id) in Language ($language) not found."
         }
     }
 
@@ -364,14 +359,12 @@ class EntityStoreSpec {
         EntityStore(koin).fetchEntity(id, language)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFails {
-                    result.receive().unwrap()
-                }
-
-                error sameAs expected
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
             }
+
+            error sameAs expected
         }
     }
 
@@ -430,14 +423,12 @@ class EntityStoreSpec {
         EntityStore(koin).fetchEntity(id, language)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFails {
-                    result.receive().unwrap()
-                }
-
-                error sameAs expected
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
             }
+
+            error sameAs expected
         }
     }
 
@@ -485,14 +476,12 @@ class EntityStoreSpec {
         EntityStore(koin).setLabel(fixture.fixture())
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.MutationFailure> {
-                    result.receive().unwrap()
-                }
-
-                error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.MutationFailure> {
+                result.receive().unwrap()
             }
+
+            error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
         }
     }
 
@@ -554,10 +543,8 @@ class EntityStoreSpec {
         EntityStore(koin).setLabel(newLabel)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() mustBe entity.copy(label = newLabel)
-            }
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe entity.copy(label = newLabel)
         }
     }
 
@@ -605,14 +592,12 @@ class EntityStoreSpec {
         EntityStore(koin).setDescription(fixture.fixture())
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.MutationFailure> {
-                    result.receive().unwrap()
-                }
-
-                error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.MutationFailure> {
+                result.receive().unwrap()
             }
+
+            error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
         }
     }
 
@@ -674,10 +659,8 @@ class EntityStoreSpec {
         EntityStore(koin).setDescription(newDescription)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() mustBe entity.copy(description = newDescription)
-            }
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe entity.copy(description = newDescription)
         }
     }
 
@@ -725,14 +708,12 @@ class EntityStoreSpec {
         EntityStore(koin).setAliases(fixture.listFixture())
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.MutationFailure> {
-                    result.receive().unwrap()
-                }
-
-                error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.MutationFailure> {
+                result.receive().unwrap()
             }
+
+            error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
         }
     }
 
@@ -794,10 +775,8 @@ class EntityStoreSpec {
         EntityStore(koin).setAliases(newAliases)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() mustBe entity.copy(aliases = newAliases)
-            }
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe entity.copy(aliases = newAliases)
         }
     }
 
@@ -848,20 +827,18 @@ class EntityStoreSpec {
         EntityStore(koin).create(language, type)
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() mustBe MonolingualEntity(
-                    id = "",
-                    type = type,
-                    revision = 0,
-                    language = language,
-                    lastModification = Instant.DISTANT_PAST,
-                    isEditable = true,
-                    label = null,
-                    description = null,
-                    aliases = emptyList(),
-                )
-            }
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe MonolingualEntity(
+                id = "",
+                type = type,
+                revision = 0,
+                language = language,
+                lastModification = Instant.DISTANT_PAST,
+                isEditable = true,
+                label = null,
+                description = null,
+                aliases = emptyList(),
+            )
         }
     }
 

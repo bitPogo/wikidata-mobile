@@ -16,7 +16,6 @@ repositories {
 
 dependencies {
     implementation(Dependency.gradle.dependency)
-    implementation(Dependency.gradle.reflection)
     implementation(Dependency.gradle.serialization)
     implementation(Dependency.gradle.coverage)
     implementation(Dependency.gradle.spotless)
