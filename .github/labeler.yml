@@ -24,6 +24,9 @@ mw-client:
 entity-store:
   - entity-store/**/*
 
+user-store:
+  - user-store/**/*
+
 utils-coroutine:
   - utils-coroutine/**/*
 
