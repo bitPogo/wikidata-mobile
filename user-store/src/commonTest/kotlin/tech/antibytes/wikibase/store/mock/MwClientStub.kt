@@ -23,20 +23,24 @@ class MwClientStub : PublicApi.Client, MockContract.Mock {
     override val wikibase = WikibaseStub()
 
     override fun clear() {
-        page.clear()
-        wikibase.clear()
+        authentication.clear()
     }
 }
 
-class AuthenticationStub : PublicApi.AuthenticationService {
+class AuthenticationStub : PublicApi.AuthenticationService, MockContract.Mock {
+    var login: ((String, String) -> SuspendingFunctionWrapper<Boolean>)? = null
+
     override suspend fun login(username: String, password: String): SuspendingFunctionWrapper<Boolean> {
-        TODO("Not yet implemented")
+        return login?.invoke(username, password)
+            ?: throw MockError.MissingStub("Missing Sideeffect login")
+    }
+
+    override fun clear() {
+        login = null
     }
 }
 
-class PageStub : PublicApi.PageService, MockContract.Mock {
-    var fetchRestrictions: ((String) -> SuspendingFunctionWrapper<List<String>>)? = null
-
+class PageStub : PublicApi.PageService {
     override fun randomPage(
         limit: Int,
         namespace: Int?
@@ -45,26 +49,16 @@ class PageStub : PublicApi.PageService, MockContract.Mock {
     }
 
     override fun fetchRestrictions(pageTitle: String): SuspendingFunctionWrapper<List<String>> {
-        return fetchRestrictions?.invoke(pageTitle)
-            ?: throw MockError.MissingStub("Missing Sideeffect fetchRestrictions")
-    }
-
-    override fun clear() {
-        fetchRestrictions = null
+        TODO("Not yet implemented")
     }
 }
 
-class WikibaseStub : PublicApi.WikibaseService, MockContract.Mock {
-    var fetchEntities: ((Set<EntityId>, LanguageTag?) -> SuspendingFunctionWrapper<List<RevisionedEntity>>)? = null
-    var updateEntity: ((RevisionedEntity) -> SuspendingFunctionWrapper<RevisionedEntity?>)? = null
-    var createEntity: ((EntityType, BoxedTerms) -> SuspendingFunctionWrapper<RevisionedEntity?>)? = null
-
+class WikibaseStub : PublicApi.WikibaseService {
     override fun fetchEntities(
         ids: Set<EntityId>,
         language: LanguageTag?
     ): SuspendingFunctionWrapper<List<RevisionedEntity>> {
-        return fetchEntities?.invoke(ids, language)
-            ?: throw MockError.MissingStub("Missing Sideeffect fetchEntities")
+        TODO("Not yet implemented")
     }
 
     override fun searchForEntities(
@@ -77,21 +71,10 @@ class WikibaseStub : PublicApi.WikibaseService, MockContract.Mock {
     }
 
     override fun updateEntity(entity: RevisionedEntity): SuspendingFunctionWrapper<RevisionedEntity?> {
-        return updateEntity?.invoke(entity)
-            ?: throw MockError.MissingStub("Missing Sideeffect updateEntity")
+        TODO("Not yet implemented")
     }
 
-    override fun createEntity(
-        type: EntityType,
-        entity: BoxedTerms
-    ): SuspendingFunctionWrapper<RevisionedEntity?> {
-        return createEntity?.invoke(type, entity)
-            ?: throw MockError.MissingStub("Missing Sideeffect createEntity")
-    }
-
-    override fun clear() {
-        fetchEntities = null
-        updateEntity = null
-        createEntity = null
+    override fun createEntity(type: EntityType, entity: BoxedTerms): SuspendingFunctionWrapper<RevisionedEntity?> {
+        TODO("Not yet implemented")
     }
 }

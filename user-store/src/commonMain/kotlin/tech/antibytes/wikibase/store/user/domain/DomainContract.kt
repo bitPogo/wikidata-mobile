@@ -8,7 +8,7 @@ package tech.antibytes.wikibase.store.user.domain
 
 internal interface DomainContract {
     interface Repository {
-        fun login(username: String, password: String): Boolean
-        fun logout()
+        suspend fun login(username: String, password: String): Boolean
+        suspend fun logout(): Boolean
     }
 }
