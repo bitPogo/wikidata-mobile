@@ -6,6 +6,7 @@
 
 package tech.antibytes.wikibase.store.user
 
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 
 interface UserStoreContract {
@@ -14,5 +15,13 @@ interface UserStoreContract {
 
         fun login(username: String, password: String)
         fun logout()
+    }
+
+    interface UserStoreFactory {
+        fun getInstance(
+            client: PublicApi.Client,
+            producerScope: CoroutineWrapperContract.CoroutineScopeDispatcher,
+            consumerScope: CoroutineWrapperContract.CoroutineScopeDispatcher
+        ): UserStore
     }
 }

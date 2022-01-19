@@ -11,7 +11,6 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.util.test.sameAs
 import tech.antibytes.wikibase.store.mock.MwClientStub
 import tech.antibytes.wikibase.store.mock.SuspendingFunctionWrapperStub
 import tech.antibytes.wikibase.store.user.domain.DomainContract

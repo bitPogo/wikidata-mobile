@@ -433,7 +433,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given setLabel is called with a String it fails, if the latest State is an failure`() {
+    fun `Given setLabel is called with a String it emits a Failure, if the latest State is an failure`() {
         // Given
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Failure(EntityStoreError.InitialState())
@@ -549,7 +549,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given setDescription is called with a String it fails, if the latest State is an failure`() {
+    fun `Given setDescription is called with a String it emits a Failure, if the latest State is an failure`() {
         // Given
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Failure(EntityStoreError.InitialState())
@@ -665,7 +665,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given setAliases is called with a String it fails, if the latest State is an failure`() {
+    fun `Given setAliases is called with a String it emits a Failure, if the latest State is an failure`() {
         // Given
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Failure(EntityStoreError.InitialState())
@@ -908,7 +908,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given rollback is called, while in Error state, it fails with InvalidState`() {
+    fun `Given rollback is called, while in Error state, it emits a Failure with InvalidState`() {
         // Given
         val expected = RuntimeException()
 
@@ -1057,7 +1057,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given rollback is called, while in Success state, it fails with MissingEntity if the LocalRepository returns null`() {
+    fun `Given rollback is called, while in Success state, it emits a Failure with MissingEntity if the LocalRepository returns null`() {
         // Given
         val id: EntityId = fixture.fixture()
         val language: LanguageTag = fixture.fixture()
@@ -1132,7 +1132,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given rollback is called, while in Success state, it rethrows any Exceptions from the LocalRepository`() {
+    fun `Given rollback is called, while in Success state, it emtis a Failure with any Exceptions from the LocalRepository`() {
         // Given
         val id: EntityId = fixture.fixture()
         val language: LanguageTag = fixture.fixture()
@@ -1274,7 +1274,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an ErrorState, it with InvalidState`() {
+    fun `Given save is called after an ErrorState, it emits a Failure with InvalidState`() {
         // Given
         val expected = RuntimeException()
 
@@ -1425,7 +1425,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an EntityCreation, it rethorws any error from the remoteRepository`() {
+    fun `Given save is called after an EntityCreation, it emits a Failure wiht any Error from the remoteRepository`() {
         // Given
         val inMemoryEntity = MonolingualEntity(
             id = "",
@@ -1513,7 +1513,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an EntityCreation, it rethorws any error from the localRepository`() {
+    fun `Given save is called after an EntityCreation, it emits a Failure wiht any Error from the localRepository`() {
         // Given
         val inMemoryEntity = MonolingualEntity(
             id = "",
@@ -1601,7 +1601,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an EntityCreation, it fails due to the remote Repository returns null`() {
+    fun `Given save is called after an EntityCreation, it emits a Failure due to the remote Repository returns null`() {
         // Given
         val inMemoryEntity = MonolingualEntity(
             id = "",
@@ -1687,7 +1687,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an EntityCreation, it fails due to the local Repository returns null`() {
+    fun `Given save is called after an EntityCreation, it emits a Failure due to the local Repository returns null`() {
         // Given
         val inMemoryEntity = MonolingualEntity(
             id = "",
@@ -1869,7 +1869,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an EntityUpdate, it rethorws any error from the remoteRepository`() {
+    fun `Given save is called after an EntityUpdate, it emits Failure with any Error from the RemoteRepository`() {
         // Given
         val inMemoryEntity = MonolingualEntity(
             id = fixture.fixture(),
@@ -1957,7 +1957,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an EntityUpdate, it rethorws any error from the localRepository`() {
+    fun `Given save is called after an EntityUpdate, it emits a Failure with any Error from the LocalRepository`() {
         // Given
         val inMemoryEntity = MonolingualEntity(
             id = fixture.fixture(),
@@ -2045,7 +2045,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an EntityUpdate, it fails due to the remote Repository returns null`() {
+    fun `Given save is called after an EntityUpdate, it emits a Failure due to the remote Repository returns null`() {
         // Given
         val inMemoryEntity = MonolingualEntity(
             id = fixture.fixture(),
@@ -2131,7 +2131,7 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given save is called after an EntityUpdate, it fails due to the local Repository returns null`() {
+    fun `Given save is called after an EntityUpdate, it emits a Failure due to the local Repository returns null`() {
         // Given
         val inMemoryEntity = MonolingualEntity(
             id = fixture.fixture(),
