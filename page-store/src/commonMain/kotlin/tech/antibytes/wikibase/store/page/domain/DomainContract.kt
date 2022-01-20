@@ -17,7 +17,7 @@ internal interface DomainContract {
     }
 
     interface RemoteRepository {
-        suspend fun fetchRandomPageIds(): List<EntityId>
+        suspend fun fetchRandomItemIds(): List<EntityId>
         suspend fun searchForItem(term: String, language: LanguageTag): List<PageModelContract.SearchEntry>
     }
 

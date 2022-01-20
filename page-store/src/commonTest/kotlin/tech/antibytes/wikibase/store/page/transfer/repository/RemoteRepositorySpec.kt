@@ -13,10 +13,10 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
+import tech.antibytes.wikibase.store.mock.SuspendingFunctionWrapperStub
 import tech.antibytes.wikibase.store.mock.client.EntityStub
 import tech.antibytes.wikibase.store.mock.client.MwClientStub
 import tech.antibytes.wikibase.store.mock.client.PagePointerStub
-import tech.antibytes.wikibase.store.mock.SuspendingFunctionWrapperStub
 import tech.antibytes.wikibase.store.mock.transfer.mapper.SearchEntityMapperStub
 import tech.antibytes.wikibase.store.page.domain.DomainContract
 import tech.antibytes.wikibase.store.page.domain.model.SearchEntry
@@ -55,7 +55,7 @@ class RemoteRepositorySpec {
             SuspendingFunctionWrapperStub { randomPages }
         }
         // When
-        val actual = RemoteRepository(client, mapper).fetchRandomPageIds()
+        val actual = RemoteRepository(client, mapper).fetchRandomItemIds()
 
         //
         actual mustBe expected
@@ -80,7 +80,7 @@ class RemoteRepositorySpec {
             SuspendingFunctionWrapperStub { randomPages }
         }
         // When
-        val actual = RemoteRepository(client, mapper).fetchRandomPageIds()
+        val actual = RemoteRepository(client, mapper).fetchRandomItemIds()
 
         //
         actual mustBe emptyList()

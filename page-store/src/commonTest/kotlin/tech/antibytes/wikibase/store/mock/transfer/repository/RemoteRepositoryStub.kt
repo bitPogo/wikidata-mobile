@@ -17,7 +17,7 @@ class RemoteRepositoryStub(
     var fetchRandomPageIds: (() -> List<EntityId>)? = null,
     var searchForItem: ((String, LanguageTag) -> List<PageModelContract.SearchEntry>)? = null
 ) : DomainContract.RemoteRepository, MockContract.Mock {
-    override suspend fun fetchRandomPageIds(): List<EntityId> {
+    override suspend fun fetchRandomItemIds(): List<EntityId> {
         return fetchRandomPageIds?.invoke()
             ?: throw MockError.MissingStub("Missing Sideeffect fetchRandomPageIds")
     }

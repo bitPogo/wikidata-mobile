@@ -17,7 +17,7 @@ interface PageStoreContract {
         val randomPage: CoroutineWrapperContract.SharedFlowWrapper<String, Exception>
         val search: CoroutineWrapperContract.SharedFlowWrapper<List<PageModelContract.SearchEntry>, Exception>
 
-        fun fetchRandomPage()
+        fun fetchRandomItem()
         fun searchForItem(term: String, language: LanguageTag)
     }
 
@@ -27,6 +27,6 @@ interface PageStoreContract {
             database: PageQueries,
             producerScope: CoroutineWrapperContract.CoroutineScopeDispatcher,
             consumerScope: CoroutineWrapperContract.CoroutineScopeDispatcher
-        )
+        ): PageStore
     }
 }

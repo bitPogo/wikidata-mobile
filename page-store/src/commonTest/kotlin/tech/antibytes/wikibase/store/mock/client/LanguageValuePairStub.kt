@@ -11,5 +11,6 @@ import tech.antibytes.mediawiki.LanguageTag
 
 data class LanguageValuePairStub(
     override val language:
-    LanguageTag, override val value: String
+        LanguageTag,
+    override val value: String
 ) : DataModelContract.LanguageValuePair

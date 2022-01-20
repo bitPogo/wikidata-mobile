@@ -6,11 +6,11 @@
 
 package tech.antibytes.wikibase.store.mock.client
 
-import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
-import tech.antibytes.mediawiki.DataModelContract.Entity
 import tech.antibytes.mediawiki.DataModelContract.BoxedTerms
+import tech.antibytes.mediawiki.DataModelContract.Entity
 import tech.antibytes.mediawiki.DataModelContract.EntityType
 import tech.antibytes.mediawiki.DataModelContract.RevisionedEntity
+import tech.antibytes.mediawiki.DataModelContract.RevisionedPagePointer
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
 import tech.antibytes.mediawiki.PublicApi

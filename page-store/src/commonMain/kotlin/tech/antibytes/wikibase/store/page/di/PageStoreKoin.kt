@@ -49,7 +49,6 @@ internal fun resolvePageStoreModule(): Module {
             MutableSharedFlow<ResultContract<List<PageModelContract.SearchEntry>, Exception>>()
         }
 
-
         factory<SharedFlowWrapper<List<PageModelContract.SearchEntry>, Exception>>(
             named(DomainContract.DomainKoinIds.EXTERNAL_SEARCH_FLOW)
         ) {

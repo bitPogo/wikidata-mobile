@@ -63,7 +63,6 @@ class SchemaSpec {
 
         queries.deleteRandomPage(id1)
 
-
         val actual = queries.peekRandomPages().executeAsOneOrNull()
 
         // Then

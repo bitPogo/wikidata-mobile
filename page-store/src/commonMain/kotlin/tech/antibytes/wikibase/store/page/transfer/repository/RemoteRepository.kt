@@ -27,7 +27,7 @@ internal class RemoteRepository(
             .filter { id -> id.startsWith(ITEM_PREFIX) }
     }
 
-    override suspend fun fetchRandomPageIds(): List<EntityId> {
+    override suspend fun fetchRandomItemIds(): List<EntityId> {
         val response = client.page.randomPage(42).wrappedFunction.invoke()
 
         return mapPageIds(response)
