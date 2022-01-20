@@ -7,6 +7,7 @@
 package tech.antibytes.wikibase.store.page
 
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.wikibase.store.page.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 
 interface PageStoreContract {
@@ -15,6 +16,6 @@ interface PageStoreContract {
         val search: CoroutineWrapperContract.SharedFlowWrapper<List<PageModelContract.SearchEntry>, Exception>
 
         fun fetchRandomPage()
-        fun searchForPage(term: String)
+        fun searchForItem(term: String, language: LanguageTag)
     }
 }

@@ -7,16 +7,21 @@
 package tech.antibytes.wikibase.store.page.domain
 
 import tech.antibytes.wikibase.store.page.domain.model.EntityId
+import tech.antibytes.wikibase.store.page.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 
-interface DomainContract {
+internal interface DomainContract {
     interface LocalRepository {
         fun fetchRandomPageId(): EntityId
         fun saveRandomPageIds(ids: List<EntityId>)
     }
 
     interface RemoteRepository {
-        fun fetchRandomPageIds(): List<EntityId>
-        fun searchForPage(term: String): List<PageModelContract.SearchEntry>
+        suspend fun fetchRandomPageIds(): List<EntityId>
+        suspend fun searchForItem(term: String, language: LanguageTag): List<PageModelContract.SearchEntry>
+    }
+
+    companion object {
+        const val ITEM_PREFIX = "Q"
     }
 }
