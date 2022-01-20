@@ -21,6 +21,17 @@ internal interface DomainContract {
         suspend fun searchForItem(term: String, language: LanguageTag): List<PageModelContract.SearchEntry>
     }
 
+    enum class DomainKoinIds {
+        REMOTE,
+        LOCAL,
+        PRODUCER_SCOPE,
+        CONSUMER_SCOPE,
+        INTERNAL_RANDOM_FLOW,
+        EXTERNAL_RANDOM_FLOW,
+        INTERNAL_SEARCH_FLOW,
+        EXTERNAL_SEARCH_FLOW,
+    }
+
     companion object {
         const val ITEM_PREFIX = "Q"
     }

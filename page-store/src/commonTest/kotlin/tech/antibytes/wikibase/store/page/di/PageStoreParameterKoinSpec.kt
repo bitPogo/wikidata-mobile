@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.entity.di
+package tech.antibytes.wikibase.store.page.di
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,13 +13,13 @@ import org.koin.dsl.koinApplication
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.util.test.sameAs
-import tech.antibytes.wikibase.store.database.entity.EntityQueries
-import tech.antibytes.wikibase.store.entity.domain.DomainContract
-import tech.antibytes.wikibase.store.mock.EntityQueriesStub
-import tech.antibytes.wikibase.store.mock.MwClientStub
+import tech.antibytes.wikibase.store.database.page.PageQueries
+import tech.antibytes.wikibase.store.mock.client.MwClientStub
+import tech.antibytes.wikibase.store.mock.database.PageQueriesStub
+import tech.antibytes.wikibase.store.page.domain.DomainContract
 import kotlin.test.Test
 
-class EntityStoreParameterKoinSpec {
+class PageStoreParameterKoinSpec {
     @Test
     fun `Given resolveEntityStoreParameterModule it holds a given MWClient`() {
         // Given
@@ -27,9 +27,9 @@ class EntityStoreParameterKoinSpec {
 
         val koin = koinApplication {
             modules(
-                resolvePageStoreParameterModule(
+                resolveEntityStoreParameterModule(
                     expected,
-                    EntityQueriesStub(),
+                    PageQueriesStub(),
                     { CoroutineScope(Dispatchers.Default) },
                     { CoroutineScope(Dispatchers.Default) }
                 )
@@ -46,11 +46,11 @@ class EntityStoreParameterKoinSpec {
     @Test
     fun `Given resolveEntityStoreParameterModule it holds given EntityQueries`() {
         // Given
-        val expected = EntityQueriesStub()
+        val expected = PageQueriesStub()
 
         val koin = koinApplication {
             modules(
-                resolvePageStoreParameterModule(
+                resolveEntityStoreParameterModule(
                     MwClientStub(),
                     expected,
                     { CoroutineScope(Dispatchers.Default) },
@@ -60,7 +60,7 @@ class EntityStoreParameterKoinSpec {
         }
 
         // When
-        val database: EntityQueries = koin.koin.get()
+        val database: PageQueries = koin.koin.get()
 
         // Then
         database sameAs expected
@@ -73,9 +73,9 @@ class EntityStoreParameterKoinSpec {
 
         val koin = koinApplication {
             modules(
-                resolvePageStoreParameterModule(
+                resolveEntityStoreParameterModule(
                     MwClientStub(),
-                    EntityQueriesStub(),
+                    PageQueriesStub(),
                     expected,
                     { CoroutineScope(Dispatchers.Default) }
                 )
@@ -96,9 +96,9 @@ class EntityStoreParameterKoinSpec {
 
         val koin = koinApplication {
             modules(
-                resolvePageStoreParameterModule(
+                resolveEntityStoreParameterModule(
                     MwClientStub(),
-                    EntityQueriesStub(),
+                    PageQueriesStub(),
                     { CoroutineScope(Dispatchers.Default) },
                     expected
                 )

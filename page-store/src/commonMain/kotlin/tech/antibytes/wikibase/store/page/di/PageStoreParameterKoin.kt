@@ -4,19 +4,19 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.entity.di
+package tech.antibytes.wikibase.store.page.di
 
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
-import tech.antibytes.wikibase.store.database.entity.EntityQueries
-import tech.antibytes.wikibase.store.entity.domain.DomainContract
+import tech.antibytes.wikibase.store.database.page.PageQueries
+import tech.antibytes.wikibase.store.page.domain.DomainContract
 
-internal fun resolvePageStoreParameterModule(
+internal fun resolveEntityStoreParameterModule(
     client: PublicApi.Client,
-    database: EntityQueries,
+    database: PageQueries,
     producerScope: CoroutineScopeDispatcher,
     consumerScope: CoroutineScopeDispatcher
 ): Module {

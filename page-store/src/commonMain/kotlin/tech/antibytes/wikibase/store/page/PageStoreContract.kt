@@ -6,7 +6,9 @@
 
 package tech.antibytes.wikibase.store.page
 
+import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.wikibase.store.database.page.PageQueries
 import tech.antibytes.wikibase.store.page.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 
@@ -17,5 +19,14 @@ interface PageStoreContract {
 
         fun fetchRandomPage()
         fun searchForItem(term: String, language: LanguageTag)
+    }
+
+    interface PageStoreFactory {
+        fun getInstance(
+            client: PublicApi.Client,
+            database: PageQueries,
+            producerScope: CoroutineWrapperContract.CoroutineScopeDispatcher,
+            consumerScope: CoroutineWrapperContract.CoroutineScopeDispatcher
+        )
     }
 }
