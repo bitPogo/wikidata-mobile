@@ -127,4 +127,51 @@ class MwClientE2ESpec {
         val titlePrefix = pages.first().title.startsWith("P") || pages.first().title.startsWith("Q")
         titlePrefix mustBe true
     }
+
+    @Test
+    fun `It creates and finds a Entity`() = runBlockingTest {
+        val host = "test.wikidata.org"
+        val language = "de"
+        val entity = TestEntity(
+            id = fixture.fixture(),
+            type = DataModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            lastModification = Instant.DISTANT_FUTURE,
+            labels = mapOf(
+                language to LanguageValuePair(
+                    language = language,
+                    value = fixture.fixture()
+                )
+            ),
+            descriptions = mapOf(
+                language to LanguageValuePair(
+                    language = language,
+                    value = fixture.fixture()
+                )
+            ),
+            aliases = mapOf(
+                language to listOf(
+                    LanguageValuePair(
+                        language = language,
+                        value = fixture.fixture()
+                    )
+                )
+            )
+        )
+
+        val client = MwClient.getInstance(
+            host,
+            LoggerStub(),
+            { true },
+            { CoroutineScope(Dispatchers.Default) }
+        )
+
+        val newEntity = client.wikibase.createEntity(DataModelContract.EntityType.ITEM, entity).wrappedFunction.invoke()
+        client.wikibase.searchForEntities(
+            newEntity!!.labels[language]!!.value,
+            language,
+            newEntity.type,
+            10
+        ).wrappedFunction.invoke()
+    }
 }

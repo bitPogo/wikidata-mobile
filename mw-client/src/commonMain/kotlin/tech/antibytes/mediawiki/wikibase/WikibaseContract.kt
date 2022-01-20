@@ -51,7 +51,8 @@ internal interface WikibaseContract {
             term: String,
             language: LanguageTag,
             type: EntityType,
-            limit: Int
+            limit: Int,
+            page: Int
         ): SearchEntityResponse
 
         @Throws(
@@ -98,7 +99,8 @@ internal interface WikibaseContract {
             term: String,
             language: LanguageTag,
             type: EntityType,
-            limit: Int
+            limit: Int,
+            page: Int
         ): List<DataModelContract.Entity>
 
         @Throws(

@@ -44,7 +44,8 @@ interface PublicApi {
             term: String,
             language: LanguageTag,
             type: DataModelContract.EntityType,
-            limit: Int
+            limit: Int,
+            page: Int = 0
         ): SuspendingFunctionWrapper<List<DataModelContract.Entity>>
 
         fun updateEntity(entity: RevisionedEntity): SuspendingFunctionWrapper<RevisionedEntity?>

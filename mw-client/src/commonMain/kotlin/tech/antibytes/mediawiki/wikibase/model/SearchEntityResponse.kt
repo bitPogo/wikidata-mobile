@@ -6,8 +6,10 @@
 
 package tech.antibytes.mediawiki.wikibase.model
 
+import kotlinx.serialization.Serializable
 import tech.antibytes.mediawiki.wikibase.WikibaseContract
 
+@Serializable
 internal data class SearchEntityResponse(
     val search: List<SearchEntity>,
     override val success: Int = 0

@@ -19,7 +19,7 @@ import tech.antibytes.util.test.MockError
 
 internal class WikibaseApiServiceStub(
     var fetch: ((Set<EntityId>, LanguageTag?) -> EntitiesResponse)? = null,
-    var search: ((String, LanguageTag, DataModelContract.EntityType, Int) -> SearchEntityResponse)? = null,
+    var search: ((String, LanguageTag, DataModelContract.EntityType, Int, Int) -> SearchEntityResponse)? = null,
     var update: ((EntityId, Long, String, MetaToken) -> EntityResponse)? = null,
     var create: ((DataModelContract.EntityType, String, MetaToken) -> EntityResponse)? = null
 ) : WikibaseContract.ApiService, MockContract.Mock {
@@ -31,9 +31,10 @@ internal class WikibaseApiServiceStub(
         term: String,
         language: LanguageTag,
         type: DataModelContract.EntityType,
-        limit: Int
+        limit: Int,
+        page: Int
     ): SearchEntityResponse {
-        return search?.invoke(term, language, type, limit)
+        return search?.invoke(term, language, type, limit, page)
             ?: throw MockError.MissingStub("Missing Sideeffect search")
     }
 
