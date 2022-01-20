@@ -4,12 +4,13 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.page.transfer
+package tech.antibytes.wikibase.store.page.transfer.mapper
 
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.wikibase.store.page.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 import tech.antibytes.wikibase.store.page.domain.model.SearchEntry
+import tech.antibytes.wikibase.store.page.transfer.DataTransferContract
 
 internal class SearchEntityMapper : DataTransferContract.SearchEntityMapper {
     private fun extractLanguage(entity: DataModelContract.Entity): LanguageTag? {

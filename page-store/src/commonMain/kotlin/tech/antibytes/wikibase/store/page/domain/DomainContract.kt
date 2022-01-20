@@ -12,7 +12,7 @@ import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 
 internal interface DomainContract {
     interface LocalRepository {
-        fun fetchRandomPageId(): EntityId
+        fun fetchRandomPageId(): EntityId?
         fun saveRandomPageIds(ids: List<EntityId>)
     }
 

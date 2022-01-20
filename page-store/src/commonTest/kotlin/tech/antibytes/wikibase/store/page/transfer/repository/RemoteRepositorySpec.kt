@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.page.transfer
+package tech.antibytes.wikibase.store.page.transfer.repository
 
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.util.test.coroutine.runBlockingTest
@@ -13,11 +13,11 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.wikibase.store.mock.EntityStub
-import tech.antibytes.wikibase.store.mock.MwClientStub
-import tech.antibytes.wikibase.store.mock.PagePointerStub
+import tech.antibytes.wikibase.store.mock.client.EntityStub
+import tech.antibytes.wikibase.store.mock.client.MwClientStub
+import tech.antibytes.wikibase.store.mock.client.PagePointerStub
 import tech.antibytes.wikibase.store.mock.SuspendingFunctionWrapperStub
-import tech.antibytes.wikibase.store.mock.transfer.SearchEntityMapperStub
+import tech.antibytes.wikibase.store.mock.transfer.mapper.SearchEntityMapperStub
 import tech.antibytes.wikibase.store.page.domain.DomainContract
 import tech.antibytes.wikibase.store.page.domain.model.SearchEntry
 import kotlin.test.BeforeTest

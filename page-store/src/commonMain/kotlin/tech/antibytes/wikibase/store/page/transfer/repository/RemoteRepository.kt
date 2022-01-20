@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.page.transfer
+package tech.antibytes.wikibase.store.page.transfer.repository
 
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.PublicApi
@@ -13,6 +13,7 @@ import tech.antibytes.wikibase.store.page.domain.DomainContract.Companion.ITEM_P
 import tech.antibytes.wikibase.store.page.domain.model.EntityId
 import tech.antibytes.wikibase.store.page.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
+import tech.antibytes.wikibase.store.page.transfer.DataTransferContract
 
 internal class RemoteRepository(
     private val client: PublicApi.Client,

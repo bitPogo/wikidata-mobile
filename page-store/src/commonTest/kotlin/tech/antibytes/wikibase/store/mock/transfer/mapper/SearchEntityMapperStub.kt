@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.mock.transfer
+package tech.antibytes.wikibase.store.mock.transfer.mapper
 
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.util.test.MockContract

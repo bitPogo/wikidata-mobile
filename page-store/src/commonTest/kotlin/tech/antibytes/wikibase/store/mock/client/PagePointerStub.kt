@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.mock
+package tech.antibytes.wikibase.store.mock.client
 
 import tech.antibytes.mediawiki.DataModelContract
 

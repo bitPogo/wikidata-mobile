@@ -4,17 +4,17 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.page.transfer
+package tech.antibytes.wikibase.store.page.transfer.mapper
 
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.wikibase.store.mock.EntityStub
-import tech.antibytes.wikibase.store.mock.LanguageValuePairStub
-import tech.antibytes.wikibase.store.mock.transfer.SearchEntityMapperStub
+import tech.antibytes.wikibase.store.mock.client.EntityStub
+import tech.antibytes.wikibase.store.mock.client.LanguageValuePairStub
 import tech.antibytes.wikibase.store.page.domain.model.SearchEntry
+import tech.antibytes.wikibase.store.page.transfer.DataTransferContract
 import kotlin.test.Test
 
 class SearchEntityMapperSpec {
