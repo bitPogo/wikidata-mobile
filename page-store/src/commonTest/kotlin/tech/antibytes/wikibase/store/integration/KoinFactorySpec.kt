@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikibase.store.page.di
+package tech.antibytes.wikibase.store.integration
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +17,7 @@ import tech.antibytes.util.test.isNot
 import tech.antibytes.util.test.sameAs
 import tech.antibytes.wikibase.store.mock.client.MwClientStub
 import tech.antibytes.wikibase.store.mock.database.PageQueriesStub
+import tech.antibytes.wikibase.store.page.di.initKoin
 import tech.antibytes.wikibase.store.page.domain.DomainContract
 import tech.antibytes.wikibase.store.page.domain.model.EntityId
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract

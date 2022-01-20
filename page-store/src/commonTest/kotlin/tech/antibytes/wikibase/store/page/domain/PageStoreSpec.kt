@@ -418,7 +418,7 @@ class PageStoreSpec {
         flow.onEach { item -> result.send(item) }.launchIn(testScope2)
 
         // When
-        PageStore(koin).searchForItem(term, language)
+        PageStore(koin).searchItems(term, language)
 
         // Then
         runBlockingTest {
@@ -487,7 +487,7 @@ class PageStoreSpec {
         flow.onEach { item -> result.send(item) }.launchIn(testScope2)
 
         // When
-        PageStore(koin).searchForItem(term, language)
+        PageStore(koin).searchItems(term, language)
 
         // Then
         runBlockingTest {
