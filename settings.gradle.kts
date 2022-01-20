@@ -20,6 +20,7 @@ plugins {
 include(
     "mw-client",
     "mw-client-e2e",
+    "page-store",
     "entity-store",
     "user-store",
     "utils-coroutine"

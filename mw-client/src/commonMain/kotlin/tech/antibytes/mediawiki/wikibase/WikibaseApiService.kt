@@ -64,7 +64,6 @@ internal class WikibaseApiService(
                 mapOf(
                     "action" to "wbsearchentities",
                     "format" to "json",
-                    "strictlanguage" to "", // FIXME: Backend does not respect this parameter
                     "search" to term,
                     "language" to language,
                     "type" to type.name.lowercase(),

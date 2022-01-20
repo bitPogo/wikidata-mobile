@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.wikibase.WikibaseContract
 
+@Serializable(with = MatchTypeSerializer::class)
 internal enum class MatchTypes {
     LABEL,
     DESCRIPTION,
@@ -27,5 +28,6 @@ internal data class SearchEntity(
 
 @Serializable
 internal data class Match(
-    val type: MatchTypes
+    val type: MatchTypes,
+    val language: String
 )

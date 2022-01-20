@@ -1,0 +1,19 @@
+CREATE TABLE IF NOT EXISTS RandomPages (
+    pageId TEXT NOT NULL UNIQUE PRIMARY KEY
+);
+
+peekRandomPages:
+SELECT pageId
+FROM RandomPages
+LIMIT 1
+;
+
+insertRandomPage:
+INSERT INTO RandomPages
+VALUES (?)
+;
+
+deleteRandomPage:
+DELETE FROM RandomPages
+WHERE pageId = :whereId
+;

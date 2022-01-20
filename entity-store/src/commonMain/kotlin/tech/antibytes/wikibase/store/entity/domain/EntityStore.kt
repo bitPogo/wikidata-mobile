@@ -29,8 +29,7 @@ import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
 
 class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContract.EntityStore {
     override val entity: SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception> = koin.koin.get()
-    private val flow: MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>> =
-        koin.koin.get()
+    private val flow: MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>> by koin.koin.inject()
 
     private val dispatcher: CoroutineScopeDispatcher by koin.koin.inject(
         named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)

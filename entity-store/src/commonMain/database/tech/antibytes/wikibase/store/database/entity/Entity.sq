@@ -2,7 +2,7 @@ import kotlin.collections.List;
 import kotlinx.datetime.Instant;
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract.EntityType;
 
-CREATE TABLE Entity (
+CREATE TABLE IF NOT EXISTS Entity (
     id TEXT NOT NULL UNIQUE PRIMARY KEY,
     type TEXT AS EntityType NOT NULL,
     revision INTEGER NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE Entity (
     edibility INTEGER AS Boolean NOT NULL
 );
 
-CREATE TABLE Term (
+CREATE TABLE IF NOT EXISTS Term (
     entityId TEXT NOT NULL,
     language TEXT NOT NULL,
     label TEXT,

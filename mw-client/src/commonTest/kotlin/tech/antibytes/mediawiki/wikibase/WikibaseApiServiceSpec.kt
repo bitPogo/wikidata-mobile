@@ -217,6 +217,7 @@ class WikibaseApiServiceSpec {
                     description = fixture.fixture(),
                     aliases = fixture.listFixture(),
                     match = Match(
+                        language = languageTag,
                         type = MatchTypes.ALIAS
                     )
                 )
@@ -249,7 +250,6 @@ class WikibaseApiServiceSpec {
         requestBuilder.delegatedParameter mustBe mapOf(
             "action" to "wbsearchentities",
             "format" to "json",
-            "strictlanguage" to "",
             "search" to searchTerm,
             "language" to languageTag,
             "type" to type.name.lowercase(),

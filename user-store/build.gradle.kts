@@ -43,10 +43,6 @@ kotlin {
 
                 implementation(Dependency.multiplatform.coroutines.common)
 
-                implementation(Dependency.multiplatform.serialization.common)
-                implementation(Dependency.multiplatform.serialization.json)
-                implementation(Dependency.multiplatform.dateTime)
-
                 implementation(Dependency.multiplatform.stately.freeze)
 
                 implementation(project(":mw-client"))
