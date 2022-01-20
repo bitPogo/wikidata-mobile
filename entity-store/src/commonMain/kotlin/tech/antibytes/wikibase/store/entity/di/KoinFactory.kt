@@ -21,7 +21,7 @@ internal fun initKoin(
 ): KoinApplication {
     return koinApplication {
         modules(
-            resolvePageStoreParameterModule(
+            resolveEntityStoreParameterModule(
                 client,
                 database,
                 producerScope,

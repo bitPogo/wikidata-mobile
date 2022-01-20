@@ -14,7 +14,7 @@ import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineS
 import tech.antibytes.wikibase.store.database.entity.EntityQueries
 import tech.antibytes.wikibase.store.entity.domain.DomainContract
 
-internal fun resolvePageStoreParameterModule(
+internal fun resolveEntityStoreParameterModule(
     client: PublicApi.Client,
     database: EntityQueries,
     producerScope: CoroutineScopeDispatcher,

@@ -27,7 +27,7 @@ class EntityStoreParameterKoinSpec {
 
         val koin = koinApplication {
             modules(
-                resolvePageStoreParameterModule(
+                resolveEntityStoreParameterModule(
                     expected,
                     EntityQueriesStub(),
                     { CoroutineScope(Dispatchers.Default) },
@@ -50,7 +50,7 @@ class EntityStoreParameterKoinSpec {
 
         val koin = koinApplication {
             modules(
-                resolvePageStoreParameterModule(
+                resolveEntityStoreParameterModule(
                     MwClientStub(),
                     expected,
                     { CoroutineScope(Dispatchers.Default) },
@@ -73,7 +73,7 @@ class EntityStoreParameterKoinSpec {
 
         val koin = koinApplication {
             modules(
-                resolvePageStoreParameterModule(
+                resolveEntityStoreParameterModule(
                     MwClientStub(),
                     EntityQueriesStub(),
                     expected,
@@ -96,7 +96,7 @@ class EntityStoreParameterKoinSpec {
 
         val koin = koinApplication {
             modules(
-                resolvePageStoreParameterModule(
+                resolveEntityStoreParameterModule(
                     MwClientStub(),
                     EntityQueriesStub(),
                     { CoroutineScope(Dispatchers.Default) },
