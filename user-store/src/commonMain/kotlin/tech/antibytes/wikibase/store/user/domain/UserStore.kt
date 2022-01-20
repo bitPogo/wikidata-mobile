@@ -68,7 +68,9 @@ class UserStore internal constructor(
     }
 
     override fun logout() {
-        TODO("Not yet implemented")
+        executeAuthenticationEvent {
+            false
+        }
     }
 
     companion object : UserStoreContract.UserStoreFactory {
