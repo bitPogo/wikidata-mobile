@@ -29,7 +29,7 @@ class PageStore internal constructor(
         named(DomainContract.DomainKoinIds.INTERNAL_RANDOM_FLOW)
     )
 
-    override val randomPage: CoroutineWrapperContract.SharedFlowWrapper<String, Exception> = koin.koin.get(
+    override val randomItemId: CoroutineWrapperContract.SharedFlowWrapper<String, Exception> = koin.koin.get(
         named(DomainContract.DomainKoinIds.EXTERNAL_RANDOM_FLOW)
     )
 
@@ -37,7 +37,7 @@ class PageStore internal constructor(
         named(DomainContract.DomainKoinIds.INTERNAL_SEARCH_FLOW)
     )
 
-    override val search: CoroutineWrapperContract.SharedFlowWrapper<List<PageModelContract.SearchEntry>, Exception> = koin.koin.get(
+    override val searchEntries: CoroutineWrapperContract.SharedFlowWrapper<List<PageModelContract.SearchEntry>, Exception> = koin.koin.get(
         named(DomainContract.DomainKoinIds.EXTERNAL_SEARCH_FLOW)
     )
 
@@ -91,7 +91,7 @@ class PageStore internal constructor(
         }
     }
 
-    override fun searchForItem(term: String, language: LanguageTag) {
+    override fun searchItems(term: String, language: LanguageTag) {
         executeEvent(searchFlow) {
             remoteRepository.searchForItem(term, language)
         }

@@ -14,11 +14,11 @@ import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 
 interface PageStoreContract {
     interface PageStore {
-        val randomPage: CoroutineWrapperContract.SharedFlowWrapper<String, Exception>
-        val search: CoroutineWrapperContract.SharedFlowWrapper<List<PageModelContract.SearchEntry>, Exception>
+        val randomItemId: CoroutineWrapperContract.SharedFlowWrapper<String, Exception>
+        val searchEntries: CoroutineWrapperContract.SharedFlowWrapper<List<PageModelContract.SearchEntry>, Exception>
 
         fun fetchRandomItem()
-        fun searchForItem(term: String, language: LanguageTag)
+        fun searchItems(term: String, language: LanguageTag)
     }
 
     interface PageStoreFactory {
