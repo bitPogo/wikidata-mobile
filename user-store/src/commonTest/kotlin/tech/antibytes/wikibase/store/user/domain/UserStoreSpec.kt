@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
+import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.test.coroutine.runBlockingTestWithTimeout
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
@@ -226,6 +227,31 @@ class UserStoreSpec {
 
             capturedUsername mustBe username
             capturedPassword mustBe password
+        }
+    }
+
+    @Test
+    fun `Given logout is called it emits Succes`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<Boolean, Exception>>(
+            Success(true)
+        )
+        val result = Channel<ResultContract<Boolean, Exception>>()
+
+        // When
+        flow.onEach { item -> result.send(item) }.launchIn(testScope2)
+
+        UserStore(
+            { testScope1 },
+            remoteRepository,
+            flow,
+            SharedFlowWrapperStub()
+        ).logout()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() // skip initial value
+            result.receive().unwrap() mustBe false
         }
     }
 }
