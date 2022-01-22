@@ -12,6 +12,8 @@ object Dependency {
 
     val sqldelight = SqlDelight
 
+    val hilt = Hilt
+
     object SqlDelight {
         const val android = "com.squareup.sqldelight:android-driver:${Version.sqldelight}"
         const val jvm = "com.squareup.sqldelight:sqlite-driver:${Version.sqldelight}"
@@ -29,5 +31,11 @@ object Dependency {
             val coroutine = "tech.antibytes.test-utils-kmp:test-utils-coroutine:${Version.antibytes.test}"
             val ktor = "tech.antibytes.test-utils-kmp:test-utils-ktor:${Version.antibytes.test}"
         }
+    }
+
+    object Hilt {
+        const val core = "com.google.dagger:hilt-android:${Version.hilt}"
+        const val compiler = "com.google.dagger:hilt-compiler:${Version.hilt}"
+        const val test = "com.google.dagger:hilt-android-testing:${Version.hilt}"
     }
 }
