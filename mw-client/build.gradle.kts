@@ -40,12 +40,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(Dependency.multiplatform.kotlin.common)
-                implementation(Dependency.multiplatform.koin.core) {
-                    exclude(
-                        "org.jetbrains.kotlin",
-                        "kotlin-stdlib-jdk8"
-                    )
-                }
+                implementation(Dependency.multiplatform.koin.core)
 
                 implementation(Dependency.multiplatform.coroutines.common)
                 implementation(Dependency.multiplatform.ktor.common.core)

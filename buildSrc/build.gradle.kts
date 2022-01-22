@@ -21,4 +21,5 @@ dependencies {
     implementation(Dependency.gradle.spotless)
     implementation(Dependency.gradle.projectConfig)
     implementation(Dependency.gradle.sqldelight)
+    // implementation(Dependency.gradle.hilt)
 }
