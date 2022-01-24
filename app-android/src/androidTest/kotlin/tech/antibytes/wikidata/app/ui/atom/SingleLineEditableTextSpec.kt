@@ -19,7 +19,7 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
-class SingleLineEditableTextFieldSpec {
+class SingleLineEditableTextSpec {
     @get:Rule
     val composeTestRule = createComposeRule()
     private val fixture = kotlinFixture()
@@ -33,7 +33,7 @@ class SingleLineEditableTextFieldSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                SingleLineEditableTextField(
+                SingleLineEditableText(
                     label = label,
                     value = value,
                     onChange = {}
@@ -59,7 +59,7 @@ class SingleLineEditableTextFieldSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                SingleLineEditableTextField(
+                SingleLineEditableText(
                     label = label,
                     value = "",
                     onChange = {}
@@ -85,7 +85,7 @@ class SingleLineEditableTextFieldSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                SingleLineEditableTextField(
+                SingleLineEditableText(
                     label = fixture.fixture(),
                     value = "",
                     onChange = onChange

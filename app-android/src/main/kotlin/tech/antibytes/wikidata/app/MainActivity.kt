@@ -9,14 +9,12 @@ package tech.antibytes.wikidata.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import tech.antibytes.wikidata.app.ui.atom.SingleLineEditableTextField
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class MainActivity : ComponentActivity() {

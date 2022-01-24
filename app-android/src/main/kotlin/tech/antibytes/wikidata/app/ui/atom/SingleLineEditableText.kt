@@ -20,7 +20,7 @@ import tech.antibytes.wikidata.app.ui.theme.LightDarkGray
 import tech.antibytes.wikidata.app.ui.theme.LightGray
 
 @Composable
-fun SingleLineEditableTextField(
+fun SingleLineEditableText(
     label: String,
     value: String,
     onChange: (String) -> Unit,
@@ -53,5 +53,4 @@ fun SingleLineEditableTextField(
         ),
         isError = isError
     )
-
 }

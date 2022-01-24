@@ -29,13 +29,11 @@ val DarkBlue = Color(0xFF2A4B8D)
 val Blue = Color(0xFF3366CC)
 val BrightBlue = Color(0xFF447FF5)
 
-
 val LightRed = Color(0xFFFEE7E6)
 val BrightRed = Color(0xFFFF4242)
 val ModerateBrightRed = Color(0xFFD33D33)
 val DeepRed = Color(0xFFB32424)
 val ModerateRed = Color(0xFFA55858)
-
 
 val DarkGreen = Color(0xFF14866D)
 val LightDarkGreen = Color(0xFF1C6665)

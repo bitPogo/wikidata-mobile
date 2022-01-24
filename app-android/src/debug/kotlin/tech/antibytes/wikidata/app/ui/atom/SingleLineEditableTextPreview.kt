@@ -11,8 +11,8 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun SingleLineEditableTextFieldWithoutError() {
-    SingleLineEditableTextField(
+fun SingleLineEditableTextWithoutError() {
+    SingleLineEditableText(
         label = "test",
         value = "myTest",
         {}
@@ -21,8 +21,8 @@ fun SingleLineEditableTextFieldWithoutError() {
 
 @Preview
 @Composable
-fun DefaultSingleLineEditableTextFieldWithError() {
-    SingleLineEditableTextField(
+fun DefaultSingleLineEditableTextWithError() {
+    SingleLineEditableText(
         label = "test",
         value = "myTest",
         {},
