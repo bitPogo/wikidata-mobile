@@ -63,7 +63,7 @@ android {
 
     packagingOptions {
         resources {
-            // excludes += "/META-INF/{AL2.0,LGPL2.1}"
+             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
@@ -98,12 +98,15 @@ dependencies {
 
     // Debug
     debugImplementation(Dependency.android.compose.uiTooling)
+    debugImplementation(Dependency.android.compose.uiManifest)
 
     // Test
     testImplementation(Dependency.android.test.junit)
     testImplementation(Dependency.android.test.junit4)
     testImplementation(Dependency.android.test.composeJunit4)
     testImplementation(Dependency.android.test.robolectric)
+    testImplementation(LocalDependency.antibytes.test.fixture)
+    testImplementation(LocalDependency.antibytes.test.core)
 
     // testImplementation(LocalDependency.hilt.test)
     // kaptTest(LocalDependency.hilt.compiler)
@@ -111,8 +114,10 @@ dependencies {
     // InstrumentedTest
     androidTestImplementation(Dependency.android.test.junit)
     androidTestImplementation(Dependency.android.test.junit4)
+    androidTestImplementation(Dependency.android.test.composeJunit4)
     androidTestImplementation(Dependency.android.test.espressoCore)
     androidTestImplementation(Dependency.android.test.uiAutomator)
+    androidTestImplementation(LocalDependency.antibytes.test.fixture)
 
     // androidTestImplementation(LocalDependency.hilt.test)
     // kaptAndroidTest(LocalDependency.hilt.compiler)
