@@ -39,6 +39,10 @@ interface CoroutineWrapperContract {
         fun subscribe(
             onEach: (item: ResultContract<Success, Error>) -> Unit,
         ): Job
+
+        fun subscribeWithSuspendingFunction(
+            onEach: suspend (item: ResultContract<Success, Error>) -> Unit,
+        ): Job
     }
 
     interface SharedFlowWrapperFactory {

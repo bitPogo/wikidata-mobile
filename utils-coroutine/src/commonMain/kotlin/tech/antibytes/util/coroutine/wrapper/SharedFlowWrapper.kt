@@ -37,6 +37,14 @@ class SharedFlowWrapper<Succ, Err : Throwable> private constructor(
             .launchIn(scope)
     }
 
+    override fun subscribeWithSuspendingFunction(
+        onEach: suspend (item: ResultContract<Succ, Err>) -> Unit
+    ): Job {
+        return wrappedFlow
+            .onEach { item -> onEach.invoke(item) }
+            .launchIn(scope)
+    }
+
     companion object : CoroutineWrapperContract.SharedFlowWrapperFactory {
         override fun <Success, Error : Throwable> getInstance(
             flow: SharedFlow<ResultContract<Success, Error>>,

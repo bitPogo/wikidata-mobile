@@ -23,6 +23,10 @@ class SharedFlowWrapperStub<Succ, Err : Throwable> : SharedFlowWrapper<Succ, Err
     override fun subscribe(onEach: (item: ResultContract<Succ, Err>) -> Unit): Job {
         TODO("Not yet implemented")
     }
+
+    override fun subscribeWithSuspendingFunction(onEach: suspend (item: ResultContract<Succ, Err>) -> Unit): Job {
+        TODO("Not yet implemented")
+    }
 }
 
 class SharedFlowWrapperFactoryStub<Succ, Err : Throwable>(
