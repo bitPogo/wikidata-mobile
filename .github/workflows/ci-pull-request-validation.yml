@@ -41,4 +41,9 @@ jobs:
         run: ./gradlew spotlessCheck
       - name: Build
         run: ./gradlew build
+      - name: Run Instrumented Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew connectedCheck
 
