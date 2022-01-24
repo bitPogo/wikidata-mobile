@@ -6,4 +6,6 @@
 
 <resources>
     <string name="app_name">WikidataMobile</string>
+    <string name="hide_password">hide password</string>
+    <string name="show_password">show password</string>
 </resources>
