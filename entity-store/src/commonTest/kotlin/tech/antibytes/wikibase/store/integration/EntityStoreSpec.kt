@@ -7,7 +7,6 @@
 package tech.antibytes.wikibase.store.integration
 
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.Instant
 import tech.antibytes.mediawiki.DataModelContract
@@ -139,10 +138,8 @@ class EntityStoreSpec {
         }
 
         // When
-        entityStore.entity.subscribe { result ->
-            testScope2.launch {
-                actual.send(result)
-            }
+        entityStore.entity.subscribeWithSuspendingFunction { result ->
+            actual.send(result)
         }
 
         // Then
@@ -229,10 +226,8 @@ class EntityStoreSpec {
         }
 
         // When
-        entityStore.entity.subscribe { result ->
-            testScope2.launch {
-                actual.send(result)
-            }
+        entityStore.entity.subscribeWithSuspendingFunction { result ->
+            actual.send(result)
         }
 
         // Then
@@ -408,10 +403,8 @@ class EntityStoreSpec {
         }
 
         // When
-        entityStore.entity.subscribe { result ->
-            testScope2.launch {
-                actual.send(result)
-            }
+        entityStore.entity.subscribeWithSuspendingFunction { result ->
+            actual.send(result)
         }
 
         // Then

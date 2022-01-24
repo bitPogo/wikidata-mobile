@@ -7,7 +7,6 @@
 package tech.antibytes.wikibase.store.integration
 
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
@@ -79,10 +78,8 @@ class PageStoreSpec {
             calls.removeFirst() as CoroutineWrapperContract.SuspendingFunctionWrapper<List<DataModelContract.RevisionedPagePointer>>
         }
 
-        pageStore.randomItemId.subscribe { id ->
-            testScope1.launch {
-                actual.send(id)
-            }
+        pageStore.randomItemId.subscribeWithSuspendingFunction { id ->
+            actual.send(id)
         }
 
         // When
@@ -139,10 +136,8 @@ class PageStoreSpec {
             calls.removeFirst() as CoroutineWrapperContract.SuspendingFunctionWrapper<List<DataModelContract.Entity>>
         }
 
-        pageStore.searchEntries.subscribe { entry ->
-            testScope1.launch {
-                actual.send(entry)
-            }
+        pageStore.searchEntries.subscribeWithSuspendingFunction { entry ->
+            actual.send(entry)
         }
 
         // When

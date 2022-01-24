@@ -9,7 +9,7 @@ on:
 jobs:
   latest-version:
 
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     env:
       PACKAGE_REGISTRY_UPLOAD_USERNAME: ${{ secrets.PACKAGE_REGISTRY_UPLOAD_USERNAME }}
