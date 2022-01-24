@@ -8,7 +8,8 @@ package tech.antibytes.gradle.wikidata.dependency
 
 object Version {
 
-    const val kotlin = "1.5.32"
+    const val kotlin = "1.6.10"
+
     val gradle = Gradle
     val antibytes = Antibytes
 
@@ -16,20 +17,30 @@ object Version {
         /**
          * [AnitBytes GradlePlugins](https://github.com/bitPogo/gradle-plugins)
          */
-        const val antibytes = "d7af18f"
+        const val antibytes = "4b4554a"
 
         /**
          * [Spotless](https://plugins.gradle.org/plugin/com.diffplug.gradle.spotless)
          */
-        const val spotless = "6.0.4"
+        const val spotless = "6.2.0"
+
+        /**
+         * [Google Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
+         */
+        const val hilt = Version.hilt
     }
 
     object Antibytes {
-        val test = "6f21b6c"
+        val test = "18a85ea"
     }
 
     /**
      * [SQLDelight](https://github.com/cashapp/sqldelight/)
      */
     const val sqldelight = "1.5.3"
+
+    /**
+     * [Google Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
+     */
+    const val hilt = "2.38.1"
 }

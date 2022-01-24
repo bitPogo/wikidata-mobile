@@ -23,7 +23,8 @@ include(
     "page-store",
     "entity-store",
     "user-store",
-    "utils-coroutine"
+    "utils-coroutine",
+    "app-android"
 )
 
 buildCache {
