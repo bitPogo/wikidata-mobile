@@ -83,6 +83,37 @@ class SharedFlowWrapperSpec {
     }
 
     @Test
+    fun `Given subscribeWithSuspending is called, with a onEach Parameter, which is supspending, it channels emitted values to the subscriber`() {
+        // Given
+        val flow = MutableSharedFlow<ResultContract<String, RuntimeException>>()
+        val expected = Success<String, RuntimeException>(fixture.fixture())
+        val channel = Channel<ResultContract<String, RuntimeException>>()
+
+        // When
+        val wrapped = SharedFlowWrapper.getInstance(
+            flow,
+            { testScope1 }
+        )
+
+        wrapped.subscribeWithSuspendingFunction { result ->
+            channel.send(result)
+        }
+
+        runBlockingTest {
+            testScope2.launch {
+                flow.emit(expected)
+            }.join()
+        }
+
+        // Then
+        runBlockingTest {
+            withTimeout(2000) {
+                channel.receive() mustBe expected
+            }
+        }
+    }
+
+    @Test
     fun `It exposes its Cache`() {
         // Given
         val flow = MutableSharedFlow<ResultContract<String, RuntimeException>>(replay = 1)
