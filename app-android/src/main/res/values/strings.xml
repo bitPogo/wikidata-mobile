@@ -8,4 +8,7 @@
     <string name="app_name">WikidataMobile</string>
     <string name="hide_password">hide password</string>
     <string name="show_password">show password</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="login_login">Log In</string>
 </resources>
