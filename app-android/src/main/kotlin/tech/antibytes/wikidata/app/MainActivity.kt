@@ -9,11 +9,14 @@ package tech.antibytes.wikidata.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
-import tech.antibytes.wikidata.app.login.LoginScreen
+import tech.antibytes.wikidata.app.termbox.TermboxMenu
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +26,18 @@ class MainActivity : ComponentActivity() {
             WikidataMobileTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    LoginScreen()
+                    Column {
+                        TermboxMenu(
+                            "Test",
+                            {},
+                            {},
+                            {},
+                            {}
+                        )
+                        Row {
+                            Text("abc")
+                        }
+                    }
                 }
             }
         }
