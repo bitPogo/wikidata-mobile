@@ -10,12 +10,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
+import tech.antibytes.wikidata.app.termbox.TermView
 import tech.antibytes.wikidata.app.termbox.TermboxMenu
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
@@ -34,9 +33,11 @@ class MainActivity : ComponentActivity() {
                             {},
                             {}
                         )
-                        Row {
-                            Text("abc")
-                        }
+                        TermView(
+                            "test",
+                            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+                            listOf("Lorem", "ipsum", "dolor", "sit", "amet")
+                        )
                     }
                 }
             }

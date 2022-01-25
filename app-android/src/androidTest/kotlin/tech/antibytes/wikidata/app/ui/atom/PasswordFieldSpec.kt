@@ -26,7 +26,7 @@ class PasswordFieldSpec {
     private val fixture = kotlinFixture()
 
     @Test
-    fun It_contains_a_editable_TextField_without_a_value() {
+    fun It_renders_a_editable_TextField_without_a_value() {
         // Given
         val label: String = fixture.fixture()
 

@@ -23,7 +23,7 @@ class SimpleButtonSpec {
     private val fixture = kotlinFixture()
 
     @Test
-    fun It_contains_a_Button() {
+    fun It_renders_a_Button() {
         // Given
         val label: String = fixture.fixture()
 

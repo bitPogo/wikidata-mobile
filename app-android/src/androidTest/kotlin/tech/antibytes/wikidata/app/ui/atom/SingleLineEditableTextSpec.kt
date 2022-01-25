@@ -25,7 +25,7 @@ class SingleLineEditableTextSpec {
     private val fixture = kotlinFixture()
 
     @Test
-    fun It_contains_a_editable_TextField() {
+    fun It_renders_a_editable_TextField() {
         // Given
         val label: String = fixture.fixture()
         val value: String = fixture.fixture()

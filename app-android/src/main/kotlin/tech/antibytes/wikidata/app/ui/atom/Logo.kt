@@ -41,7 +41,7 @@ fun Logo() {
         )
         Image(
             painter = image,
-            contentDescription = "",
+            contentDescription = null,
             modifier = Modifier
                 .background(Color.Transparent)
                 .width(200.dp)
