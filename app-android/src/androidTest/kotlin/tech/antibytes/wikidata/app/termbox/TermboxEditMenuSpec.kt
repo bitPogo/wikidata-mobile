@@ -20,13 +20,9 @@ import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 class TermboxEditMenuSpec {
     @get:Rule
     val composeTestRule = createComposeRule()
-    private val fixture = kotlinFixture()
 
     @Test
-    fun It_renders_a_TopBar() {
-        // Given
-        val title: String = fixture.fixture()
-
+    fun It_renders_a_TermboxEditMenu() {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
