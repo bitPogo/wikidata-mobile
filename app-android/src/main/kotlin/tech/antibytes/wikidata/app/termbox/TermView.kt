@@ -10,8 +10,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -53,9 +55,7 @@ fun TermView(
         items(1) {
             Row(
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .padding(bottom = 30.dp)
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
                     painter = noEntityImage,
@@ -67,25 +67,28 @@ fun TermView(
                     contentScale = ContentScale.FillWidth
                 )
             }
+            Spacer(modifier = Modifier.height(30.dp))
 
             Text(
                 text = label,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.W600,
-                modifier = Modifier.padding(bottom = 10.dp)
             )
+            Spacer(modifier = Modifier.height(10.dp))
 
             Text(
                 text = description,
                 lineHeight = 24.sp
             )
 
-            Text(
-                text = stringResource(R.string.termbox_view_aka),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W500,
-                modifier = Modifier.padding(top = 10.dp)
-            )
+            if (aliases.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.termbox_view_aka),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W500,
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
         }
 
         items(aliases) { alias ->

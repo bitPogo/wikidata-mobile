@@ -9,6 +9,8 @@ package tech.antibytes.wikidata.app.login
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,16 +32,13 @@ fun LoginScreen() {
             horizontal = 20.dp
         )
     ) {
-        Row(
-            modifier = Modifier.padding(
-                PaddingValues(
-                    top = 50.dp,
-                    bottom = 25.dp
-                )
-            )
-        ) {
+        Spacer(modifier = Modifier.height(50.dp))
+
+        Row {
             Logo()
         }
+        Spacer(modifier = Modifier.height(25.dp))
+
         SingleLineEditableText(
             label = stringResource(R.string.login_username),
             value = "",
@@ -50,13 +49,8 @@ fun LoginScreen() {
             value = "",
             onChange = {}
         )
-        Row(
-            modifier = Modifier.padding(
-                PaddingValues(
-                    top = 25.dp
-                )
-            )
-        ) {
+        Spacer(modifier = Modifier.height(25.dp))
+        Row {
             SimpleButton(label = stringResource(R.string.login_login)) {
             }
         }

@@ -88,7 +88,6 @@ fun PasswordField(
             textColor = DeepBlack,
             disabledTextColor = LightDarkGray,
             cursorColor = DeepBlack,
-            backgroundColor = DarkWhite,
             placeholderColor = LightDarkGray,
             focusedBorderColor = Blue,
             unfocusedBorderColor = LightGray,

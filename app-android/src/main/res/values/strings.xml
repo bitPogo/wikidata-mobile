@@ -18,4 +18,8 @@
     <string name="termbox_menu_random_entity">Select a random entity</string>
     <string name="termbox_menu_search_language">Select another language</string>
     <string name="termbox_view_aka">Also known as:</string>
+    <string name="termbox_edit_label">Label</string>
+    <string name="termbox_edit_description">Description</string>
+    <string name="termbox_edit_aka">Aliases</string>
+    <string name="termbox_edit_new_aka">New alias</string>
 </resources>

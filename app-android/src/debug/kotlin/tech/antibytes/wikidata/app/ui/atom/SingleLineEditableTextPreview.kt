@@ -29,3 +29,15 @@ fun DefaultSingleLineEditableTextWithError() {
         isError = true
     )
 }
+
+@Preview
+@Composable
+fun DefaultSingleLineEditableTextBorderless() {
+    SingleLineEditableText(
+        label = "test",
+        value = "myTest",
+        {},
+        isError = true,
+        underlineIndicator = true
+    )
+}
