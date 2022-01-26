@@ -24,4 +24,7 @@
     <string name="termbox_edit_new_aka">New alias</string>
     <string name="termbox_edit_cancel">Discard changes</string>
     <string name="termbox_edit_save">Save changes</string>
+    <string name="termbox_search_placeholder">Your query</string>
+    <string name="termbox_search_search">Apply your query</string>
+    <string name="termbox_search_cancel">Cancel search</string>
 </resources>

@@ -87,7 +87,7 @@ fun TopSearchBarWithTextFieldColorAndModifier() {
         "test",
         {},
         textFieldColours = colours,
-        modifier = {
+        textFieldModifier = {
             this.border(
                 BorderStroke(5.dp, Color.Black),
             )
