@@ -21,6 +21,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import tech.antibytes.wikidata.app.termbox.TermboxEditMenu
 import tech.antibytes.wikidata.app.ui.atom.AliasEditField
 import tech.antibytes.wikidata.app.ui.atom.MultiLineEditableText
 import tech.antibytes.wikidata.app.ui.atom.SingleLineEditableText
@@ -35,56 +36,7 @@ class MainActivity : ComponentActivity() {
             WikidataMobileTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = 20.dp,
-                                bottom = 10.dp,
-                                start = 10.dp,
-                                end = 10.dp,
-                            )
-                            .fillMaxSize(1F)
-                    ) {
-                        val scope = this
 
-                        item {
-                            SingleLineEditableText(
-                                label = "Label",
-                                value = "",
-                                onChange = {},
-                                underlineIndicator = true
-                            )
-
-                            Spacer(modifier = Modifier.height(15.dp))
-
-
-                            MultiLineEditableText(
-                                "Description",
-                                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
-                                {},
-                                underlineIndicator = true,
-                            )
-
-                            Spacer(modifier = Modifier.height(15.dp))
-
-                            Text("Aliases")
-                        }
-
-                        itemsIndexed(aliases) { idx, value ->
-                            val new = if (value.isEmpty()) {
-                                "new alias"
-                            } else {
-                                null
-                            }
-
-                            AliasEditField(
-                                label = new,
-                                value = value,
-                                onChange = {},
-                            )
-                        }
-                    }
                 }
             }
         }

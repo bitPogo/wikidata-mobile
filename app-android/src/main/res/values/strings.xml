@@ -22,4 +22,6 @@
     <string name="termbox_edit_description">Description</string>
     <string name="termbox_edit_aka">Aliases</string>
     <string name="termbox_edit_new_aka">New alias</string>
+    <string name="termbox_edit_cancel">Discard changes</string>
+    <string name="termbox_edit_save">Save changes</string>
 </resources>
