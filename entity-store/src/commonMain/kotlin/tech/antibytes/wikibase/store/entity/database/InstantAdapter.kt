@@ -9,7 +9,7 @@ package tech.antibytes.wikibase.store.entity.database
 import com.squareup.sqldelight.ColumnAdapter
 import kotlinx.datetime.Instant
 
-internal class InstantAdapter : ColumnAdapter<Instant, Long> {
+class InstantAdapter : ColumnAdapter<Instant, Long> {
     override fun encode(value: Instant): Long = value.toEpochMilliseconds()
 
     override fun decode(databaseValue: Long): Instant = Instant.fromEpochMilliseconds(databaseValue)
