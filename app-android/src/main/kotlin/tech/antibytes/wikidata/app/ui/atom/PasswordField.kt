@@ -27,7 +27,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import tech.antibytes.wikidata.app.R
 import tech.antibytes.wikidata.app.ui.theme.Blue
-import tech.antibytes.wikidata.app.ui.theme.DarkWhite
 import tech.antibytes.wikidata.app.ui.theme.DeepBlack
 import tech.antibytes.wikidata.app.ui.theme.DeepRed
 import tech.antibytes.wikidata.app.ui.theme.LightDarkGray

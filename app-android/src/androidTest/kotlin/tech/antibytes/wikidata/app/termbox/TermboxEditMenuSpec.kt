@@ -13,8 +13,6 @@ import androidx.compose.ui.test.performClick
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class TermboxEditMenuSpec {

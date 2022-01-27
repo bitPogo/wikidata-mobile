@@ -53,7 +53,6 @@ fun TermEditor(
 
             Spacer(modifier = Modifier.height(15.dp))
 
-
             MultiLineEditableText(
                 stringResource(R.string.termbox_edit_description),
                 description,

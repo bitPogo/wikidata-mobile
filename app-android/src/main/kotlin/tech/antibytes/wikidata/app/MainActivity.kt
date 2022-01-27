@@ -9,15 +9,14 @@ package tech.antibytes.wikidata.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import tech.antibytes.wikidata.app.languageselector.LanguageSearchBar
-import tech.antibytes.wikidata.app.termsearch.TermSearchBar
-import tech.antibytes.wikidata.app.termsearch.TermSearchItem
+import tech.antibytes.wikidata.app.languageselector.LanguageItem
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,10 +25,33 @@ class MainActivity : ComponentActivity() {
             WikidataMobileTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    LanguageSearchBar(
-                        "A Query",
-                        {},
-                    )
+                    Column {
+                        LanguageItem(
+                            value = Locale.GERMANY,
+                            selected = Locale.GERMANY,
+                            {}
+                        )
+                        LanguageItem(
+                            value = Locale.ENGLISH,
+                            selected = Locale.GERMANY,
+                            {}
+                        )
+                        LanguageItem(
+                            value = Locale.CANADA_FRENCH,
+                            selected = Locale.GERMANY,
+                            {}
+                        )
+                        LanguageItem(
+                            value = Locale.SIMPLIFIED_CHINESE,
+                            selected = Locale.GERMANY,
+                            {}
+                        )
+                        LanguageItem(
+                            value = Locale.TRADITIONAL_CHINESE,
+                            selected = Locale.GERMANY,
+                            {}
+                        )
+                    }
                 }
             }
         }

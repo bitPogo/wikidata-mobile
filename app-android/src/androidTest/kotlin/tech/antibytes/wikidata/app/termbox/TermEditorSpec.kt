@@ -39,7 +39,7 @@ class TermEditorSpec {
                     aliases = aliases,
                     onLabelInput = {},
                     onDescriptionInput = {},
-                    onAliasInput = {_, _ -> Unit}
+                    onAliasInput = { _, _ -> Unit }
                 )
             }
         }
@@ -79,7 +79,7 @@ class TermEditorSpec {
                     aliases = emptyList(),
                     onLabelInput = onLabelChange,
                     onDescriptionInput = {},
-                    onAliasInput = {_, _ -> Unit}
+                    onAliasInput = { _, _ -> Unit }
                 )
             }
         }
@@ -114,11 +114,10 @@ class TermEditorSpec {
                     aliases = emptyList(),
                     onLabelInput = { },
                     onDescriptionInput = onDescriptionChange,
-                    onAliasInput = {_, _ -> Unit}
+                    onAliasInput = { _, _ -> Unit }
                 )
             }
         }
-
 
         composeTestRule
             .onNodeWithText(description)
@@ -156,7 +155,6 @@ class TermEditorSpec {
                 )
             }
         }
-
 
         composeTestRule
             .onNodeWithText(aliases[3])
