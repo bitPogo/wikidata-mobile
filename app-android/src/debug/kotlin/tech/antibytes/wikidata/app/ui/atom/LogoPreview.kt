@@ -11,8 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun DefaultSimpleButton() {
-    SimpleButton(
-        label = "Label",
-    ) {}
+fun LogoMedium() {
+    Logo()
 }

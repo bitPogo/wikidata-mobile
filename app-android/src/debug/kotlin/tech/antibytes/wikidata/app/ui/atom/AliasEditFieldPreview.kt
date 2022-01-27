@@ -11,8 +11,10 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun DefaultSimpleButton() {
-    SimpleButton(
-        label = "Label",
-    ) {}
+fun AliasEditFieldPreview() {
+    AliasEditField(
+        label = "test",
+        value = "myTest",
+        {},
+    )
 }

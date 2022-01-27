@@ -4,15 +4,13 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.ui.atom
+package tech.antibytes.wikidata.app.login
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun DefaultSimpleButton() {
-    SimpleButton(
-        label = "Label",
-    ) {}
+fun DefaultLoginScreen() {
+    LoginScreen()
 }

@@ -6,10 +6,14 @@
 
 package tech.antibytes.wikidata.app.ui.atom
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import tech.antibytes.wikidata.app.ui.theme.DarkBlue
 import tech.antibytes.wikidata.app.ui.theme.LightBrightWhite
 import tech.antibytes.wikidata.app.ui.theme.LightGray
@@ -18,7 +22,8 @@ import tech.antibytes.wikidata.app.ui.theme.Shapes
 @Composable
 fun SimpleButton(
     label: String,
-    onClick: () -> Unit
+    fontSize: TextUnit = 16.sp,
+    onClick: () -> Unit,
 ) {
     TextButton(
         onClick = onClick,
@@ -27,6 +32,12 @@ fun SimpleButton(
             contentColor = LightBrightWhite,
             disabledContentColor = LightGray
         ),
-        shape = Shapes.medium
-    ) { Text(label) }
+        shape = Shapes.medium,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            label,
+            fontSize = fontSize
+        )
+    }
 }

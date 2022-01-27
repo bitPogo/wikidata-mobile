@@ -20,7 +20,7 @@ import tech.antibytes.wikidata.app.ui.theme.LightDarkGray
 import tech.antibytes.wikidata.app.ui.theme.LightGray
 
 @Composable
-fun SingleLineEditableText(
+fun MultiLineEditableText(
     label: String,
     value: String,
     onChange: (String) -> Unit,
@@ -49,7 +49,7 @@ fun SingleLineEditableText(
             onValueChange = onChange,
             label = labelField,
             placeholder = labelField,
-            singleLine = true,
+            singleLine = false,
             modifier = Modifier
                 .fillMaxWidth(),
             colors = colours,
@@ -61,7 +61,7 @@ fun SingleLineEditableText(
             onValueChange = onChange,
             label = labelField,
             placeholder = labelField,
-            singleLine = true,
+            singleLine = false,
             modifier = Modifier
                 .fillMaxWidth(),
             colors = colours,

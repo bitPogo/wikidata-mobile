@@ -4,67 +4,72 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.ui.atom
+package tech.antibytes.wikidata.app.languageselector
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import org.junit.Assert.assertTrue
+import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
+import java.util.Locale
 
-class SimpleButtonSpec {
+class LanguageItemSpec {
     @get:Rule
     val composeTestRule = createComposeRule()
-    private val fixture = kotlinFixture()
 
     @Test
-    fun It_renders_a_Button() {
+    fun It_renders_a_LanguageItem() {
         // Given
-        val label: String = fixture.fixture()
+        val value = Locale.GERMAN
 
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                SimpleButton(
-                    label = label,
-                    onClick = {}
+                LanguageItem(
+                    value = value,
+                    selected = Locale.CANADA,
+                    {}
                 )
             }
         }
 
         // Then
         composeTestRule
-            .onNodeWithText(label)
+            .onNodeWithText(value.displayName)
             .assertIsDisplayed()
     }
 
     @Test
-    fun It_delegates_the_click_event_to_the_given_function() {
+    fun Given_the_item_is_clicked_it_delegates_the_call_and_its_value_to_the_given_lambda() {
         // Given
-        val label: String = fixture.fixture()
+        val value = Locale.GERMAN
 
-        var wasClicked = false
+        var capturedLocale: Locale? = null
+        val onClick = { givenLocale: Locale ->
+            capturedLocale = givenLocale
+        }
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                SimpleButton(
-                    label = label,
-                    onClick = { wasClicked = true }
+                LanguageItem(
+                    value = value,
+                    selected = Locale.CANADA,
+                    onClick
                 )
             }
         }
 
-        // Then
         composeTestRule
-            .onNodeWithText(label)
-            .performClick()
+            .onNodeWithText(value.displayName)
             .performClick()
 
-        assertTrue(wasClicked)
+        // Then
+        assertEquals(
+            value,
+            capturedLocale
+        )
     }
 }
