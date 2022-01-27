@@ -4,27 +4,25 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.termsearch
+package tech.antibytes.wikidata.app.languageselector
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun TermSearchBarPreview() {
-    TermSearchBar(
+fun LanguageSearchBarPreview() {
+    LanguageSearchBar(
         "A Query",
-        {},
         {},
     )
 }
 
 @Preview
 @Composable
-fun TermSearchBarPreviewWithPlaceholder() {
-    TermSearchBar(
+fun LanguageSearchBarPreviewWithPlaceHolder() {
+    LanguageSearchBar(
         "",
-        {},
         {},
     )
 }

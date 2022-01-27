@@ -4,39 +4,36 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.termsearch
+package tech.antibytes.wikidata.app.languageselector
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
-class TermSearchBarSpec {
+class LanguageSearchBarSpec {
     @get:Rule
     val composeTestRule = createComposeRule()
     private val fixture = kotlinFixture()
 
     @Test
-    fun It_renders_a_TermSearchBar() {
+    fun It_renders_a_LanguageSearchBar() {
         // Given
         val value: String = fixture.fixture()
 
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermSearchBar(
+                LanguageSearchBar(
                     value = value,
                     onValueChange = {},
-                    onSearch = {},
                 )
             }
         }
@@ -47,7 +44,7 @@ class TermSearchBarSpec {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithContentDescription("Apply your query")
+            .onNodeWithContentDescription("Cancel language selection")
             .assertIsDisplayed()
     }
 
@@ -64,10 +61,9 @@ class TermSearchBarSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermSearchBar(
+                LanguageSearchBar(
                     value = oldValue,
                     onValueChange = onValueChange,
-                    onSearch = {},
                 )
             }
         }
@@ -81,31 +77,5 @@ class TermSearchBarSpec {
             newValue,
             capturedValue
         )
-    }
-
-    @Test
-    fun Given_the_search_button_is_clicked_it_calls_the_given_lambda() {
-        // Given
-        var wasCalled = false
-        val onSearch = {
-            wasCalled = true
-        }
-        // When
-        composeTestRule.setContent {
-            WikidataMobileTheme {
-                TermSearchBar(
-                    value = fixture.fixture(),
-                    onValueChange = {},
-                    onSearch = onSearch,
-                )
-            }
-        }
-
-        composeTestRule
-            .onNodeWithContentDescription("Apply your query")
-            .performClick()
-
-        // Then
-        assertTrue(wasCalled)
     }
 }

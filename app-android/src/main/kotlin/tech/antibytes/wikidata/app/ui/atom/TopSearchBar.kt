@@ -7,6 +7,8 @@
 package tech.antibytes.wikidata.app.ui.atom
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,43 +34,67 @@ fun TopSearchBar(
     placeholder: String? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
+    actions: (@Composable () -> Unit)? = null,
     backgroundColour: Color? = null,
     textFieldColours: TextFieldColors? = null,
     textFieldModifier: Modifier.() -> Modifier = { this },
-    textFieldShape: Shape? = null
+    textFieldShape: Shape? = null,
 ) {
+    val searchWidth = if (actions == null) {
+        1F
+    } else {
+        0.85F
+    }
+
     Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(1F)
             .fillMaxHeight(1F)
             .let { scopedModifier ->
-                val colour = backgroundColour ?: Color.Transparent
+                val colour = backgroundColour ?: MaterialTheme.colors.primarySurface
                 scopedModifier.background(
                     color = colour,
                     shape = RoundedCornerShape(0.dp)
                 )
             },
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            placeholder = if (placeholder != null) {
-                @Composable { Text(placeholder) }
-            } else {
-                null
-            },
-            singleLine = true,
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon,
-            modifier = textFieldModifier.invoke(
-                Modifier.fillMaxWidth()
-            ),
-            colors = textFieldColours ?: TextFieldDefaults.textFieldColors(),
-            shape = textFieldShape ?: MaterialTheme.shapes.small.copy(
-                bottomEnd = ZeroCornerSize,
-                bottomStart = ZeroCornerSize
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .fillMaxWidth(searchWidth)
+                .fillMaxHeight()
+        ) {
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                placeholder = if (placeholder != null) {
+                    @Composable { Text(placeholder) }
+                } else {
+                    null
+                },
+                singleLine = true,
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+                modifier = textFieldModifier.invoke(
+                    Modifier.fillMaxWidth()
+                ),
+                colors = textFieldColours ?: TextFieldDefaults.textFieldColors(),
+                shape = textFieldShape ?: MaterialTheme.shapes.small.copy(
+                    bottomEnd = ZeroCornerSize,
+                    bottomStart = ZeroCornerSize
+                )
             )
-        )
+        }
+
+        if (actions != null) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                actions.invoke()
+            }
+        }
     }
 }

@@ -26,5 +26,5 @@
     <string name="termbox_edit_save">Save changes</string>
     <string name="termbox_search_placeholder">Your query</string>
     <string name="termbox_search_search">Apply your query</string>
-    <string name="termbox_search_cancel">Cancel search</string>
+    <string name="language_selector_placeholder">Find a supported language</string>
 </resources>

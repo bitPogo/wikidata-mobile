@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.termsearch
+package tech.antibytes.wikidata.app.languageselector
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +12,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -25,10 +28,9 @@ import tech.antibytes.wikidata.app.ui.theme.LightBrightWhite
 import tech.antibytes.wikidata.app.ui.theme.LightDarkGray
 
 @Composable
-fun TermSearchBar(
+fun LanguageSearchBar(
     value: String,
     onValueChange: (String) -> Unit,
-    onSearch: () -> Unit,
 ) {
     val colours = TextFieldDefaults.outlinedTextFieldColors(
         textColor = DeepBlack,
@@ -48,17 +50,9 @@ fun TermSearchBar(
 
     TopSearchBar(
         value = value,
-        placeholder = stringResource(R.string.termbox_search_placeholder),
+        placeholder = stringResource(R.string.language_selector_placeholder),
         onValueChange = onValueChange,
         backgroundColour = Blue,
-        leadingIcon = @Composable {
-            IconButton(onClick = onSearch) {
-                Icon(
-                    Icons.Default.Search,
-                    stringResource(R.string.termbox_search_search)
-                )
-            }
-        },
         textFieldColours = colours,
         textFieldShape = RoundedCornerShape(10.dp),
         textFieldModifier = {
@@ -68,6 +62,6 @@ fun TermSearchBar(
                 top = 5.dp,
                 bottom = 5.dp
             )
-        }
+        },
     )
 }
