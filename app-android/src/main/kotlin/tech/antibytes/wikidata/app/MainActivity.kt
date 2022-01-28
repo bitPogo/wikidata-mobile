@@ -25,33 +25,7 @@ class MainActivity : ComponentActivity() {
             WikidataMobileTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Column {
-                        LanguageItem(
-                            value = Locale.GERMANY,
-                            selected = Locale.GERMANY,
-                            {}
-                        )
-                        LanguageItem(
-                            value = Locale.ENGLISH,
-                            selected = Locale.GERMANY,
-                            {}
-                        )
-                        LanguageItem(
-                            value = Locale.CANADA_FRENCH,
-                            selected = Locale.GERMANY,
-                            {}
-                        )
-                        LanguageItem(
-                            value = Locale.SIMPLIFIED_CHINESE,
-                            selected = Locale.GERMANY,
-                            {}
-                        )
-                        LanguageItem(
-                            value = Locale.TRADITIONAL_CHINESE,
-                            selected = Locale.GERMANY,
-                            {}
-                        )
-                    }
+
                 }
             }
         }

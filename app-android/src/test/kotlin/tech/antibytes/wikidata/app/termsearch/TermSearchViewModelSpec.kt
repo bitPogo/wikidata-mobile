@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -31,6 +32,7 @@ import tech.antibytes.wikidata.mock.PageStoreStub
 import tech.antibytes.wikidata.mock.SearchEntry
 import java.lang.RuntimeException
 import java.util.Locale
+import java.util.Locale.ENGLISH
 
 class TermSearchViewModelSpec {
     private val fixture = kotlinFixture()
@@ -44,26 +46,29 @@ class TermSearchViewModelSpec {
         flowSurface,
     )
 
+    private val currentLanguage = MutableStateFlow(ENGLISH)
+
     @Before
     fun setUp() {
+        currentLanguage.value = ENGLISH
         store.clear()
     }
 
     @Test
     fun `It fulfils TermSearchViewModel`() {
-        val viewModel = TermSearchViewModel(store)
+        val viewModel = TermSearchViewModel(store, currentLanguage)
         viewModel fulfils TermSearchContract.TermSearchViewModel::class
         viewModel fulfils ViewModel::class
     }
 
     @Test
     fun `Its default query state is a empty String`() {
-        TermSearchViewModel(store).query.value mustBe ""
+        TermSearchViewModel(store, currentLanguage).query.value mustBe ""
     }
 
     @Test
     fun `Its default result state is a empty List`() {
-        TermSearchViewModel(store).result.value mustBe emptyList()
+        TermSearchViewModel(store, currentLanguage).result.value mustBe emptyList()
     }
 
     @Test
@@ -73,7 +78,7 @@ class TermSearchViewModelSpec {
         val result = Channel<String>()
 
         // When
-        val viewModel = TermSearchViewModel(store)
+        val viewModel = TermSearchViewModel(store, currentLanguage)
         CoroutineScope(Dispatchers.Default).launch {
             viewModel.query.collectLatest { state -> result.send(state) }
         }
@@ -103,6 +108,8 @@ class TermSearchViewModelSpec {
         val language = Locale.KOREA
         val searchResult = Channel<List<PageModelContract.SearchEntry>>()
 
+        currentLanguage.value = language
+
         val expected = listOf(
             SearchEntry(
                 id = fixture.fixture(),
@@ -124,7 +131,7 @@ class TermSearchViewModelSpec {
         }
 
         // When
-        val viewModel = TermSearchViewModel(store)
+        val viewModel = TermSearchViewModel(store, currentLanguage)
         CoroutineScope(Dispatchers.Default).launch {
             viewModel.result.collectLatest { state -> searchResult.send(state) }
         }
@@ -138,7 +145,7 @@ class TermSearchViewModelSpec {
 
         // When
         viewModel.setQuery(query)
-        viewModel.search(language)
+        viewModel.search()
 
         // Then
         runBlocking {
@@ -158,6 +165,8 @@ class TermSearchViewModelSpec {
         val language = Locale.KOREA
         val searchResult = Channel<List<PageModelContract.SearchEntry>>()
 
+        currentLanguage.value = language
+
         var capturedQuery: String? = null
         var capturedLanguage: String? = null
         store.searchItems = { givenQuery, givenLanguage ->
@@ -170,7 +179,7 @@ class TermSearchViewModelSpec {
         }
 
         // When
-        val viewModel = TermSearchViewModel(store)
+        val viewModel = TermSearchViewModel(store, currentLanguage)
         CoroutineScope(Dispatchers.Default).launch {
             viewModel.result.collectLatest { state -> searchResult.send(state) }
         }
@@ -184,7 +193,7 @@ class TermSearchViewModelSpec {
 
         // When
         viewModel.setQuery(query)
-        viewModel.search(language)
+        viewModel.search()
 
         // Then
         runBlocking {

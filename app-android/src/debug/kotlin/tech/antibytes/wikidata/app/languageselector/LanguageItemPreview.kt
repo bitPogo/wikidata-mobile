@@ -14,6 +14,7 @@ import java.util.Locale
 @Composable
 fun LanguageItemPreviewSelected() {
     LanguageItem(
+        id = 23,
         value = Locale.GERMANY,
         selected = Locale.GERMANY,
         {}
@@ -24,6 +25,7 @@ fun LanguageItemPreviewSelected() {
 @Composable
 fun LanguageItemPreviewUnSelected() {
     LanguageItem(
+        id = 42,
         value = Locale.ENGLISH,
         selected = Locale.GERMANY,
         {}

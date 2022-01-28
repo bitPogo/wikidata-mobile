@@ -15,7 +15,8 @@ import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 import java.util.Locale
 
 class TermSearchViewModel(
-    private val store: PageStoreContract.PageStore
+    private val store: PageStoreContract.PageStore,
+    private val currentLanguage: StateFlow<Locale>
 ) : TermSearchContract.TermSearchViewModel, ViewModel() {
     private val _result = MutableStateFlow<List<PageModelContract.SearchEntry>>(emptyList())
     override val result: StateFlow<List<PageModelContract.SearchEntry>> = _result
@@ -35,10 +36,10 @@ class TermSearchViewModel(
         _query.update { query }
     }
 
-    override fun search(inLanguage: Locale) {
+    override fun search() {
         store.searchItems(
             _query.value,
-            inLanguage.toLanguageTag().replace('_', '-')
+            currentLanguage.value.toLanguageTag().replace('_', '-')
         )
     }
 }

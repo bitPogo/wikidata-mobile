@@ -26,9 +26,10 @@ import java.util.Locale
 
 @Composable
 fun LanguageItem(
+    id: Int,
     value: Locale,
     selected: Locale,
-    onClick: (Locale) -> Unit
+    onClick: (Int) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -36,7 +37,7 @@ fun LanguageItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(role = Role.Button) {
-                onClick.invoke(value)
+                onClick.invoke(id)
             }
             .padding(
                 vertical = 10.dp,

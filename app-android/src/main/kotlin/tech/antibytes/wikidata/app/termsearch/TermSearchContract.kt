@@ -17,6 +17,6 @@ interface TermSearchContract {
         val query: StateFlow<String>
 
         fun setQuery(query: String)
-        fun search(inLanguage: Locale)
+        fun search()
     }
 }
