@@ -48,10 +48,10 @@ class LoginViewModelSpec {
 
     @Test
     fun `It fulfils LoginViewModel`() {
-        val viewmodel = LoginViewModel(store)
+        val viewModel = LoginViewModel(store)
 
-        viewmodel fulfils LoginContract.LoginViewModel::class
-        viewmodel fulfils ViewModel::class
+        viewModel fulfils LoginContract.LoginViewModel::class
+        viewModel fulfils ViewModel::class
     }
 
     @Test
@@ -66,10 +66,10 @@ class LoginViewModelSpec {
         val result = Channel<String>()
 
         // When
-        val viewmodel = LoginViewModel(store)
+        val viewModel = LoginViewModel(store)
 
         CoroutineScope(Dispatchers.Default).launch {
-            viewmodel.username.collectLatest { givenUsername ->
+            viewModel.username.collectLatest { givenUsername ->
                 result.send(givenUsername)
             }
         }
@@ -82,7 +82,7 @@ class LoginViewModelSpec {
         }
 
         // When
-        viewmodel.setUsername(username)
+        viewModel.setUsername(username)
 
         // Then
         runBlocking {
@@ -99,11 +99,11 @@ class LoginViewModelSpec {
         val result = Channel<String>()
 
         // When
-        val viewmodel = LoginViewModel(store)
+        val viewModel = LoginViewModel(store)
 
 
         CoroutineScope(Dispatchers.Default).launch {
-            viewmodel.password.collectLatest { givenPassword ->
+            viewModel.password.collectLatest { givenPassword ->
                 result.send(givenPassword)
             }
         }
@@ -116,7 +116,7 @@ class LoginViewModelSpec {
         }
 
         // When
-        viewmodel.setPassword(password)
+        viewModel.setPassword(password)
 
         // Then
         runBlocking {
@@ -136,10 +136,10 @@ class LoginViewModelSpec {
         val expected = true
 
         // When
-        val viewmodel = LoginViewModel(store)
+        val viewModel = LoginViewModel(store)
 
         CoroutineScope(Dispatchers.Default).launch {
-            viewmodel.isLoggedIn.collectLatest { isLoggedIn ->
+            viewModel.isLoggedIn.collectLatest { isLoggedIn ->
                 resultLogin.send(isLoggedIn)
             }
         }
@@ -163,16 +163,16 @@ class LoginViewModelSpec {
         }
 
         // When
-        viewmodel.setUsername(username)
-        viewmodel.setPassword(password)
+        viewModel.setUsername(username)
+        viewModel.setPassword(password)
 
         CoroutineScope(Dispatchers.Default).launch {
-            viewmodel.password.collectLatest { givenPassword ->
+            viewModel.password.collectLatest { givenPassword ->
                 resultPassword.send(givenPassword)
             }
         }
 
-        viewmodel.login()
+        viewModel.login()
 
         // Then
         runBlocking {
@@ -195,10 +195,10 @@ class LoginViewModelSpec {
         val expected = false
 
         // When
-        val viewmodel = LoginViewModel(store)
+        val viewModel = LoginViewModel(store)
 
         CoroutineScope(Dispatchers.Default).launch {
-            viewmodel.isLoggedIn.collectLatest { isLoggedIn ->
+            viewModel.isLoggedIn.collectLatest { isLoggedIn ->
                 result.send(isLoggedIn)
             }
         }
@@ -222,9 +222,9 @@ class LoginViewModelSpec {
         }
 
         // When
-        viewmodel.setUsername(username)
-        viewmodel.setPassword(password)
-        viewmodel.login()
+        viewModel.setUsername(username)
+        viewModel.setPassword(password)
+        viewModel.login()
 
         // Then
         runBlocking {
