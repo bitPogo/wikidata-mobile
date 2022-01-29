@@ -11,7 +11,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-internal class ListAdapter(
+class ListAdapter(
     private val serializer: Json
 ) : ColumnAdapter<List<String>, String> {
     override fun decode(databaseValue: String): List<String> = serializer.decodeFromString(databaseValue)

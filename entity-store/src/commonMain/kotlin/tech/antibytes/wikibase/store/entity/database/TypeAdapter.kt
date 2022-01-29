@@ -9,7 +9,7 @@ package tech.antibytes.wikibase.store.entity.database
 import com.squareup.sqldelight.ColumnAdapter
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 
-internal class TypeAdapter : ColumnAdapter<EntityModelContract.EntityType, String> {
+class TypeAdapter : ColumnAdapter<EntityModelContract.EntityType, String> {
     override fun decode(
         databaseValue: String
     ): EntityModelContract.EntityType = EntityModelContract.EntityType.valueOf(databaseValue)

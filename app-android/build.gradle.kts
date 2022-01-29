@@ -93,6 +93,18 @@ dependencies {
     implementation(Dependency.android.compose.foundation)
     implementation(Dependency.android.compose.constrainLayout)
 
+    implementation(LocalDependency.sqldelight.android)
+
+    implementation(Dependency.multiplatform.dateTime)
+    implementation(Dependency.multiplatform.serialization.android)
+    implementation(Dependency.multiplatform.serialization.json)
+
+    implementation(project(":mw-client"))
+    implementation(project(":entity-store"))
+    implementation(project(":page-store"))
+    implementation(project(":user-store"))
+    implementation(project(":utils-coroutine"))
+
     // implementation(LocalDependency.hilt.core)
     // kapt(LocalDependency.hilt.compiler)
 
@@ -103,6 +115,7 @@ dependencies {
     // Test
     testImplementation(Dependency.android.test.junit)
     testImplementation(Dependency.android.test.junit4)
+    testImplementation(Dependency.multiplatform.test.mockk.junit)
     testImplementation(Dependency.android.test.composeJunit4)
     testImplementation(Dependency.android.test.robolectric)
     testImplementation(LocalDependency.antibytes.test.fixture)
@@ -121,4 +134,14 @@ dependencies {
 
     // androidTestImplementation(LocalDependency.hilt.test)
     // kaptAndroidTest(LocalDependency.hilt.compiler)
+}
+
+sqldelight {
+    database("WikibaseDataBase") {
+        packageName = "tech.antibytes.wikibase.store.database"
+        sourceFolders = listOf("database")
+        dependency(project(":entity-store"))
+        dependency(project(":page-store"))
+        verifyMigrations = true
+    }
 }

@@ -9,7 +9,7 @@ package tech.antibytes.wikibase.store.entity.database
 import com.squareup.sqldelight.db.SqlDriver
 import tech.antibytes.wikibase.store.database.entity.WikibaseDataBase
 
-internal val testDatabase = "test"
+internal const val testDatabase = "test"
 
 expect class DatabaseDriver constructor() {
     val dataBase: WikibaseDataBase
