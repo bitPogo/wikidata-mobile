@@ -26,7 +26,7 @@ class TermSearchViewModel(
 
     init {
         store.searchEntries.subscribeWithSuspendingFunction { searchResult ->
-            if (!searchResult.isError()) {
+            if (searchResult.isSuccess()) {
                 _result.emit(searchResult.unwrap())
             }
         }

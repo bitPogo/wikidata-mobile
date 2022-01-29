@@ -30,7 +30,7 @@ class LoginViewModel(
     override val password: StateFlow<String> = _password
 
     init {
-        userStore.isAuthenticated.subscribe { result ->
+        userStore.isAuthenticated.subscribeWithSuspendingFunction { result ->
             subscription(result)
         }
     }

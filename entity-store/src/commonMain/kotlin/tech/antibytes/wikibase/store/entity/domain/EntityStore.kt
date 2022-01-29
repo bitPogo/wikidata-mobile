@@ -99,6 +99,14 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
         }
     }
 
+    override fun refresh() {
+        executeEvent {
+            guardValue { entity ->
+                fetchAndUpdate(entity.id, entity.language)
+            }
+        }
+    }
+
     private fun setLabel(
         label: String,
         entity: EntityModelContract.MonolingualEntity
@@ -125,6 +133,28 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
         executeEvent {
             guardValue { entity ->
                 setDescription(description, entity)
+            }
+        }
+    }
+
+    private fun setAlias(
+        index: Int,
+        alias: String,
+        entity: EntityModelContract.MonolingualEntity
+    ): EntityModelContract.MonolingualEntity {
+        return (entity as MonolingualEntity).copy(
+            aliases = entity.aliases
+                .toMutableList()
+                .also { aliases ->
+                    aliases[index] = alias
+                }
+        )
+    }
+
+    override fun setAlias(index: Int, alias: String) {
+        executeEvent {
+            guardValue { entity ->
+                setAlias(index, alias, entity)
             }
         }
     }

@@ -19,9 +19,11 @@ interface EntityStoreContract {
         val entity: SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>
 
         fun fetchEntity(id: EntityId, language: LanguageTag)
+        fun refresh()
 
         fun setLabel(label: String)
         fun setDescription(description: String)
+        fun setAlias(index: Int, alias: String)
         fun setAliases(aliases: List<String>)
 
         fun create(

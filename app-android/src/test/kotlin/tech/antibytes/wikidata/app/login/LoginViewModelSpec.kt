@@ -101,7 +101,6 @@ class LoginViewModelSpec {
         // When
         val viewModel = LoginViewModel(store)
 
-
         CoroutineScope(Dispatchers.Default).launch {
             viewModel.password.collectLatest { givenPassword ->
                 result.send(givenPassword)
@@ -233,7 +232,6 @@ class LoginViewModelSpec {
 
                 error fulfils LoginContract.LoginState.AuthenticationError::class
                 (error as LoginContract.LoginState.AuthenticationError).reason mustBe LoginContract.Reason.WRONG_USERNAME_OR_PASSWORD
-
             }
         }
 
