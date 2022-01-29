@@ -99,6 +99,8 @@ dependencies {
     implementation(Dependency.multiplatform.serialization.android)
     implementation(Dependency.multiplatform.serialization.json)
 
+    implementation(Dependency.multiplatform.ktor.logger)
+
     implementation(project(":mw-client"))
     implementation(project(":entity-store"))
     implementation(project(":page-store"))
