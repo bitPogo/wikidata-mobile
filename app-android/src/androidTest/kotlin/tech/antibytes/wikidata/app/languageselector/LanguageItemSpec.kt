@@ -29,6 +29,7 @@ class LanguageItemSpec {
         composeTestRule.setContent {
             WikidataMobileTheme {
                 LanguageItem(
+                    23,
                     value = value,
                     selected = Locale.CANADA,
                     {}
@@ -45,16 +46,18 @@ class LanguageItemSpec {
     @Test
     fun Given_the_item_is_clicked_it_delegates_the_call_and_its_value_to_the_given_lambda() {
         // Given
+        val id = 23
         val value = Locale.GERMAN
 
-        var capturedLocale: Locale? = null
-        val onClick = { givenLocale: Locale ->
-            capturedLocale = givenLocale
+        var capturedId: Int? = null
+        val onClick = { givenId: Int ->
+            capturedId = givenId
         }
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
                 LanguageItem(
+                    id,
                     value = value,
                     selected = Locale.CANADA,
                     onClick
@@ -68,8 +71,8 @@ class LanguageItemSpec {
 
         // Then
         assertEquals(
-            value,
-            capturedLocale
+            id,
+            capturedId
         )
     }
 }

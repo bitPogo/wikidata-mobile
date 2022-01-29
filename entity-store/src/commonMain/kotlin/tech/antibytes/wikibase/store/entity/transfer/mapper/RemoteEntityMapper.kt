@@ -58,7 +58,8 @@ internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
             lastModification = monolingualEntity.lastModification,
             labels = mapOf(
                 monolingualEntity.language to mapValue(
-                    monolingualEntity.language, monolingualEntity.label
+                    monolingualEntity.language,
+                    monolingualEntity.label
                 )
             ),
             descriptions = mapOf(

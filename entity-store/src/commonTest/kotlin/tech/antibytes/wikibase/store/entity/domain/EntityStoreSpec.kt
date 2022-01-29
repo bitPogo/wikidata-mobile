@@ -433,6 +433,392 @@ class EntityStoreSpec {
     }
 
     @Test
+    fun `Given refresh is called it emits a Failure, if the latest State is an failure`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val koin = koinApplication {
+            modules(
+                module {
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
+                        RepositoryStub()
+                    }
+
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
+                        RepositoryStub()
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
+                    }
+
+                    single {
+                        flow
+                    }
+
+                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
+                        SharedFlowWrapperStub()
+                    }
+                }
+            )
+        }
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.MutationFailure> {
+                result.receive().unwrap()
+            }
+
+            error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
+        }
+    }
+
+    @Test
+    fun `Given refresh is called it mutates the Entity as Success with the remote fetched Entity, while updating the local stored one`() {
+        // Given
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+
+        val initialEntity = MonolingualEntity(
+            id = id,
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = language,
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(initialEntity)
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteEntity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val localRepository = RepositoryStub()
+
+        var capturedEntity: EntityModelContract.MonolingualEntity? = null
+        localRepository.updateEntity = { givenEntity ->
+            capturedEntity = givenEntity
+
+            expected
+        }
+
+        val remoteRepository = RepositoryStub()
+        var capturedId: String? = null
+        var capturedLanguage: String? = null
+        remoteRepository.fetchEntity = { givenId, givenLanguage ->
+            capturedId = givenId
+            capturedLanguage = givenLanguage
+
+            remoteEntity
+        }
+
+        val koin = koinApplication {
+            modules(
+                module {
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
+                        localRepository
+                    }
+
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
+                        remoteRepository
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
+                    }
+
+                    single {
+                        flow
+                    }
+
+                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
+                        SharedFlowWrapperStub()
+                    }
+                }
+            )
+        }
+
+        flow.onEach { item ->
+            if (item.unwrap() != initialEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe expected
+
+            capturedEntity mustBe remoteEntity
+
+            capturedId mustBe id
+            capturedLanguage mustBe language
+        }
+    }
+
+    @Test
+    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the remote call is empty`() {
+        // Given
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+
+        val initialEntity = MonolingualEntity(
+            id = id,
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = language,
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(initialEntity)
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.fetchEntity = { _, _ -> null }
+
+        val koin = koinApplication {
+            modules(
+                module {
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
+                        RepositoryStub()
+                    }
+
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
+                        remoteRepository
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
+                    }
+
+                    single {
+                        flow
+                    }
+
+                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
+                        SharedFlowWrapperStub()
+                    }
+                }
+            )
+        }
+
+        flow.onEach { item ->
+            if (item.value != initialEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.MissingEntity> {
+                result.receive().unwrap()
+            }
+
+            error.message mustBe "Entity ($id) in Language ($language) not found."
+        }
+    }
+
+    @Test
+    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the remote repository throws an error`() {
+        // Given
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+
+        val expected = IllegalStateException()
+
+        val initialEntity = MonolingualEntity(
+            id = id,
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = language,
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(initialEntity)
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.fetchEntity = { _, _ -> throw expected }
+
+        val koin = koinApplication {
+            modules(
+                module {
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
+                        RepositoryStub()
+                    }
+
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
+                        remoteRepository
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
+                    }
+
+                    single {
+                        flow
+                    }
+
+                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
+                        SharedFlowWrapperStub()
+                    }
+                }
+            )
+        }
+
+        flow.onEach { item ->
+            if (item.value != initialEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
+            }
+
+            error sameAs expected
+        }
+    }
+
+    @Test
+    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the local repository throws an error`() {
+        // Given
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+
+        val expected = IllegalStateException()
+
+        val initialEntity = MonolingualEntity(
+            id = id,
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = language,
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(initialEntity)
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val localRepository = RepositoryStub()
+        localRepository.updateEntity = { _ -> throw expected }
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.fetchEntity = { _, _ -> initialEntity }
+
+        val koin = koinApplication {
+            modules(
+                module {
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
+                        localRepository
+                    }
+
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
+                        remoteRepository
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
+                    }
+
+                    single {
+                        flow
+                    }
+
+                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
+                        SharedFlowWrapperStub()
+                    }
+                }
+            )
+        }
+
+        flow.onEach { item ->
+            if (item.value != initialEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
+            }
+
+            error sameAs expected
+        }
+    }
+
+    // Set
+    @Test
     fun `Given setLabel is called with a String it emits a Failure, if the latest State is an failure`() {
         // Given
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
@@ -661,6 +1047,130 @@ class EntityStoreSpec {
         // Then
         runBlockingTestWithTimeout {
             result.receive().unwrap() mustBe entity.copy(description = newDescription)
+        }
+    }
+
+    @Test
+    fun `Given setAlias is called with a String it emits a Failure, if the latest State is an failure`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val koin = koinApplication {
+            modules(
+                module {
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
+                        RepositoryStub()
+                    }
+
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
+                        RepositoryStub()
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
+                    }
+
+                    single {
+                        flow
+                    }
+
+                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
+                        SharedFlowWrapperStub()
+                    }
+                }
+            )
+        }
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).setAlias(
+            fixture.fixture(),
+            fixture.fixture()
+        )
+
+        // Then
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.MutationFailure> {
+                result.receive().unwrap()
+            }
+
+            error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
+        }
+    }
+
+    @Test
+    fun `Given setAlias is called it mutates the Alias with the given String at the given Index, if the latest State is an Success`() {
+        // Given
+        val index = 2
+        val newAlias: String = fixture.fixture()
+
+        val entity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(size = 5),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(entity)
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val koin = koinApplication {
+            modules(
+                module {
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
+                        RepositoryStub()
+                    }
+
+                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
+                        RepositoryStub()
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
+                    }
+
+                    single {
+                        flow
+                    }
+
+                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
+                        SharedFlowWrapperStub()
+                    }
+                }
+            )
+        }
+
+        flow.onEach { item ->
+            if (item.value!!.aliases != entity.aliases) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).setAlias(index, newAlias)
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe entity.copy(
+                aliases = entity.aliases.toMutableList().also { aliases ->
+                    aliases[index] = newAlias
+                }
+            )
         }
     }
 
