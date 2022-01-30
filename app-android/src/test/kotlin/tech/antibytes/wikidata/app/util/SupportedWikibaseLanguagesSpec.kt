@@ -19,9 +19,11 @@ class SupportedWikibaseLanguagesSpec {
     }
 
     @Test
-    fun `Given get is called, it returns a List of the supported Languages`() {
+    fun `Given get is called, it returns a sorted List of the supported Languages`() {
         // Given
-        val expected = LANGUAGES.map { tag -> Locale.forLanguageTag(tag) }
+        val expected = LANGUAGES
+            .map { tag -> Locale.forLanguageTag(tag) }
+            .sortedBy { locale -> locale.displayName }
 
         // When
         val actual = SupportedWikibaseLanguages.get()

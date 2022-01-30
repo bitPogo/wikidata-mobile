@@ -10,6 +10,8 @@ import java.util.Locale
 
 object SupportedWikibaseLanguages : UtilContract.SupportedWikibaseLanguages {
     override fun get(): List<Locale> {
-        return UtilContract.SupportedWikibaseLanguages.LANGUAGES.map { tag -> Locale.forLanguageTag(tag) }
+        return UtilContract.SupportedWikibaseLanguages.LANGUAGES
+            .map { tag -> Locale.forLanguageTag(tag) }
+            .sortedBy { locale -> locale.displayName }
     }
 }

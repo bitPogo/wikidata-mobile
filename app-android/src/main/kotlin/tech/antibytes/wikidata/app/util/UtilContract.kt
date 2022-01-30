@@ -20,6 +20,7 @@ interface UtilContract {
         }
     }
 
+    // TODO Map Build a WMF Wrapper for the special snowflakes
     interface SupportedWikibaseLanguages {
         fun get(): List<Locale>
 
