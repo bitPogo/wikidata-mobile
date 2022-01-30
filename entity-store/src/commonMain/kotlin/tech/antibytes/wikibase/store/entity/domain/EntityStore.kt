@@ -6,6 +6,7 @@
 
 package tech.antibytes.wikibase.store.entity.domain
 
+import co.touchlab.stately.concurrency.AtomicReference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,6 +44,10 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
         named(DomainContract.DomainKoinIds.REMOTE)
     )
 
+    private val rollbackReference = AtomicReference<ResultContract<Pair<EntityId, LanguageTag>, Exception>>(
+        Failure(EntityStoreError.InvalidRollbackState())
+    )
+
     private suspend fun wrapResult(
         action: suspend () -> EntityModelContract.MonolingualEntity
     ): ResultContract<EntityModelContract.MonolingualEntity, Exception> {
@@ -59,6 +64,12 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
                 wrapResult(event)
             }
         }
+    }
+
+    private fun setRollbackPoint(entity: EntityModelContract.MonolingualEntity) {
+        rollbackReference.set(
+            Success(Pair(entity.id, entity.language))
+        )
     }
 
     private suspend fun fetchRemoteEntity(id: EntityId, language: LanguageTag): EntityModelContract.MonolingualEntity {
@@ -83,7 +94,9 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
 
     override fun fetchEntity(id: EntityId, language: LanguageTag) {
         executeEvent {
-            fetchLocallyOrRemotely(id, language)
+            fetchLocallyOrRemotely(id, language).also { entity ->
+                setRollbackPoint(entity)
+            }
         }
     }
 
@@ -195,6 +208,7 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
 
     override fun reset() {
         executeEvent {
+            rollbackReference.set(Failure(EntityStoreError.InvalidRollbackState()))
             throw EntityStoreError.InitialState()
         }
     }
@@ -220,17 +234,24 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
         }
     }
 
-    private suspend fun rollback(entity: EntityModelContract.MonolingualEntity): EntityModelContract.MonolingualEntity {
-        return localRepository.fetchEntity(entity.id, entity.language)
-            ?: throw EntityStoreError.MissingEntity(entity.id, entity.language)
+    private suspend fun rollback(entityId: EntityId, language: LanguageTag): EntityModelContract.MonolingualEntity {
+        return localRepository.fetchEntity(entityId, language)
+            ?: throw EntityStoreError.MissingEntity(entityId, language)
+    }
+
+    private fun isValidRollback(entityId: EntityId, language: LanguageTag): Boolean {
+        return entityId.isNotEmpty() && language.isNotEmpty()
     }
 
     override fun rollback() {
         executeEvent {
-            store(
-                { throw EntityStoreError.InvalidRollbackState() },
-                { value -> rollback(value) }
-            )
+            val (entityId, language) = rollbackReference.get().unwrap()
+
+            if (isValidRollback(entityId, language)) {
+                rollback(entityId, language)
+            } else {
+                throw EntityStoreError.InvalidRollbackState()
+            }
         }
     }
 
@@ -259,7 +280,9 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
             store(
                 { entity -> saveOnCreate(entity) },
                 { entity -> saveOnUpdate(entity) }
-            )
+            ).also { entity ->
+                setRollbackPoint(entity)
+            }
         }
     }
 

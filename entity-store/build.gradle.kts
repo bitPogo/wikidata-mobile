@@ -51,7 +51,7 @@ kotlin {
                 implementation(Dependency.multiplatform.dateTime)
 
                 implementation(Dependency.multiplatform.stately.freeze)
-                implementation(Dependency.multiplatform.stately.isolate)
+                implementation(Dependency.multiplatform.stately.concurrency)
 
                 implementation(LocalDependency.sqldelight.coroutines)
 
