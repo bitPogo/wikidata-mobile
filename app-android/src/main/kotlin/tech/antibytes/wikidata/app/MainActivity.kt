@@ -21,7 +21,7 @@ import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.wikibase.store.database.WikibaseDataBase
 import tech.antibytes.wikibase.store.entity.domain.EntityStore
 import tech.antibytes.wikibase.store.page.domain.PageStore
-import tech.antibytes.wikidata.app.termbox.TermboxEditView
+import tech.antibytes.wikidata.app.termbox.TermboxScreen
 import tech.antibytes.wikidata.app.termbox.TermboxViewModel
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 import tech.antibytes.wikidata.app.util.DatabaseFactory
@@ -57,8 +57,7 @@ class MainActivity : ComponentActivity() {
             WikidataMobileTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    TermboxEditView(
-                        onReadMode = {},
+                    TermboxScreen(
                         viewModel = TermboxViewModel(
                             entityStore = EntityStore.getInstance(
                                 client,

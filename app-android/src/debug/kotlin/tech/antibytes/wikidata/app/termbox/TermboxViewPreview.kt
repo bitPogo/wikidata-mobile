@@ -9,8 +9,6 @@ package tech.antibytes.wikidata.app.termbox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import java.util.Locale
 import java.util.Locale.ENGLISH
 
 @Preview
@@ -91,40 +89,4 @@ fun TermboxViewPreviewProtected() {
             MutableStateFlow(ENGLISH)
         )
     )
-}
-
-private class TermboxViewModelStub(
-    override val id: StateFlow<String>,
-    override val isEditable: StateFlow<Boolean>,
-    override val label: StateFlow<String>,
-    override val description: StateFlow<String>,
-    override val aliases: StateFlow<List<String>>,
-    override val language: StateFlow<Locale>
-) : TermboxContract.TermboxViewModel {
-    override fun setLabel(newLabel: String) {
-    }
-
-    override fun setDescription(newDescription: String) {
-    }
-
-    override fun setAlias(idx: Int, newAlias: String) {
-    }
-
-    override fun dischargeChanges() {
-    }
-
-    override fun saveChanges() {
-    }
-
-    override fun refresh() {
-    }
-
-    override fun createNewItem() {
-    }
-
-    override fun randomItem() {
-    }
-
-    override fun fetchItem(id: String) {
-    }
 }

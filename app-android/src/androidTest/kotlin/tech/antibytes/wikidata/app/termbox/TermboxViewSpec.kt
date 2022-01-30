@@ -72,7 +72,7 @@ class TermboxViewSpec {
 
         // Then
         composeTestRule
-            .onNodeWithContentDescription("Edit the current entity")
+            .onNodeWithContentDescription("Edit current entity")
             .assertIsDisplayed()
 
         composeTestRule
@@ -122,7 +122,7 @@ class TermboxViewSpec {
 
         // Then
         composeTestRule
-            .onNodeWithContentDescription("Edit the current entity")
+            .onNodeWithContentDescription("Edit current entity")
             .assertIsNotEnabled()
     }
 
@@ -286,7 +286,7 @@ class TermboxViewSpec {
         }
 
         composeTestRule
-            .onNodeWithContentDescription("Edit the current entity")
+            .onNodeWithContentDescription("Edit current entity")
             .performClick()
 
         // Then

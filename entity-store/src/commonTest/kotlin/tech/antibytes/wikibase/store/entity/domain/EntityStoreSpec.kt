@@ -2336,7 +2336,6 @@ class EntityStoreSpec {
 
     // rollback
 
-
     @Test
     fun `Given rollback is called, while in Rollback is in ErrorState, it emits an Failure`() {
         // Given

@@ -52,7 +52,7 @@ class TermboxMenuSpec {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithContentDescription("Edit the current entity")
+            .onNodeWithContentDescription("Edit current entity")
             .assertIsDisplayed()
 
         composeTestRule
@@ -117,7 +117,7 @@ class TermboxMenuSpec {
         }
 
         composeTestRule
-            .onNodeWithContentDescription("Edit the current entity")
+            .onNodeWithContentDescription("Edit current entity")
             .performClick()
 
         // Then
