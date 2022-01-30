@@ -12,7 +12,7 @@ import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 
 interface TermSearchContract {
     interface TermSearchViewModel {
-        val result: SharedFlow<List<PageModelContract.SearchEntry>>
+        val result: StateFlow<List<PageModelContract.SearchEntry>>
         val query: StateFlow<String>
 
         fun setQuery(query: String)

@@ -26,5 +26,9 @@
     <string name="termbox_edit_save">Save changes</string>
     <string name="termbox_search_placeholder">Your query</string>
     <string name="termbox_search_search">Apply your query</string>
+    <string name="termbox_missing_label">No label defined</string>
+    <string name="termbox_missing_description">No description defined</string>
+    <string name="termsearch_missing_query">Please enter a query</string>
+    <string name="termsearch_no_results">The given query had no results</string>
     <string name="language_selector_placeholder">Find a language</string>
 </resources>
