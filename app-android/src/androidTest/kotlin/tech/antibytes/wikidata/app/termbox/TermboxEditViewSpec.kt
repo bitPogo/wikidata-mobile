@@ -7,13 +7,15 @@
 package tech.antibytes.wikidata.app.termbox
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -25,14 +27,14 @@ import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 import tech.antibytes.wikidata.mock.TermBoxViewModelStub
 import java.util.Locale
 
-class TermboxViewSpec {
+class TermboxEditViewSpec {
     @get:Rule
     val composeTestRule = createComposeRule()
     private val fixture = kotlinFixture()
 
     private val id = MutableStateFlow("")
     private val editability = MutableStateFlow(true)
-    private val label = MutableStateFlow("Test")
+    private val label = MutableStateFlow("")
     private val description = MutableStateFlow("")
     private val aliases = MutableStateFlow(emptyList<String>())
 
@@ -53,18 +55,18 @@ class TermboxViewSpec {
 
         id.update { "" }
         editability.update { true }
-        label.update { "Test" }
+        label.update { "" }
         description.update { "" }
         aliases.update { emptyList() }
     }
 
     @Test
-    fun It_renders_a_TermboxView() {
+    fun It_renders_a_TermboxEditView() {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
+                TermboxEditView(
+                    onReadMode = { },
                     viewModel = viewModel
                 )
             }
@@ -72,58 +74,12 @@ class TermboxViewSpec {
 
         // Then
         composeTestRule
-            .onNodeWithContentDescription("Edit the current entity")
+            .onNodeWithContentDescription("Discard changes")
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText("Test")
+            .onNodeWithText("Label")
             .assertIsDisplayed()
-    }
-
-    @Test
-    fun It_propagates_Id_changes_of_the_ViewModel() {
-        // Given
-        val id: String = fixture.fixture()
-
-        // When
-        composeTestRule.setContent {
-            WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
-                    viewModel = viewModel
-                )
-            }
-        }
-
-        this.id.update { id }
-
-        // Then
-        composeTestRule
-            .onNodeWithText(id)
-            .assertIsDisplayed()
-    }
-
-    @Test
-    fun It_propagates_Editability_changes_of_the_ViewModel() {
-        // Given
-        val editability = false
-
-        // When
-        composeTestRule.setContent {
-            WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
-                    viewModel = viewModel
-                )
-            }
-        }
-
-        this.editability.update { editability }
-
-        // Then
-        composeTestRule
-            .onNodeWithContentDescription("Edit the current entity")
-            .assertIsNotEnabled()
     }
 
     @Test
@@ -134,8 +90,8 @@ class TermboxViewSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
+                TermboxEditView(
+                    onReadMode = { },
                     viewModel = viewModel
                 )
             }
@@ -150,26 +106,33 @@ class TermboxViewSpec {
     }
 
     @Test
-    fun Given_a_Label_is_empty_it_uses_a_resource_string() {
+    fun Given_a_User_changes_the_Label_it_delegates_the_call_to_the_ViewModel() {
         // Given
-        val label = ""
+        val label: String = fixture.fixture()
 
+        var capturedLabel: String? = null
+        viewModel.setLabel = { givenLabel ->
+            capturedLabel = givenLabel
+        }
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
+                TermboxEditView(
+                    onReadMode = { },
                     viewModel = viewModel
                 )
             }
         }
 
-        this.label.update { label }
+        composeTestRule
+            .onNodeWithText("Label")
+            .performTextInput(label)
 
         // Then
-        composeTestRule
-            .onNodeWithText("No label defined")
-            .assertIsDisplayed()
+        assertEquals(
+            label,
+            capturedLabel
+        )
     }
 
     @Test
@@ -180,8 +143,8 @@ class TermboxViewSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
+                TermboxEditView(
+                    onReadMode = { },
                     viewModel = viewModel
                 )
             }
@@ -196,26 +159,33 @@ class TermboxViewSpec {
     }
 
     @Test
-    fun Given_a_Description_is_empty_it_uses_a_resource_string() {
+    fun Given_a_User_changes_the_Description_it_delegates_the_call_to_the_ViewModel() {
         // Given
-        val description = ""
+        val description: String = fixture.fixture()
 
+        var capturedDescription: String? = null
+        viewModel.setDescription = { givenDescription ->
+            capturedDescription = givenDescription
+        }
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
+                TermboxEditView(
+                    onReadMode = { },
                     viewModel = viewModel
                 )
             }
         }
 
-        this.description.update { description }
+        composeTestRule
+            .onNodeWithText("Description")
+            .performTextInput(description)
 
         // Then
-        composeTestRule
-            .onNodeWithText("No description defined")
-            .assertIsDisplayed()
+        assertEquals(
+            description,
+            capturedDescription
+        )
     }
 
     @Test
@@ -226,8 +196,8 @@ class TermboxViewSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
+                TermboxEditView(
+                    onReadMode = { },
                     viewModel = viewModel
                 )
             }
@@ -242,54 +212,101 @@ class TermboxViewSpec {
     }
 
     @Test
-    fun Given_a_User_click_on_random_entity_it_delegates_the_call_to_the_ViewModel() {
+    fun Given_a_User_changes_a_Alias_it_delegates_the_call_to_the_ViewModel() {
         // Given
-        var wasClicked = false
-        viewModel.randomItem = { wasClicked = true }
+        val aliases: List<String> = fixture.listFixture(size = 5)
+        val newAlias: String = fixture.fixture()
+        val index = 3
+
+        var capturedAlias: String? = null
+        var capturedIndex: Int? = null
+
+        this.aliases.update { aliases }
+
+        viewModel.setAlias = { givenIndex, givenAlias ->
+            capturedIndex = givenIndex
+            capturedAlias = givenAlias
+        }
 
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = {},
+                TermboxEditView(
+                    onReadMode = { },
                     viewModel = viewModel
                 )
             }
         }
 
         composeTestRule
-            .onNodeWithContentDescription("Show more actions")
-            .performClick()
-
-        composeTestRule
-            .onNodeWithText("Select a random entity")
-            .performClick()
+            .onNodeWithText(aliases[index])
+            .performTextReplacement(newAlias)
 
         // Then
-        assertTrue(wasClicked)
+        assertEquals(
+            index,
+            capturedIndex
+        )
+
+        assertEquals(
+            newAlias,
+            capturedAlias
+        )
     }
 
     @Test
-    fun Given_a_User_click_on_edit_entity_it_delegates_the_call_to_given_function() {
+    fun Given_a_User_clicks_cancel_it_discharge_changes_and_reverts_to_the_read_mode() {
         // Given
-        var wasClicked = false
-        val onEdit = { wasClicked = true }
+        var readModeWasCalled = false
+        var cancelWasCalled = false
+
+        val onReadMode = { readModeWasCalled = true }
+        viewModel.dischargeChanges = { cancelWasCalled = true }
 
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxView(
-                    onEditMode = onEdit,
+                TermboxEditView(
+                    onReadMode = onReadMode,
                     viewModel = viewModel
                 )
             }
         }
 
         composeTestRule
-            .onNodeWithContentDescription("Edit the current entity")
+            .onNodeWithContentDescription("Discard changes")
             .performClick()
 
         // Then
-        assertTrue(wasClicked)
+        assertTrue(cancelWasCalled)
+        assertTrue(readModeWasCalled)
+    }
+
+    @Test
+    fun Given_a_User_clicks_cancel_it_saves_changes_and_reverts_to_the_read_mode() {
+        // Given
+        var readModeWasCalled = false
+        var saveWasCalled = false
+
+        val onReadMode = { readModeWasCalled = true }
+        viewModel.saveChanges = { saveWasCalled = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermboxEditView(
+                    onReadMode = onReadMode,
+                    viewModel = viewModel
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Save changes")
+            .performClick()
+
+        // Then
+        assertTrue(saveWasCalled)
+        assertTrue(readModeWasCalled)
     }
 }
