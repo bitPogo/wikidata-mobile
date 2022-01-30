@@ -21,7 +21,6 @@ import tech.antibytes.wikidata.app.R
 import tech.antibytes.wikidata.app.ui.atom.TopSearchBar
 import tech.antibytes.wikidata.app.ui.theme.Blue
 import tech.antibytes.wikidata.app.ui.theme.DeepBlack
-import tech.antibytes.wikidata.app.ui.theme.LightBrightWhite
 import tech.antibytes.wikidata.app.ui.theme.LightDarkGray
 import tech.antibytes.wikidata.app.ui.theme.White
 

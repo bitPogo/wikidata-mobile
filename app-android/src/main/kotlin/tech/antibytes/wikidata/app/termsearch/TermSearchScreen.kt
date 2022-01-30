@@ -6,11 +6,7 @@
 
 package tech.antibytes.wikidata.app.termsearch
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 import tech.antibytes.wikidata.app.R
 import tech.antibytes.wikidata.app.extension.useResourceOnNullOrBlank
+import tech.antibytes.wikidata.app.ui.molecule.ScreenWithTopBar
 
 @Composable
 fun TermSearchScreen(viewModel: TermSearchContract.TermSearchViewModel) {
@@ -36,13 +33,9 @@ fun TermSearchScreen(viewModel: TermSearchContract.TermSearchViewModel) {
     } else {
         R.string.termsearch_no_results
     }
-    
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-        ) {
+
+    ScreenWithTopBar(
+        topBar = @Composable {
             TermSearchBar(
                 value = query.value,
                 onValueChange = { newQuery ->
@@ -50,13 +43,8 @@ fun TermSearchScreen(viewModel: TermSearchContract.TermSearchViewModel) {
                 },
                 onSearch = { }
             )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
+        },
+        content = @Composable {
             if (result.value.isNotEmpty()) {
                 LazyColumn {
                     items(result.value) { entry: PageModelContract.SearchEntry ->
@@ -80,5 +68,5 @@ fun TermSearchScreen(viewModel: TermSearchContract.TermSearchViewModel) {
                 )
             }
         }
-    }
+    )
 }

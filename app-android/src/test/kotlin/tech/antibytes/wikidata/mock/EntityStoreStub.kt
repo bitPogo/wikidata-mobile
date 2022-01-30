@@ -7,6 +7,7 @@
 package tech.antibytes.wikidata.mock
 
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityId
@@ -24,7 +25,7 @@ class EntityStoreStub(
     var create: ((String, EntityModelContract.EntityType) -> Unit)? = null,
     var save: (() -> Unit)? = null,
     var rollback: (() -> Unit)? = null
-) : EntityStoreContract.EntityStore {
+) : EntityStoreContract.EntityStore, MockContract.Mock {
     override fun fetchEntity(id: EntityId, language: LanguageTag) {
         return fetchEntity?.invoke(id, language)
             ?: throw MockError.MissingStub("Missing Sideeffect fetchEntity")
@@ -72,5 +73,17 @@ class EntityStoreStub(
 
     override fun reset() {
         TODO("Not yet implemented")
+    }
+
+    override fun clear() {
+        fetchEntity = null
+        refresh = null
+        setLabel = null
+        setDescription = null
+        setAlias = null
+        setAliases = null
+        create = null
+        save = null
+        rollback = null
     }
 }

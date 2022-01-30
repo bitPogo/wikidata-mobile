@@ -6,7 +6,6 @@
 
 package tech.antibytes.wikidata.app.termsearch
 
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 

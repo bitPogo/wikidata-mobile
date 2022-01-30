@@ -29,10 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import tech.antibytes.wikidata.app.R
 import tech.antibytes.wikidata.app.ui.theme.Blue
-import tech.antibytes.wikidata.app.ui.theme.BrightWhite
+import tech.antibytes.wikidata.app.ui.theme.White
 
 @Composable
 private fun ActionsButtons(
+    isEditable: Boolean,
     onSearch: () -> Unit,
     onEdit: () -> Unit,
     onLanguageSearch: () -> Unit,
@@ -53,7 +54,10 @@ private fun ActionsButtons(
             )
         }
 
-        IconButton(onClick = onEdit) {
+        IconButton(
+            onClick = onEdit,
+            enabled = isEditable
+        ) {
             Icon(
                 Icons.Outlined.Edit,
                 stringResource(R.string.termbox_menu_edit)
@@ -101,8 +105,9 @@ private fun ActionsButtons(
 }
 
 @Composable
-fun TermboxMenu(
+fun TermMenu(
     title: String,
+    isEditable: Boolean,
     onSearch: () -> Unit,
     onEdit: () -> Unit,
     onLanguageSearch: () -> Unit,
@@ -111,10 +116,11 @@ fun TermboxMenu(
     TopAppBar(
         title = @Composable { Text(text = title) },
         backgroundColor = Blue,
-        contentColor = BrightWhite,
+        contentColor = White,
         modifier = Modifier.fillMaxWidth(),
         actions = @Composable {
             ActionsButtons(
+                isEditable,
                 onSearch,
                 onEdit,
                 onLanguageSearch,

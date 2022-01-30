@@ -14,14 +14,14 @@ import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 import tech.antibytes.wikidata.app.R
+import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class StringExtensionSpec {
     @get:Rule
     val composeTestRule = createComposeRule()
     private val fixture = kotlinFixture()
-    
+
     @Test
     fun Givne_useResourceOnNullOrBlank_is_called_with_on_a_String_it_returns_its_value() {
         // Given
@@ -33,8 +33,8 @@ class StringExtensionSpec {
                 Text(text = expected.useResourceOnNullOrBlank(id = R.string.termbox_missing_label))
             }
         }
-        
-        // Then
+
+// Then
         composeTestRule
             .onNodeWithText(expected)
             .assertIsDisplayed()
@@ -44,6 +44,24 @@ class StringExtensionSpec {
     fun Givne_useResourceOnNullOrBlank_is_called_with_on_a_blank_String_it_returns_the_given_ResourceString() {
         // Given
         val given = "      "
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                Text(text = given.useResourceOnNullOrBlank(id = R.string.termbox_missing_label))
+            }
+        }
+
+        // Then
+        composeTestRule
+            .onNodeWithText("No label defined")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun Givne_useResourceOnNullOrBlank_is_called_with_on_a_empty_String_it_returns_the_given_ResourceString() {
+        // Given
+        val given = ""
 
         // When
         composeTestRule.setContent {

@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.Instant
+import org.junit.Before
 import org.junit.Test
 import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
@@ -55,11 +56,23 @@ class TermboxViewModelSpec {
         pageFlow
     ) { CoroutineScope(Dispatchers.Default) }
 
-    private val entityStore = EntityStoreStub(entitySurfaceFlow)
+    private val entityStore = EntityStoreStub(
+        entitySurfaceFlow,
+    )
     private val pageStore = PageStoreStub(
         pageSurfaceFlow,
         SharedFlowWrapper.getInstance(MutableSharedFlow()) { CoroutineScope(Dispatchers.Default) }
     )
+
+    @Before
+    fun setUp() {
+        entityStore.clear()
+        pageStore.clear()
+
+        entityStore.fetchEntity = { _, _ -> Unit }
+
+        entityFlow.update { Failure(EntityStoreError.InitialState()) }
+    }
 
     @Test
     fun `It fulfils TermboxViewModel`() {
@@ -70,6 +83,28 @@ class TermboxViewModelSpec {
         )
         viewModel fulfils TermboxContract.TermboxViewModel::class
         viewModel fulfils ViewModel::class
+    }
+
+    @Test
+    fun `It fetches an Entity on initialisation`() {
+        // Given
+        var capturedId: String? = null
+        var capturedLanguageTag: String? = null
+        entityStore.fetchEntity = { givenId, givenLanguage ->
+            capturedId = givenId
+            capturedLanguageTag = givenLanguage
+        }
+
+        // When
+        TermboxViewModel(
+            currentLanguageState,
+            entityStore,
+            pageStore
+        )
+
+        // Then
+        capturedLanguageTag mustBe currentLanguageState.value.toLanguageTag().replace('_', '-')
+        capturedId mustBe "Q214750"
     }
 
     @Test

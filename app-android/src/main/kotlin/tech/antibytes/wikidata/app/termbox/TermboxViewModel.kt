@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.page.PageStoreContract
+import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
 import java.util.Locale
 
 class TermboxViewModel(
@@ -43,6 +44,8 @@ class TermboxViewModel(
                 distributeEntity(entity.unwrap())
             }
         }
+
+        fetchItem(INITIAL_ENTITY)
     }
 
     private fun distributeEntity(entity: EntityModelContract.MonolingualEntity) {

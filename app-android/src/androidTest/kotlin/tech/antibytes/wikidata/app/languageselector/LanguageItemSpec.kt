@@ -6,20 +6,12 @@
 
 package tech.antibytes.wikidata.app.languageselector
 
-import androidx.compose.ui.semantics.SemanticsPropertyKey
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsSelectable
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.onSibling
-import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.printToString
 import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test

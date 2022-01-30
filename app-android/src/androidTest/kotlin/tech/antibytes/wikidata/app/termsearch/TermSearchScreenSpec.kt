@@ -88,7 +88,6 @@ class TermSearchScreenSpec {
             }
         }
 
-
         composeTestRule
             .onNodeWithText("Your query")
             .performTextInput(query)

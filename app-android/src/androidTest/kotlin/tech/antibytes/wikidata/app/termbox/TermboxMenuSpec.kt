@@ -31,8 +31,9 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = title,
+                    isEditable = true,
                     onSearch = { /*TODO*/ },
                     onEdit = { /*TODO*/ },
                     onLanguageSearch = { /*TODO*/ },
@@ -51,7 +52,7 @@ class TermboxMenuSpec {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithContentDescription("Edit current entity")
+            .onNodeWithContentDescription("Edit the current entity")
             .assertIsDisplayed()
 
         composeTestRule
@@ -76,8 +77,9 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
+                    isEditable = true,
                     onSearch = onSearch,
                     onEdit = { /*TODO*/ },
                     onLanguageSearch = { /*TODO*/ },
@@ -103,8 +105,9 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
+                    isEditable = true,
                     onSearch = { /*TODO*/ },
                     onEdit = onEdit,
                     onLanguageSearch = { /*TODO*/ },
@@ -114,7 +117,7 @@ class TermboxMenuSpec {
         }
 
         composeTestRule
-            .onNodeWithContentDescription("Edit current entity")
+            .onNodeWithContentDescription("Edit the current entity")
             .performClick()
 
         // Then
@@ -126,8 +129,9 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
+                    isEditable = true,
                     onSearch = { /*TODO*/ },
                     onEdit = { /*TODO*/ },
                     onLanguageSearch = { /*TODO*/ },
@@ -159,8 +163,9 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
+                    isEditable = true,
                     onSearch = { /*TODO*/ },
                     onEdit = { /*TODO*/ },
                     onLanguageSearch = { /*TODO*/ },
@@ -198,8 +203,9 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
+                    isEditable = true,
                     onSearch = { /*TODO*/ },
                     onEdit = { /*TODO*/ },
                     onLanguageSearch = onLanguageSearch,

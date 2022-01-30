@@ -28,5 +28,9 @@ interface TermboxContract {
         fun createNewItem()
         fun randomItem()
         fun fetchItem(id: String)
+
+        companion object {
+            const val INITIAL_ENTITY = "Q214750"
+        }
     }
 }

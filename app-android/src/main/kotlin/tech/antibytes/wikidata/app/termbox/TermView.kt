@@ -82,6 +82,8 @@ fun TermView(
             )
 
             if (aliases.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(10.dp))
+
                 Text(
                     text = stringResource(R.string.termbox_view_aka),
                     fontSize = 16.sp,
