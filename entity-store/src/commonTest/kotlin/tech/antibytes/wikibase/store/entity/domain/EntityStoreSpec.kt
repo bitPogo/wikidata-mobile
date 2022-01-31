@@ -40,6 +40,7 @@ import tech.antibytes.wikibase.store.mock.EntityQueriesStub
 import tech.antibytes.wikibase.store.mock.MwClientStub
 import tech.antibytes.wikibase.store.mock.SharedFlowWrapperStub
 import tech.antibytes.wikibase.store.mock.domain.RepositoryStub
+import tech.antibytes.wikibase.store.mock.extension.monolingualEntityFixture
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
@@ -109,17 +110,7 @@ class EntityStoreSpec {
         val id: EntityId = fixture.fixture()
         val language: LanguageTag = fixture.fixture()
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val localRepository = RepositoryStub()
 
@@ -166,29 +157,8 @@ class EntityStoreSpec {
         val id: EntityId = fixture.fixture()
         val language: LanguageTag = fixture.fixture()
 
-        val remoteEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val remoteEntity = fixture.monolingualEntityFixture()
+        val expected = fixture.monolingualEntityFixture()
 
         val localRepository = RepositoryStub()
         localRepository.fetchEntity = { _, _ -> null }
@@ -363,291 +333,6 @@ class EntityStoreSpec {
         }
     }
 
-    @Test
-    fun `Given refresh is called it emits a Failure, if the latest State is an failure`() {
-        // Given
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Failure(EntityStoreError.InitialState())
-        )
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val koin = initKoin(
-            RepositoryStub(),
-            RepositoryStub(),
-            flow
-        )
-
-        flow.onEach { item ->
-            if (item.error !is EntityStoreError.InitialState) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).refresh()
-
-        // Then
-        runBlockingTestWithTimeout {
-            val error = assertFailsWith<EntityStoreError.MutationFailure> {
-                result.receive().unwrap()
-            }
-
-            error.message sameAs "Cannot mutate Entity, since last event resulted in an error."
-        }
-    }
-
-    @Test
-    fun `Given refresh is called it mutates the Entity as Success with the remote fetched Entity, while updating the local stored one`() {
-        // Given
-        val id: EntityId = fixture.fixture()
-        val language: LanguageTag = fixture.fixture()
-
-        val initialEntity = MonolingualEntity(
-            id = id,
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = language,
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(initialEntity)
-        )
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val remoteEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val localRepository = RepositoryStub()
-
-        var capturedEntity: EntityModelContract.MonolingualEntity? = null
-        localRepository.updateEntity = { givenEntity ->
-            capturedEntity = givenEntity
-
-            expected
-        }
-
-        val remoteRepository = RepositoryStub()
-        var capturedId: String? = null
-        var capturedLanguage: String? = null
-        remoteRepository.fetchEntity = { givenId, givenLanguage ->
-            capturedId = givenId
-            capturedLanguage = givenLanguage
-
-            remoteEntity
-        }
-
-        val koin = initKoin(
-            localRepository,
-            remoteRepository,
-            flow
-        )
-
-        flow.onEach { item ->
-            if (item.unwrap() != initialEntity) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).refresh()
-
-        // Then
-        runBlockingTestWithTimeout {
-            result.receive().unwrap() mustBe expected
-
-            capturedEntity mustBe remoteEntity
-
-            capturedId mustBe id
-            capturedLanguage mustBe language
-        }
-    }
-
-    @Test
-    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the remote call is empty`() {
-        // Given
-        val id: EntityId = fixture.fixture()
-        val language: LanguageTag = fixture.fixture()
-
-        val initialEntity = MonolingualEntity(
-            id = id,
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = language,
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(initialEntity)
-        )
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val remoteRepository = RepositoryStub()
-        remoteRepository.fetchEntity = { _, _ -> null }
-
-        val koin = initKoin(
-            RepositoryStub(),
-            remoteRepository,
-            flow
-        )
-
-        flow.onEach { item ->
-            if (item.value != initialEntity) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).refresh()
-
-        // Then
-        runBlockingTestWithTimeout {
-            val error = assertFailsWith<EntityStoreError.MissingEntity> {
-                result.receive().unwrap()
-            }
-
-            error.message mustBe "Entity ($id) in Language ($language) not found."
-        }
-    }
-
-    @Test
-    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the remote repository throws an error`() {
-        // Given
-        val id: EntityId = fixture.fixture()
-        val language: LanguageTag = fixture.fixture()
-
-        val expected = IllegalStateException()
-
-        val initialEntity = MonolingualEntity(
-            id = id,
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = language,
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(initialEntity)
-        )
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val remoteRepository = RepositoryStub()
-        remoteRepository.fetchEntity = { _, _ -> throw expected }
-
-        val koin = initKoin(
-            RepositoryStub(),
-            remoteRepository,
-            flow
-        )
-
-        flow.onEach { item ->
-            if (item.value != initialEntity) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).refresh()
-
-        // Then
-        runBlockingTestWithTimeout {
-            val error = assertFails {
-                result.receive().unwrap()
-            }
-
-            error sameAs expected
-        }
-    }
-
-    @Test
-    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the local repository throws an error`() {
-        // Given
-        val id: EntityId = fixture.fixture()
-        val language: LanguageTag = fixture.fixture()
-
-        val expected = IllegalStateException()
-
-        val initialEntity = MonolingualEntity(
-            id = id,
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = language,
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(initialEntity)
-        )
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val localRepository = RepositoryStub()
-        localRepository.updateEntity = { _ -> throw expected }
-
-        val remoteRepository = RepositoryStub()
-        remoteRepository.fetchEntity = { _, _ -> initialEntity }
-
-        val koin = initKoin(
-            localRepository,
-            remoteRepository,
-            flow
-        )
-
-        flow.onEach { item ->
-            if (item.value != initialEntity) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).refresh()
-
-        // Then
-        runBlockingTestWithTimeout {
-            val error = assertFails {
-                result.receive().unwrap()
-            }
-
-            error sameAs expected
-        }
-    }
-
     // Set
     @Test
     fun `Given setLabel is called with a String it emits a Failure, if the latest State is an failure`() {
@@ -686,18 +371,7 @@ class EntityStoreSpec {
     fun `Given setLabel is called it mutates the Label with the given String, if the latest State is an Success`() {
         // Given
         val newLabel: String = fixture.fixture()
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val entity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(entity)
@@ -762,18 +436,7 @@ class EntityStoreSpec {
     fun `Given setDescritpion is called it mutates the Description with the given String, if the latest State is an Success`() {
         // Given
         val newDescription: String = fixture.fixture()
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val entity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(entity)
@@ -874,18 +537,7 @@ class EntityStoreSpec {
     fun `Given setAliases is called it mutates the Aliases with the given List, if the latest State is an Success`() {
         // Given
         val newAliases: List<String> = fixture.listFixture()
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val entity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(entity)
@@ -958,17 +610,7 @@ class EntityStoreSpec {
     @Test
     fun `Given reset is called it goes back into the inital state`() {
         // Given
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val entity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(entity)
@@ -1035,29 +677,11 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityCreation, it creates a new Entity remotely and locally`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(
             id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
             lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
         )
-
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1108,29 +732,15 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityCreation, it creates a new Entity remotely and locally, while trimming its values`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(
             id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
             lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
             label = " ${fixture.fixture<String>()} ",
             description = " ${fixture.fixture<String>()} ",
             aliases = fixture.listFixture<String>().map { alias -> " $alias " },
         )
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1185,29 +795,15 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityCreation, it creates a new Entity remotely and locally, while filtering empty values`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(
             id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
             lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
             label = "",
             description = "",
             aliases = fixture.listFixture<String>().map { "" },
         )
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1262,29 +858,15 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityCreation, it creates a new Entity remotely and locally, while filtering blank values`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(
             id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
             lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
             label = "  ",
             description = "  ",
             aliases = fixture.listFixture<String>().map { "  " },
         )
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1339,29 +921,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityCreation, it emits a Failure wiht any Error from the remoteRepository`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(id = "")
+        val entity = fixture.monolingualEntityFixture()
 
         val expected = IllegalArgumentException()
 
@@ -1405,29 +966,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityCreation, it emits a Failure wiht any Error from the localRepository`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(id = "")
+        val entity = fixture.monolingualEntityFixture()
 
         val expected = IllegalArgumentException()
 
@@ -1471,29 +1011,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityCreation, it emits a Failure due to the remote Repository returns null`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(id = "")
+        val entity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1535,29 +1054,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityCreation, it emits a Failure due to the local Repository returns null`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(id = "")
+        val entity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1600,29 +1098,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityUpdate, it creates a new Entity remotely and locally`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture()
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1673,29 +1150,13 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityUpdate, it creates a new Entity remotely and locally, while trimming its values`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(
             label = " ${fixture.fixture<String>()} ",
             description = " ${fixture.fixture<String>()} ",
             aliases = fixture.listFixture<String>().map { alias -> " $alias " },
         )
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1750,29 +1211,13 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityUpdate, it creates a new Entity remotely and locally, while filtering empty values`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(
             label = "",
             description = "",
             aliases = fixture.listFixture<String>().map { "" },
         )
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1827,29 +1272,13 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityUpdate, it creates a new Entity remotely and locally, while filtering blank values`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
+        val inMemoryEntity = fixture.monolingualEntityFixture().copy(
             label = "   ",
             description = "   ",
             aliases = fixture.listFixture<String>().map { "   " },
         )
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -1904,29 +1333,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityUpdate, it emits Failure with any Error from the RemoteRepository`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture()
+        val entity = fixture.monolingualEntityFixture()
 
         val expected = IllegalArgumentException()
 
@@ -1970,29 +1378,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityUpdate, it emits a Failure with any Error from the LocalRepository`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture()
+        val entity = fixture.monolingualEntityFixture()
 
         val expected = IllegalArgumentException()
 
@@ -2036,29 +1423,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityUpdate, it emits a Failure due to the remote Repository returns null`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture()
+        val entity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -2100,29 +1466,8 @@ class EntityStoreSpec {
     @Test
     fun `Given save is called after an EntityUpdate, it emits a Failure due to the local Repository returns null`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture()
+        val entity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -2162,7 +1507,6 @@ class EntityStoreSpec {
     }
 
     // rollback
-
     @Test
     fun `Given rollback is called, while in Rollback is in ErrorState, it emits an Failure`() {
         // Given
@@ -2197,17 +1541,7 @@ class EntityStoreSpec {
     @Test
     fun `Given rollback is called, after an unsuccessful save, it emits an Failure`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -2252,29 +1586,8 @@ class EntityStoreSpec {
     @Test
     fun `Given rollback is called, after an successful save, it emits an Success with the saved Entity`() {
         // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture()
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -2400,17 +1713,7 @@ class EntityStoreSpec {
         val id: EntityId = fixture.fixture()
         val language: LanguageTag = fixture.fixture()
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val localRepository = RepositoryStub()
         var capturedEntityId: String? = null
@@ -2474,17 +1777,7 @@ class EntityStoreSpec {
         val id: EntityId = fixture.fixture()
         val language: LanguageTag = fixture.fixture()
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val localRepository = RepositoryStub()
         localRepository.fetchEntity = { _, _ -> expected }
@@ -2527,29 +1820,9 @@ class EntityStoreSpec {
         // Given
         val errorMessage: String = fixture.fixture()
 
-        val inMemoryEntity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.DISTANT_PAST,
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val inMemoryEntity = fixture.monolingualEntityFixture()
 
-        val expected = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
+        val expected = fixture.monolingualEntityFixture()
 
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
             Success(inMemoryEntity)
@@ -2599,6 +1872,458 @@ class EntityStoreSpec {
             }
 
             error.message mustBe errorMessage
+        }
+    }
+
+    // refresh
+    @Test
+    fun `Given refresh is called it emits a Failure, if the latest RollBackState is an Failure`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            assertFailsWith<EntityStoreError.InvalidRefreshState> {
+                result.receive().unwrap()
+            }
+        }
+    }
+
+    @Test
+    fun `Given refresh is called, after an unsuccessful save, it emits an Failure`() {
+        // Given
+        val inMemoryEntity = fixture.monolingualEntityFixture()
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.updateEntity = { throw RuntimeException() }
+
+        val koin = initKoin(
+            RepositoryStub(),
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.save()
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive()
+        }
+
+        // When
+        store.refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            assertFailsWith<EntityStoreError.InvalidRefreshState> {
+                result.receive().unwrap()
+            }
+        }
+    }
+
+    @Test
+    fun `Given refresh is called, after an successful save, it emits an Success with the remote fetched Entity, while updating the local stored one`() {
+        // Given
+        val inMemoryEntity = fixture.monolingualEntityFixture()
+
+        val expected = fixture.monolingualEntityFixture()
+        val remoteEntity = fixture.monolingualEntityFixture().copy(revision = expected.revision)
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        val localRepository = RepositoryStub()
+
+        var capturedEntity: EntityModelContract.MonolingualEntity? = null
+        localRepository.updateEntity = { givenEntity ->
+            capturedEntity = givenEntity
+
+            expected.copy(revision = givenEntity.revision)
+        }
+
+        remoteRepository.updateEntity = { _ ->
+            expected.copy(revision = fixture.fixture())
+        }
+
+        var capturedRemoteEntityId: EntityId? = null
+        var capturedRemoteLanguage: LanguageTag? = null
+        remoteRepository.fetchEntity = { givenId, givenLanguage ->
+            capturedRemoteEntityId = givenId
+            capturedRemoteLanguage = givenLanguage
+
+            remoteEntity
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.save()
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe expected
+        }
+
+        capturedRemoteEntityId mustBe expected.id
+        capturedRemoteLanguage mustBe expected.language
+
+        capturedEntity mustBe remoteEntity
+    }
+
+    @Test
+    fun `Given refresh is called, after an unsuccessful fetch, it emits an Failure`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.fetchEntity = { _, _ -> throw RuntimeException() }
+
+        val koin = initKoin(
+            RepositoryStub(),
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.fetchEntity(fixture.fixture(), fixture.fixture())
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive()
+        }
+
+        // When
+        store.refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            assertFailsWith<EntityStoreError.InvalidRefreshState> {
+                result.receive().unwrap()
+            }
+        }
+    }
+
+    @Test
+    fun `Given refresh is called, after an successful fetch, it emits an Success`() {
+        val expected = fixture.monolingualEntityFixture()
+        val remoteEntity = fixture.monolingualEntityFixture().copy(revision = expected.revision)
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        val localRepository = RepositoryStub()
+
+        var capturedEntity: EntityModelContract.MonolingualEntity? = null
+        localRepository.updateEntity = { givenEntity ->
+            capturedEntity = givenEntity
+
+            expected.copy(revision = givenEntity.revision)
+        }
+
+        remoteRepository.updateEntity = { _ ->
+            expected.copy(revision = fixture.fixture())
+        }
+
+        localRepository.fetchEntity = { _, _ ->
+            expected.copy(revision = fixture.fixture())
+        }
+
+        var capturedRemoteEntityId: EntityId? = null
+        var capturedRemoteLanguage: LanguageTag? = null
+        remoteRepository.fetchEntity = { givenId, givenLanguage ->
+            capturedRemoteEntityId = givenId
+            capturedRemoteLanguage = givenLanguage
+
+            remoteEntity
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.fetchEntity(fixture.fixture(), fixture.fixture())
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe expected
+        }
+
+        capturedRemoteEntityId mustBe expected.id
+        capturedRemoteLanguage mustBe expected.language
+
+        capturedEntity mustBe remoteEntity
+    }
+
+    @Test
+    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the remote call is empty`() {
+        // Given
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+
+        val initialEntity = fixture.monolingualEntityFixture().copy(id = id, language = language)
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(initialEntity)
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        val localRepository = RepositoryStub()
+
+        remoteRepository.fetchEntity = { _, _ -> null }
+
+        localRepository.updateEntity = { _ ->
+            initialEntity.copy(revision = fixture.fixture())
+        }
+
+        remoteRepository.updateEntity = { _ ->
+            initialEntity.copy(revision = fixture.fixture())
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != initialEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.save()
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.refresh()
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.MissingEntity> {
+                result.receive().unwrap()
+            }
+
+            error.message mustBe "Entity ($id) in Language ($language) not found."
+        }
+    }
+
+    @Test
+    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the remote repository throws an error`() {
+        // Given
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+        val expected = IllegalStateException()
+
+        val initialEntity = fixture.monolingualEntityFixture().copy(id = id, language = language)
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(initialEntity)
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        val localRepository = RepositoryStub()
+
+        remoteRepository.fetchEntity = { _, _ -> throw expected }
+
+        localRepository.updateEntity = { _ ->
+            initialEntity.copy(revision = fixture.fixture())
+        }
+
+        remoteRepository.updateEntity = { _ ->
+            initialEntity.copy(revision = fixture.fixture())
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != initialEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.save()
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
+            }
+
+            error sameAs expected
+        }
+    }
+
+    @Test
+    fun `Given refresh is called it mutates the Entity as Failure with the EntityStoreError, if the local repository throws an error`() {
+        // Given
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+        val expected = IllegalStateException()
+
+        val initialEntity = fixture.monolingualEntityFixture().copy(id = id, language = language)
+        val indicatorEntity = fixture.monolingualEntityFixture().copy(id = id, language = language)
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(initialEntity)
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        val localRepository = RepositoryStub()
+
+        remoteRepository.fetchEntity = { _, _ -> indicatorEntity }
+
+        localRepository.updateEntity = { givenEntity ->
+            if (givenEntity == indicatorEntity) {
+                throw expected
+            } else {
+                initialEntity.copy(revision = fixture.fixture())
+            }
+        }
+
+        remoteRepository.updateEntity = { _ ->
+            initialEntity.copy(revision = fixture.fixture())
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != initialEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.save()
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.refresh()
+
+        // Then
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
+            }
+
+            error sameAs expected
         }
     }
 }

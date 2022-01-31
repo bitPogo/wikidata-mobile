@@ -26,6 +26,8 @@ plugins {
 
 }
 
+val host = "\"test.wikidata.org\""
+
 android {
     defaultConfig {
         applicationId = "tech.antibytes.wikidata.app"
@@ -41,16 +43,30 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+
+            buildConfigField(
+                "String",
+                "ENDPOINT",
+                host
+            )
         }
 
         debug {
             isMinifyEnabled = false
             matchingFallbacks.add("release")
+
+            buildConfigField(
+                "String",
+                "ENDPOINT",
+                host
+            )
         }
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
 
     buildFeatures {
         compose = true

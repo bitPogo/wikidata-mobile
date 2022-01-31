@@ -23,6 +23,7 @@ sealed class EntityStoreError(
     // TODO Remove if the StateFlow allows a repeating the last state
     class InvalidCreationState : EntityStoreError()
     class InvalidRollbackState : EntityStoreError()
+    class InvalidRefreshState : EntityStoreError()
 
     class CreationRemoteFailure(language: String) : EntityStoreError(
         "Cannot create Entity in Language ($language)"

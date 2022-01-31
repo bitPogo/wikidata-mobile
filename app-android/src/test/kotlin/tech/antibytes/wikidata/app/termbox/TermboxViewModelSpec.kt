@@ -21,6 +21,8 @@ import kotlinx.coroutines.yield
 import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
@@ -39,6 +41,7 @@ import java.lang.Exception
 import java.util.Locale
 import java.util.Locale.KOREAN
 
+@RunWith(RobolectricTestRunner::class)
 class TermboxViewModelSpec {
     private val fixture = kotlinFixture()
     private val currentLanguageState = MutableStateFlow(Locale.ENGLISH)
