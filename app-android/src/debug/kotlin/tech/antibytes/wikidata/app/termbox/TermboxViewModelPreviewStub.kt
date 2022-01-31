@@ -9,7 +9,7 @@ package tech.antibytes.wikidata.app.termbox
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Locale
 
-class TermboxViewModelStub(
+class TermboxViewModelPreviewStub(
     override val id: StateFlow<String>,
     override val isEditable: StateFlow<Boolean>,
     override val label: StateFlow<String>,
@@ -21,6 +21,9 @@ class TermboxViewModelStub(
     }
 
     override fun setDescription(newDescription: String) {
+    }
+
+    override fun addAlias(newAlias: String) {
     }
 
     override fun setAlias(idx: Int, newAlias: String) {

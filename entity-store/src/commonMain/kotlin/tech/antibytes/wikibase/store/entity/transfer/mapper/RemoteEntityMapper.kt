@@ -47,7 +47,8 @@ internal class RemoteEntityMapper : MapperContract.RemoteEntityMapper {
     }
 
     private fun mapAliases(language: LanguageTag, aliases: List<String>): List<DataModelContract.LanguageValuePair> {
-        return aliases.map { alias -> LanguageValuePair(language, alias) }
+        return aliases
+            .map { alias -> LanguageValuePair(language, alias) }
     }
 
     override fun toRevisionedEntity(monolingualEntity: EntityModelContract.MonolingualEntity): DataModelContract.RevisionedEntity {

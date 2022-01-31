@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.wikidata.app.termbox.TermboxContract
 import java.util.Locale
 
-class TermBoxViewModelStub(
+class TermboxViewModelStub(
     override val id: StateFlow<String>,
     override val isEditable: StateFlow<Boolean>,
     override val label: StateFlow<String>,
@@ -19,6 +19,7 @@ class TermBoxViewModelStub(
     override val language: StateFlow<Locale>,
     var setLabel: ((String) -> Unit)? = null,
     var setDescription: ((String) -> Unit)? = null,
+    var addAlias: ((String) -> Unit)? = null,
     var setAlias: ((Int, String) -> Unit)? = null,
     var dischargeChanges: (() -> Unit)? = null,
     var saveChanges: (() -> Unit)? = null,
@@ -35,6 +36,11 @@ class TermBoxViewModelStub(
     override fun setDescription(newDescription: String) {
         return setDescription?.invoke(newDescription)
             ?: throw RuntimeException("Missing Sideeffect setDescription")
+    }
+
+    override fun addAlias(newAlias: String) {
+        return addAlias?.invoke(newAlias)
+            ?: throw RuntimeException("Missing Sideeffect addAlias")
     }
 
     override fun setAlias(idx: Int, newAlias: String) {
@@ -75,6 +81,7 @@ class TermBoxViewModelStub(
     fun clear() {
         setLabel = null
         setDescription = null
+        addAlias = null
         setAlias = null
         dischargeChanges = null
         saveChanges = null

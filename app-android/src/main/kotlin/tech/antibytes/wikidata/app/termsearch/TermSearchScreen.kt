@@ -38,9 +38,7 @@ fun TermSearchScreen(viewModel: TermSearchContract.TermSearchViewModel) {
         topBar = @Composable {
             TermSearchBar(
                 value = query.value,
-                onValueChange = { newQuery ->
-                    viewModel.setQuery(newQuery)
-                },
+                onValueChange = viewModel::setQuery,
                 onSearch = { }
             )
         },

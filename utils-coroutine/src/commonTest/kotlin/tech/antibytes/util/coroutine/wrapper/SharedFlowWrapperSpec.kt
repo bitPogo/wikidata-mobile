@@ -10,11 +10,16 @@ import co.touchlab.stately.isFrozen
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.test.coroutine.runBlockingTest
+import tech.antibytes.util.test.coroutine.runBlockingTestWithTimeout
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
@@ -71,14 +76,12 @@ class SharedFlowWrapperSpec {
         runBlockingTest {
             testScope2.launch {
                 flow.emit(expected)
-            }.join()
+            }
         }
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                channel.receive() mustBe expected
-            }
+        runBlockingTestWithTimeout {
+            channel.receive() mustBe expected
         }
     }
 
@@ -100,16 +103,15 @@ class SharedFlowWrapperSpec {
         }
 
         runBlockingTest {
-            testScope2.launch {
+            // FIXME: Note this small difference to subscribe -> The consumer scope must be same as the producer scope, execpt the given flow is a StateFlow
+            testScope1.launch {
                 flow.emit(expected)
-            }.join()
+            }
         }
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                channel.receive() mustBe expected
-            }
+        runBlockingTestWithTimeout {
+            channel.receive() mustBe expected
         }
     }
 
@@ -130,7 +132,7 @@ class SharedFlowWrapperSpec {
         runBlockingTest {
             testScope2.launch {
                 flow.emit(expected)
-            }.join()
+            }
         }
 
         // Then

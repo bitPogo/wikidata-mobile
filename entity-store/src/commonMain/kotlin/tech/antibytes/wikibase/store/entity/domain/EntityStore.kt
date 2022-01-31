@@ -159,7 +159,11 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
             aliases = entity.aliases
                 .toMutableList()
                 .also { aliases ->
-                    aliases[index] = alias
+                    if (alias.isNotEmpty()) {
+                        aliases[index] = alias
+                    } else {
+                        aliases.removeAt(index)
+                    }
                 }
         )
     }
@@ -221,11 +225,35 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
         }
     }
 
+    private fun cleanValue(value: String?): String? {
+        return if (value.isNullOrBlank()) {
+            null
+        } else {
+            value.trim()
+        }
+    }
+
+    private fun cleanAliases(aliases: List<String>): List<String> {
+        return aliases
+            .filter { alias -> alias.isNotBlank() }
+            .map { alias -> alias.trim() }
+    }
+
+    private fun cleanEntity(entity: MonolingualEntity): EntityModelContract.MonolingualEntity {
+        return entity.copy(
+            label = cleanValue(entity.label),
+            description = cleanValue(entity.description),
+            aliases = cleanAliases(entity.aliases)
+        )
+    }
+
     private suspend fun store(
         onCreate: suspend (EntityModelContract.MonolingualEntity) -> EntityModelContract.MonolingualEntity,
         onUpdate: suspend (EntityModelContract.MonolingualEntity) -> EntityModelContract.MonolingualEntity,
     ): EntityModelContract.MonolingualEntity {
-        val value = getState()
+        val value = cleanEntity(
+            getState() as MonolingualEntity
+        )
 
         return if (value.id.isEmpty()) {
             onCreate(value)

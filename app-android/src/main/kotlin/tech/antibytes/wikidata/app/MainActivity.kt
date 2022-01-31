@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
                                 { CoroutineScope(Dispatchers.IO) },
                                 { CoroutineScope(Dispatchers.Default) }
                             ),
-                            currentLanguage = MutableStateFlow(Locale.GERMAN)
+                            currentLanguage = MutableStateFlow(Locale.GERMAN),
                         )
                     )
                 }

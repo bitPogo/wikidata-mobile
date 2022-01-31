@@ -31,17 +31,13 @@ class SharedFlowWrapper<Succ, Err : Throwable> private constructor(
 
     override fun subscribe(
         onEach: (item: ResultContract<Succ, Err>) -> Unit
-    ): Job {
-        return wrappedFlow
-            .onEach { item -> onEach.invoke(item) }
-            .launchIn(scope)
-    }
+    ): Job = subscribeWithSuspendingFunction(onEach)
 
     override fun subscribeWithSuspendingFunction(
         onEach: suspend (item: ResultContract<Succ, Err>) -> Unit
     ): Job {
         return wrappedFlow
-            .onEach { item -> onEach.invoke(item) }
+            .onEach(onEach)
             .launchIn(scope)
     }
 

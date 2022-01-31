@@ -46,22 +46,19 @@ fun LoginScreen(viewModel: LoginContract.LoginViewModel) {
             SingleLineEditableText(
                 label = stringResource(R.string.login_username),
                 value = username.value,
-                onChange = { newUsername ->
-                    viewModel.setUsername(newUsername)
-                }
+                onChange = viewModel::setUsername
             )
             PasswordField(
                 label = stringResource(R.string.login_password),
                 value = password.value,
-                onChange = { newPassword ->
-                    viewModel.setPassword(newPassword)
-                }
+                onChange = viewModel::setPassword
             )
             Spacer(modifier = Modifier.height(25.dp))
             Row {
-                SimpleButton(label = stringResource(R.string.login_login)) {
-                    viewModel.login()
-                }
+                SimpleButton(
+                    label = stringResource(R.string.login_login),
+                    onClick = viewModel::login
+                )
             }
         }
     }

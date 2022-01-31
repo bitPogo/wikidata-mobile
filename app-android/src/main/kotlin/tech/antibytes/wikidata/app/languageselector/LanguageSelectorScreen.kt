@@ -23,9 +23,7 @@ fun LanguageSelectorScreen(viewModel: LanguageSelectorContract.LanguageSelectorV
         topBar = @Composable {
             LanguageSearchBar(
                 value = languageQuery.value,
-                onValueChange = { filter ->
-                    viewModel.setFilter(filter)
-                }
+                onValueChange = viewModel::setFilter
             )
         },
         content = @Composable {
@@ -35,9 +33,7 @@ fun LanguageSelectorScreen(viewModel: LanguageSelectorContract.LanguageSelectorV
                         id = idx,
                         value = language,
                         selected = selectedLanguage.value,
-                        onClick = { selector ->
-                            viewModel.selectLanguage(selector)
-                        }
+                        onClick = viewModel::selectLanguage
                     )
                 }
             }

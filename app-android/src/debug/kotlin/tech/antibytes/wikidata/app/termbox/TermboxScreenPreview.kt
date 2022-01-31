@@ -15,7 +15,7 @@ import java.util.Locale
 @Composable
 fun TermboxScreenPreview() {
     TermboxScreen(
-        viewModel = TermboxViewModelStub(
+        viewModel = TermboxViewModelPreviewStub(
             MutableStateFlow("QTest"),
             MutableStateFlow(false),
             MutableStateFlow("Test"),

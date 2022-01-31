@@ -31,7 +31,7 @@ fun TermboxView(
                 onSearch = { /*TODO*/ },
                 onEdit = onEditMode,
                 onLanguageSearch = { /*TODO*/ },
-                onRandomEntity = { viewModel.randomItem() }
+                onRandomEntity = viewModel::randomItem
             )
         },
         content = @Composable {

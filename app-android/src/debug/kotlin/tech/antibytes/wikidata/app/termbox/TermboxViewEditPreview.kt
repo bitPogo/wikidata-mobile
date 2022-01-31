@@ -16,7 +16,7 @@ import java.util.Locale.ENGLISH
 fun TermboxViewEditPreview() {
     TermboxEditView(
         onReadMode = { },
-        viewModel = TermboxViewModelStub(
+        viewModel = TermboxViewModelPreviewStub(
             MutableStateFlow("QTest"),
             MutableStateFlow(true),
             MutableStateFlow("Test"),

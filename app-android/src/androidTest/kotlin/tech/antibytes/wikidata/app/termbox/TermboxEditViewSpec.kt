@@ -24,7 +24,7 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
-import tech.antibytes.wikidata.mock.TermBoxViewModelStub
+import tech.antibytes.wikidata.mock.TermboxViewModelStub
 import java.util.Locale
 
 class TermboxEditViewSpec {
@@ -40,7 +40,7 @@ class TermboxEditViewSpec {
 
     private val currentLanguage = MutableStateFlow(Locale.ENGLISH)
 
-    private val viewModel = TermBoxViewModelStub(
+    private val viewModel = TermboxViewModelStub(
         id,
         editability,
         label,
@@ -250,6 +250,40 @@ class TermboxEditViewSpec {
 
         assertEquals(
             newAlias,
+            capturedAlias
+        )
+    }
+
+    @Test
+    fun Given_a_User_enters_a_new_Alias_it_delegates_the_call_to_the_ViewModel() {
+        // Given
+        val aliases: List<String> = fixture.listFixture(size = 5)
+
+        var capturedAlias: String? = null
+
+        this.aliases.update { aliases }
+
+        viewModel.addAlias = { givenAlias ->
+            capturedAlias = givenAlias
+        }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermboxEditView(
+                    onReadMode = { },
+                    viewModel = viewModel
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Add a new alias")
+            .performClick()
+
+        // Then
+        assertEquals(
+            "",
             capturedAlias
         )
     }

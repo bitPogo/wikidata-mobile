@@ -22,7 +22,7 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
-import tech.antibytes.wikidata.mock.TermBoxViewModelStub
+import tech.antibytes.wikidata.mock.TermboxViewModelStub
 import java.util.Locale
 
 class TermboxViewSpec {
@@ -38,7 +38,7 @@ class TermboxViewSpec {
 
     private val currentLanguage = MutableStateFlow(Locale.ENGLISH)
 
-    private val viewModel = TermBoxViewModelStub(
+    private val viewModel = TermboxViewModelStub(
         id,
         editability,
         label,

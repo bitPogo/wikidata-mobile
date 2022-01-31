@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
 import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Test
@@ -312,7 +313,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `It distributes an empty Label if the Entitys Label is null`() {
+    fun `It distributes an empty Label if the Entities Label is null`() {
         // Given
         val result = Channel<String>()
 
@@ -431,7 +432,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `It distributes an empty Label if the Entitys Description is null`() {
+    fun `It distributes an empty Label if the Entities Description is null`() {
         // Given
         val result = Channel<String>()
 
@@ -550,7 +551,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `Given setLabel is called with a new Label it delegates the call to entity repository`() {
+    fun `Given setLabel is called with a new Label it delegates the call to EntityStore`() {
         // Given
         val newLabel: String = fixture.fixture()
 
@@ -571,7 +572,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `Given setDescription is called with a new Description it delegates the call to entity repository`() {
+    fun `Given setDescription is called with a new Description it delegates the call to EntityStore`() {
         // Given
         val newDescription: String = fixture.fixture()
 
@@ -592,7 +593,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `Given setAlias is called with an Index new Alias it delegates the call to entity repository`() {
+    fun `Given setAlias is called with an Index new Alias it delegates the call to EntityStore`() {
         // Given
         val index: Int = fixture.fixture()
         val newAlias: String = fixture.fixture()
@@ -617,7 +618,57 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `Given dischargeChanges is called it delegates the call to entity repository`() {
+    fun `Given addAlias is called with an new Alias it delegates the call to EntityStore, while appending the new Alias`() {
+        // Given
+        val aliases: List<String> = fixture.listFixture()
+        val newAlias: String = fixture.fixture()
+
+        var capturedAliases: List<String>? = null
+        entityStore.setAliases = { givenAliases ->
+            capturedAliases = givenAliases
+        }
+
+        // When
+        val viewModel = TermboxViewModel(
+            currentLanguageState,
+            entityStore,
+            pageStore
+        )
+
+        entityFlow.update {
+            Success(
+                MonolingualEntity(
+                    id = fixture.fixture(),
+                    type = EntityModelContract.EntityType.ITEM,
+                    revision = fixture.fixture(),
+                    language = fixture.fixture(),
+                    isEditable = fixture.fixture(),
+                    lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+                    label = fixture.fixture(),
+                    description = fixture.fixture(),
+                    aliases = aliases
+                )
+            )
+        }
+
+        runBlocking {
+            yield()
+        }
+
+        viewModel.addAlias(newAlias)
+
+        runBlocking {
+            yield()
+        }
+
+        // Then
+        capturedAliases mustBe aliases.toMutableList().also {
+            it.add(newAlias)
+        }
+    }
+
+    @Test
+    fun `Given dischargeChanges is called it delegates the call to EntityStore`() {
         // Given
         var wasCalled = false
         entityStore.rollback = {
@@ -636,7 +687,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `Given saveChanges is called it delegates the call to entity repository`() {
+    fun `Given saveChanges is called it delegates the call to EntityStore`() {
         // Given
         var wasCalled = false
         entityStore.save = {
@@ -655,7 +706,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `Given refresh is called it delegates the call to entity repository`() {
+    fun `Given refresh is called it delegates the call to EntityStore`() {
         // Given
         var wasCalled = false
         entityStore.save = {
@@ -674,7 +725,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `Given fetchItem is called with an Id it delegates, while using the currentLanguage the call to entity repository`() {
+    fun `Given fetchItem is called with an Id it delegates, while using the currentLanguage the call to EntityStore`() {
         // Given
         val id: String = fixture.fixture()
         val language = KOREAN
@@ -702,7 +753,7 @@ class TermboxViewModelSpec {
     }
 
     @Test
-    fun `Given createNewItem is called it delegates, while using the currentLanguage the call to entity repository`() {
+    fun `Given createNewItem is called it delegates, while using the currentLanguage the call to EntityStore`() {
         // Given
         val language = KOREAN
 

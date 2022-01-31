@@ -8,6 +8,10 @@ package tech.antibytes.wikidata.app.termbox
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import tech.antibytes.wikidata.app.ui.molecule.ScreenWithTopBar
 
 @Composable
@@ -18,6 +22,8 @@ fun TermboxEditView(
     val label = viewModel.label.collectAsState()
     val description = viewModel.description.collectAsState()
     val aliases = viewModel.aliases.collectAsState()
+
+    var focus by remember { mutableStateOf(-1) }
 
     ScreenWithTopBar(
         topBar = @Composable {
@@ -37,15 +43,14 @@ fun TermboxEditView(
                 label = label.value,
                 description = description.value,
                 aliases = aliases.value,
-                onLabelInput = { newLabel ->
-                    viewModel.setLabel(newLabel)
+                onLabelInput = viewModel::setLabel,
+                onDescriptionInput = viewModel::setDescription,
+                onAliasInput = viewModel::setAlias,
+                onNewAliasInput = { newAlias ->
+                    viewModel.addAlias(newAlias)
+                    focus = aliases.value.size
                 },
-                onDescriptionInput = { newDescription ->
-                    viewModel.setDescription(newDescription)
-                },
-                onAliasInput = { idx, alias ->
-                    viewModel.setAlias(idx, alias)
-                }
+                focusAlias = focus
             )
         }
     )

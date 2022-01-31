@@ -7,6 +7,7 @@
 package tech.antibytes.wikidata.app.ui.atom
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -25,7 +26,8 @@ fun MultiLineEditableText(
     value: String,
     onChange: (String) -> Unit,
     isError: Boolean = false,
-    underlineIndicator: Boolean = false
+    underlineIndicator: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val labelField = @Composable { Text(text = label) }
     val colours = TextFieldDefaults.outlinedTextFieldColors(
@@ -53,7 +55,8 @@ fun MultiLineEditableText(
             modifier = Modifier
                 .fillMaxWidth(),
             colors = colours,
-            isError = isError
+            isError = isError,
+            keyboardOptions = keyboardOptions,
         )
     } else {
         TextField(
@@ -65,7 +68,8 @@ fun MultiLineEditableText(
             modifier = Modifier
                 .fillMaxWidth(),
             colors = colours,
-            isError = isError
+            isError = isError,
+            keyboardOptions = keyboardOptions,
         )
     }
 }

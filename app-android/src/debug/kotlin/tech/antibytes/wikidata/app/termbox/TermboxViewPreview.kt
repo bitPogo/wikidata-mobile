@@ -16,7 +16,7 @@ import java.util.Locale.ENGLISH
 fun TermboxViewPreview() {
     TermboxView(
         onEditMode = { },
-        viewModel = TermboxViewModelStub(
+        viewModel = TermboxViewModelPreviewStub(
             MutableStateFlow("QTest"),
             MutableStateFlow(true),
             MutableStateFlow("Test"),
@@ -32,7 +32,7 @@ fun TermboxViewPreview() {
 fun TermboxViewPreviewWithEmptyLabel() {
     TermboxView(
         onEditMode = { },
-        viewModel = TermboxViewModelStub(
+        viewModel = TermboxViewModelPreviewStub(
             MutableStateFlow("QTest"),
             MutableStateFlow(true),
             MutableStateFlow(""),
@@ -48,7 +48,7 @@ fun TermboxViewPreviewWithEmptyLabel() {
 fun TermboxViewPreviewWithEmptyDescription() {
     TermboxView(
         onEditMode = { },
-        viewModel = TermboxViewModelStub(
+        viewModel = TermboxViewModelPreviewStub(
             MutableStateFlow("QTest"),
             MutableStateFlow(true),
             MutableStateFlow("Test"),
@@ -64,7 +64,7 @@ fun TermboxViewPreviewWithEmptyDescription() {
 fun TermboxViewPreviewWithEmptyAliases() {
     TermboxView(
         onEditMode = { },
-        viewModel = TermboxViewModelStub(
+        viewModel = TermboxViewModelPreviewStub(
             MutableStateFlow("QTest"),
             MutableStateFlow(true),
             MutableStateFlow("Test"),
@@ -80,7 +80,7 @@ fun TermboxViewPreviewWithEmptyAliases() {
 fun TermboxViewPreviewProtected() {
     TermboxView(
         onEditMode = { },
-        viewModel = TermboxViewModelStub(
+        viewModel = TermboxViewModelPreviewStub(
             MutableStateFlow("QTest"),
             MutableStateFlow(false),
             MutableStateFlow("Test"),
