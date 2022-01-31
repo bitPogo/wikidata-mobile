@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,7 @@ import tech.antibytes.wikidata.app.util.ConnectivityManager
 import tech.antibytes.wikidata.app.util.DatabaseFactory
 import java.util.Locale
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +74,7 @@ class MainActivity : ComponentActivity() {
                                 { CoroutineScope(Dispatchers.IO) },
                                 { CoroutineScope(Dispatchers.Default) }
                             ),
-                            currentLanguage = MutableStateFlow(Locale.GERMAN),
+                            language = MutableStateFlow(Locale.GERMAN),
                         )
                     )
                 }

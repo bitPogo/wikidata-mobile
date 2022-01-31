@@ -7,14 +7,17 @@
 package tech.antibytes.wikidata.app.login
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.wikibase.store.user.UserStoreContract
 import tech.antibytes.wikibase.store.user.lang.UserStoreError
+import javax.inject.Inject
 
-class LoginViewModel(
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val userStore: UserStoreContract.UserStore,
 ) : LoginContract.LoginViewModel, ViewModel() {
     private val _isLoggedIn = MutableStateFlow<LoginContract.LoginState>(LoginContract.LoginState.LoggedOut)

@@ -7,17 +7,20 @@
 package tech.antibytes.wikidata.app.languageselector
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Named
 
-class LanguageSelectorViewModel(
-    private val languageState: MutableStateFlow<Locale>,
+@HiltViewModel
+class LanguageSelectorViewModel @Inject constructor(
+    @Named("MutableLanguageHandle") private val languageState: MutableStateFlow<Locale>,
     private val supportedLanguages: List<Locale>,
-    private val scope: CoroutineScope
 ) : LanguageSelectorContract.LanguageSelectorViewModel, ViewModel() {
     override val currentLanguage: StateFlow<Locale> = languageState
 
@@ -46,7 +49,7 @@ class LanguageSelectorViewModel(
     }
 
     override fun setFilter(newFilter: String) {
-        scope.launch {
+        viewModelScope.launch {
             _filter.update { newFilter }
             _selection.update { filterSelection(newFilter) }
         }

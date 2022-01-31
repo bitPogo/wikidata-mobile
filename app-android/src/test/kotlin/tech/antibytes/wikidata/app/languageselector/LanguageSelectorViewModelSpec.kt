@@ -9,11 +9,13 @@ package tech.antibytes.wikidata.app.languageselector
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withTimeout
 import org.junit.Before
 import org.junit.Test
@@ -23,19 +25,19 @@ import java.util.Locale
 
 class LanguageSelectorViewModelSpec {
     private val currentLanguageState = MutableStateFlow(Locale.ENGLISH)
-    private val scope = CoroutineScope(Dispatchers.Default)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
         currentLanguageState.value = Locale.ENGLISH
+        Dispatchers.setMain(Dispatchers.Default)
     }
 
     @Test
     fun `It fulfils LanguageSelectorViewModel`() {
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            emptyList(),
-            scope
+            emptyList()
         )
         viewModel fulfils LanguageSelectorContract.LanguageSelectorViewModel::class
         viewModel fulfils ViewModel::class
@@ -45,8 +47,7 @@ class LanguageSelectorViewModelSpec {
     fun `Its filter is empty by default`() {
         LanguageSelectorViewModel(
             currentLanguageState,
-            emptyList(),
-            scope
+            emptyList()
         ).filter.value mustBe ""
     }
 
@@ -56,8 +57,7 @@ class LanguageSelectorViewModelSpec {
 
         LanguageSelectorViewModel(
             MutableStateFlow(expected),
-            emptyList(),
-            scope
+            emptyList()
         ).currentLanguage.value mustBe expected
     }
 
@@ -71,8 +71,7 @@ class LanguageSelectorViewModelSpec {
 
         LanguageSelectorViewModel(
             currentLanguageState,
-            expected,
-            scope
+            expected
         ).selection.value mustBe expected
     }
 
@@ -85,8 +84,7 @@ class LanguageSelectorViewModelSpec {
         // When
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            emptyList(),
-            scope
+            emptyList()
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -127,8 +125,7 @@ class LanguageSelectorViewModelSpec {
         // When
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            selection,
-            scope
+            selection
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -169,8 +166,7 @@ class LanguageSelectorViewModelSpec {
         // When
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            selection,
-            scope
+            selection
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -221,8 +217,7 @@ class LanguageSelectorViewModelSpec {
         // When
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            selection,
-            scope
+            selection
         )
 
         CoroutineScope(Dispatchers.Default).launch {

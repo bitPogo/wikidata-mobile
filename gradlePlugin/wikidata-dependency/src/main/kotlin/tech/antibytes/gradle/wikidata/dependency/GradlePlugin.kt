@@ -14,5 +14,5 @@ object GradlePlugin {
     const val projectConfig = "tech.antibytes.gradle-plugins:antibytes-configuration:${Version.gradle.antibytes}"
     const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${Version.gradle.spotless}"
     const val sqldelight = "com.squareup.sqldelight:gradle-plugin:${Version.sqldelight}"
-    const val hilt = "com.google.dagger:hilt-android-gradle-plugin:2.38.1"
+    const val hilt = "com.google.dagger:hilt-android-gradle-plugin:${Version.gradle.hilt}"
 }
