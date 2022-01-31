@@ -6,6 +6,7 @@
 
 package tech.antibytes.wikidata.app.termbox
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.page.PageStoreContract
+import tech.antibytes.wikidata.app.ApplicationContract
 import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
 import java.util.Locale
 
@@ -42,6 +44,11 @@ class TermboxViewModel(
         entityStore.entity.subscribeWithSuspendingFunction { entity ->
             if (entity.isSuccess()) {
                 distributeEntity(entity.unwrap())
+            } else {
+                Log.d(
+                    ApplicationContract.LogTag.TERMBOX_VIEWMODEL.value,
+                    entity.error?.message ?: entity.error.toString()
+                )
             }
         }
 

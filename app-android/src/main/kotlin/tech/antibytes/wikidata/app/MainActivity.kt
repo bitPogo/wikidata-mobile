@@ -24,6 +24,7 @@ import tech.antibytes.wikibase.store.page.domain.PageStore
 import tech.antibytes.wikidata.app.termbox.TermboxScreen
 import tech.antibytes.wikidata.app.termbox.TermboxViewModel
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
+import tech.antibytes.wikidata.app.util.ConnectivityManager
 import tech.antibytes.wikidata.app.util.DatabaseFactory
 import java.util.Locale
 
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     println("HTTP: $message")
                 }
             },
-            { true },
+            ConnectivityManager(applicationContext),
             { CoroutineScope(Dispatchers.IO) }
         )
 

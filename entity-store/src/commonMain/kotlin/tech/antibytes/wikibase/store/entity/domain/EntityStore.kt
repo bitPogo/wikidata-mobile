@@ -112,11 +112,21 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
         }
     }
 
+    private fun unwrapRollbackOnRefresh(): Pair<EntityId, LanguageTag> {
+        val state = rollbackReference.get()
+
+        return if (state.isError()) {
+            throw EntityStoreError.InvalidRefreshState()
+        } else {
+            state.unwrap()
+        }
+    }
+
     override fun refresh() {
         executeEvent {
-            guardValue { entity ->
-                fetchAndUpdate(entity.id, entity.language)
-            }
+            val (entityId, language) = unwrapRollbackOnRefresh()
+
+            fetchAndUpdate(entityId, language)
         }
     }
 
@@ -267,19 +277,11 @@ class EntityStore internal constructor(koin: KoinApplication) : EntityStoreContr
             ?: throw EntityStoreError.MissingEntity(entityId, language)
     }
 
-    private fun isValidRollback(entityId: EntityId, language: LanguageTag): Boolean {
-        return entityId.isNotEmpty() && language.isNotEmpty()
-    }
-
     override fun rollback() {
         executeEvent {
             val (entityId, language) = rollbackReference.get().unwrap()
 
-            if (isValidRollback(entityId, language)) {
-                rollback(entityId, language)
-            } else {
-                throw EntityStoreError.InvalidRollbackState()
-            }
+            rollback(entityId, language)
         }
     }
 
