@@ -34,10 +34,11 @@ class TermboxMenuSpec {
                 TermMenu(
                     title = title,
                     isEditable = true,
-                    onSearch = { /*TODO*/ },
-                    onEdit = { /*TODO*/ },
-                    onLanguageSearch = { /*TODO*/ },
-                    onRandomEntity = { /*TODO*/ }
+                    onSearch = { },
+                    onRefresh = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
                 )
             }
         }
@@ -49,6 +50,10 @@ class TermboxMenuSpec {
 
         composeTestRule
             .onNodeWithContentDescription("Search for another entity")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithContentDescription("Refresh current entity")
             .assertIsDisplayed()
 
         composeTestRule
@@ -81,15 +86,45 @@ class TermboxMenuSpec {
                     title = fixture.fixture(),
                     isEditable = true,
                     onSearch = onSearch,
-                    onEdit = { /*TODO*/ },
-                    onLanguageSearch = { /*TODO*/ },
-                    onRandomEntity = { /*TODO*/ }
+                    onRefresh = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
                 )
             }
         }
 
         composeTestRule
             .onNodeWithContentDescription("Search for another entity")
+            .performClick()
+
+        // Then
+        assertTrue(wasCalled)
+    }
+
+    @Test
+    fun Given_refresh_is_clicked_it_calls_the_delegated_function() {
+        // Given
+        var wasCalled = false
+        val onRefresh = { wasCalled = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermMenu(
+                    title = fixture.fixture(),
+                    isEditable = true,
+                    onSearch = { },
+                    onRefresh = onRefresh,
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Refresh current entity")
             .performClick()
 
         // Then
@@ -108,10 +143,11 @@ class TermboxMenuSpec {
                 TermMenu(
                     title = fixture.fixture(),
                     isEditable = true,
-                    onSearch = { /*TODO*/ },
+                    onSearch = { },
+                    onRefresh = { },
                     onEdit = onEdit,
-                    onLanguageSearch = { /*TODO*/ },
-                    onRandomEntity = { /*TODO*/ }
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
                 )
             }
         }
@@ -132,10 +168,11 @@ class TermboxMenuSpec {
                 TermMenu(
                     title = fixture.fixture(),
                     isEditable = true,
-                    onSearch = { /*TODO*/ },
-                    onEdit = { /*TODO*/ },
-                    onLanguageSearch = { /*TODO*/ },
-                    onRandomEntity = { /*TODO*/ }
+                    onRefresh = { },
+                    onSearch = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
                 )
             }
         }
@@ -166,9 +203,10 @@ class TermboxMenuSpec {
                 TermMenu(
                     title = fixture.fixture(),
                     isEditable = true,
-                    onSearch = { /*TODO*/ },
-                    onEdit = { /*TODO*/ },
-                    onLanguageSearch = { /*TODO*/ },
+                    onSearch = { },
+                    onRefresh = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
                     onRandomEntity = onRandom
                 )
             }
@@ -206,10 +244,11 @@ class TermboxMenuSpec {
                 TermMenu(
                     title = fixture.fixture(),
                     isEditable = true,
-                    onSearch = { /*TODO*/ },
-                    onEdit = { /*TODO*/ },
+                    onSearch = { },
+                    onRefresh = { },
+                    onEdit = { },
                     onLanguageSearch = onLanguageSearch,
-                    onRandomEntity = { /*TODO*/ }
+                    onRandomEntity = { }
                 )
             }
         }

@@ -18,6 +18,7 @@ fun DefaultTermboxMenuWithEnabledEditButton() {
         {},
         {},
         {},
+        {},
         {}
     )
 }
@@ -28,6 +29,7 @@ fun DefaultTermboxMenuWithDisabledEditButton() {
     TermMenu(
         "QPreview",
         true,
+        {},
         {},
         {},
         {},

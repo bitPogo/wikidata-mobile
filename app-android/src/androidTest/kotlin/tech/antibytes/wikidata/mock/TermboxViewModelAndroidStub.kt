@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.wikidata.app.termbox.TermboxContract
 import java.util.Locale
 
-class TermboxViewModelStub(
+class TermboxViewModelAndroidStub(
     override val id: StateFlow<String>,
     override val isEditable: StateFlow<Boolean>,
     override val label: StateFlow<String>,

@@ -20,6 +20,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +37,7 @@ private fun ActionsButtons(
     isEditable: Boolean,
     onSearch: () -> Unit,
     onEdit: () -> Unit,
+    onRefresh: () -> Unit,
     onLanguageSearch: () -> Unit,
     onRandomEntity: () -> Unit
 ) {
@@ -51,6 +53,15 @@ private fun ActionsButtons(
             Icon(
                 Icons.Outlined.Search,
                 stringResource(R.string.termbox_menu_search_entity)
+            )
+        }
+
+        IconButton(
+            onClick = onRefresh
+        ) {
+            Icon(
+                Icons.Outlined.Refresh,
+                stringResource(R.string.termbox_menu_refresh)
             )
         }
 
@@ -110,6 +121,7 @@ fun TermMenu(
     isEditable: Boolean,
     onSearch: () -> Unit,
     onEdit: () -> Unit,
+    onRefresh: () -> Unit,
     onLanguageSearch: () -> Unit,
     onRandomEntity: () -> Unit
 ) {
@@ -120,11 +132,12 @@ fun TermMenu(
         modifier = Modifier.fillMaxWidth(),
         actions = @Composable {
             ActionsButtons(
-                isEditable,
-                onSearch,
-                onEdit,
-                onLanguageSearch,
-                onRandomEntity
+                isEditable = isEditable,
+                onSearch = onSearch,
+                onRefresh = onRefresh,
+                onEdit = onEdit,
+                onLanguageSearch = onLanguageSearch,
+                onRandomEntity = onRandomEntity
             )
         }
     )

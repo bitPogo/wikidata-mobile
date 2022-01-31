@@ -30,6 +30,7 @@ fun TermboxView(
                 isEditable = isEditable.value,
                 onSearch = { /*TODO*/ },
                 onEdit = onEditMode,
+                onRefresh = viewModel::refresh,
                 onLanguageSearch = { /*TODO*/ },
                 onRandomEntity = viewModel::randomItem
             )

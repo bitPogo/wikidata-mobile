@@ -22,7 +22,7 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
-import tech.antibytes.wikidata.mock.TermboxViewModelStub
+import tech.antibytes.wikidata.mock.TermboxViewModelAndroidStub
 import java.util.Locale
 
 class TermboxViewSpec {
@@ -38,7 +38,7 @@ class TermboxViewSpec {
 
     private val currentLanguage = MutableStateFlow(Locale.ENGLISH)
 
-    private val viewModel = TermboxViewModelStub(
+    private val viewModel = TermboxViewModelAndroidStub(
         id,
         editability,
         label,
@@ -287,6 +287,30 @@ class TermboxViewSpec {
 
         composeTestRule
             .onNodeWithContentDescription("Edit current entity")
+            .performClick()
+
+        // Then
+        assertTrue(wasClicked)
+    }
+
+    @Test
+    fun Given_a_User_click_on_refresh_entity_it_delegates_the_call_to_given_function() {
+        // Given
+        var wasClicked = false
+        viewModel.refresh = { wasClicked = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermboxView(
+                    onEditMode = {},
+                    viewModel = viewModel
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Refresh current entity")
             .performClick()
 
         // Then
