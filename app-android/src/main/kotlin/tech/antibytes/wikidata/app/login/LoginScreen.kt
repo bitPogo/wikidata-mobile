@@ -6,12 +6,13 @@
 
 package tech.antibytes.wikidata.app.login
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,34 +24,41 @@ import tech.antibytes.wikidata.app.ui.atom.SimpleButton
 import tech.antibytes.wikidata.app.ui.atom.SingleLineEditableText
 
 @Composable
-fun LoginScreen() {
-    Column(
+fun LoginScreen(viewModel: LoginContract.LoginViewModel) {
+    val username = viewModel.username.collectAsState()
+    val password = viewModel.password.collectAsState()
+
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(
             vertical = 5.dp,
             horizontal = 20.dp
         )
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
+        item {
+            Spacer(modifier = Modifier.height(50.dp))
 
-        Row {
-            Logo()
-        }
-        Spacer(modifier = Modifier.height(25.dp))
+            Row {
+                Logo()
+            }
+            Spacer(modifier = Modifier.height(25.dp))
 
-        SingleLineEditableText(
-            label = stringResource(R.string.login_username),
-            value = "",
-            onChange = {}
-        )
-        PasswordField(
-            label = stringResource(R.string.login_password),
-            value = "",
-            onChange = {}
-        )
-        Spacer(modifier = Modifier.height(25.dp))
-        Row {
-            SimpleButton(label = stringResource(R.string.login_login)) {
+            SingleLineEditableText(
+                label = stringResource(R.string.login_username),
+                value = username.value,
+                onChange = viewModel::setUsername
+            )
+            PasswordField(
+                label = stringResource(R.string.login_password),
+                value = password.value,
+                onChange = viewModel::setPassword
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            Row {
+                SimpleButton(
+                    label = stringResource(R.string.login_login),
+                    onClick = viewModel::login
+                )
             }
         }
     }

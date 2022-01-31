@@ -7,7 +7,9 @@
 package tech.antibytes.wikidata.app.languageselector
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import junit.framework.TestCase.assertEquals
@@ -41,6 +43,31 @@ class LanguageItemSpec {
         composeTestRule
             .onNodeWithText(value.displayName)
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun It_selects_items() {
+        // Given
+        val id = 23
+        val value = Locale.GERMAN
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                LanguageItem(
+                    id,
+                    value = value,
+                    selected = value,
+                    { }
+                )
+            }
+        }
+
+        // Then
+        composeTestRule
+            .onNodeWithText(value.displayName)
+            .onChildAt(0)
+            .assertIsSelected()
     }
 
     @Test

@@ -18,15 +18,12 @@ class LoginViewModel(
     private val userStore: UserStoreContract.UserStore,
 ) : LoginContract.LoginViewModel, ViewModel() {
     private val _isLoggedIn = MutableStateFlow<LoginContract.LoginState>(LoginContract.LoginState.LoggedOut)
-
     override val isLoggedIn: StateFlow<LoginContract.LoginState> = _isLoggedIn
 
     private val _username = MutableStateFlow("")
-
     override val username: StateFlow<String> = _username
 
     private val _password = MutableStateFlow("")
-
     override val password: StateFlow<String> = _password
 
     init {

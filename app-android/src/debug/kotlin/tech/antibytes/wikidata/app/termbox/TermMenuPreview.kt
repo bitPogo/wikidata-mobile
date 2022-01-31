@@ -11,9 +11,28 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun DefaultEditTermboxMenu() {
-    TermboxEditMenu(
+fun DefaultTermboxMenuWithEnabledEditButton() {
+    TermMenu(
+        "QPreview",
+        true,
         {},
         {},
+        {},
+        {},
+        {}
+    )
+}
+
+@Preview
+@Composable
+fun DefaultTermboxMenuWithDisabledEditButton() {
+    TermMenu(
+        "QPreview",
+        true,
+        {},
+        {},
+        {},
+        {},
+        {}
     )
 }

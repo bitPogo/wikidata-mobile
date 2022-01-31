@@ -24,7 +24,7 @@ class TermboxEditMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxEditMenu(
+                TermEditMenu(
                     onCancel = {},
                     onSave = {}
                 )
@@ -50,7 +50,7 @@ class TermboxEditMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxEditMenu(
+                TermEditMenu(
                     onCancel = onCancel,
                     onSave = {}
                 )
@@ -74,7 +74,7 @@ class TermboxEditMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxEditMenu(
+                TermEditMenu(
                     onCancel = { },
                     onSave = onSave
                 )

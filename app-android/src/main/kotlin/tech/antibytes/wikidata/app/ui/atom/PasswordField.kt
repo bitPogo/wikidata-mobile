@@ -35,7 +35,7 @@ import tech.antibytes.wikidata.app.ui.theme.LightGray
 @Composable
 fun PasswordFieldIcon(
     show: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val (description, icon) = if (show) {
         R.string.hide_password to Icons.Filled.VisibilityOff
@@ -58,7 +58,7 @@ fun PasswordField(
     label: String,
     value: String,
     onChange: (String) -> Unit,
-    isError: Boolean = false
+    isError: Boolean = false,
 ) {
     var showPassword by remember { mutableStateOf(false) }
     val labelField = @Composable { Text(text = label) }

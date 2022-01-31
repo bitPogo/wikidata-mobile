@@ -191,7 +191,6 @@ class LoginViewModelSpec {
         val username: String = fixture.fixture()
         val password: String = fixture.fixture()
         val result = Channel<LoginContract.LoginState>()
-        val expected = false
 
         // When
         val viewModel = LoginViewModel(store)

@@ -21,6 +21,8 @@ interface TermboxContract {
         fun setLabel(newLabel: String)
         fun setDescription(newDescription: String)
         fun setAlias(idx: Int, newAlias: String)
+        fun addAlias(newAlias: String)
+
         fun dischargeChanges()
         fun saveChanges()
 
@@ -28,5 +30,9 @@ interface TermboxContract {
         fun createNewItem()
         fun randomItem()
         fun fetchItem(id: String)
+
+        companion object {
+            const val INITIAL_ENTITY = "Q214750"
+        }
     }
 }

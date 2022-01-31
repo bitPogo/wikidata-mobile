@@ -8,7 +8,9 @@ package tech.antibytes.wikidata.app.termbox
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -39,7 +41,8 @@ class TermEditorSpec {
                     aliases = aliases,
                     onLabelInput = {},
                     onDescriptionInput = {},
-                    onAliasInput = { _, _ -> Unit }
+                    onAliasInput = { _, _ -> Unit },
+                    onNewAliasInput = {}
                 )
             }
         }
@@ -61,7 +64,7 @@ class TermEditorSpec {
     }
 
     @Test
-    fun It_delegates_the_value_change_of_the_label() {
+    fun Given_a_User_changes_the_Label_it_delegates_the_call_to_given_Lambda() {
         // Given
         val label: String = fixture.fixture()
         val newLabel: String = fixture.fixture()
@@ -79,7 +82,8 @@ class TermEditorSpec {
                     aliases = emptyList(),
                     onLabelInput = onLabelChange,
                     onDescriptionInput = {},
-                    onAliasInput = { _, _ -> Unit }
+                    onAliasInput = { _, _ -> Unit },
+                    onNewAliasInput = {}
                 )
             }
         }
@@ -96,7 +100,7 @@ class TermEditorSpec {
     }
 
     @Test
-    fun It_delegates_the_value_change_of_the_Description() {
+    fun Given_a_User_changes_the_Description_it_delegates_the_call_to_given_Lambda() {
         // Given
         val description: String = fixture.fixture()
         val newDescription: String = fixture.fixture()
@@ -114,7 +118,8 @@ class TermEditorSpec {
                     aliases = emptyList(),
                     onLabelInput = { },
                     onDescriptionInput = onDescriptionChange,
-                    onAliasInput = { _, _ -> Unit }
+                    onAliasInput = { _, _ -> Unit },
+                    onNewAliasInput = {}
                 )
             }
         }
@@ -131,7 +136,7 @@ class TermEditorSpec {
     }
 
     @Test
-    fun It_delegates_the_value_change_of_an_Alias() {
+    fun Given_a_User_changes_an_Alias_it_delegates_the_call_to_given_Lambda() {
         // Given
         val aliases: List<String> = fixture.listFixture(size = 5)
         val newAlias: String = fixture.fixture()
@@ -151,7 +156,8 @@ class TermEditorSpec {
                     aliases = aliases,
                     onLabelInput = { },
                     onDescriptionInput = { },
-                    onAliasInput = onAliasChange
+                    onAliasInput = onAliasChange,
+                    onNewAliasInput = {}
                 )
             }
         }
@@ -169,6 +175,39 @@ class TermEditorSpec {
         assertEquals(
             3,
             capturedIndex,
+        )
+    }
+
+    @Test
+    fun Given_a_User_clicks_a_new_Alias_button_it_delegates_the_call_to_given_Lambda() {
+        // Given
+        var newValue: String? = null
+        val onNewAlias = { givenValue: String ->
+            newValue = givenValue
+        }
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermEditor(
+                    label = fixture.fixture(),
+                    description = fixture.fixture(),
+                    aliases = fixture.listFixture(),
+                    onLabelInput = { },
+                    onDescriptionInput = { },
+                    onAliasInput = { _, _ -> Unit },
+                    onNewAliasInput = onNewAlias
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Add a new alias")
+            .performClick()
+
+        // Then
+        assertEquals(
+            "",
+            newValue,
         )
     }
 }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.page.PageStoreContract
+import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
 import java.util.Locale
 
 class TermboxViewModel(
@@ -43,6 +44,8 @@ class TermboxViewModel(
                 distributeEntity(entity.unwrap())
             }
         }
+
+        fetchItem(INITIAL_ENTITY)
     }
 
     private fun distributeEntity(entity: EntityModelContract.MonolingualEntity) {
@@ -59,6 +62,13 @@ class TermboxViewModel(
 
     override fun setAlias(idx: Int, newAlias: String) = entityStore.setAlias(idx, newAlias)
 
+    override fun addAlias(newAlias: String) {
+        val aliases = _aliases.value.toMutableList()
+        aliases.add(newAlias)
+
+        entityStore.setAliases(aliases)
+    }
+
     override fun dischargeChanges() = entityStore.rollback()
 
     override fun saveChanges() = entityStore.save()
@@ -73,7 +83,7 @@ class TermboxViewModel(
     }
 
     override fun randomItem() {
-        pageStore.randomItemId.subscribeWithSuspendingFunction { result ->
+        pageStore.randomItemId.subscribe { result ->
             if (result.isSuccess()) {
                 fetchItem(result.unwrap())
             }

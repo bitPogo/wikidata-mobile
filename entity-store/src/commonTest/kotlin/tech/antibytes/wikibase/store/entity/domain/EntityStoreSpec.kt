@@ -12,8 +12,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.Instant
+import org.koin.core.KoinApplication
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -21,7 +21,6 @@ import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
-import tech.antibytes.util.test.coroutine.runBlockingTest
 import tech.antibytes.util.test.coroutine.runBlockingTestWithTimeout
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
@@ -47,6 +46,38 @@ import kotlin.test.assertFailsWith
 
 class EntityStoreSpec {
     private val fixture = kotlinFixture()
+
+    private fun initKoin(
+        localRepository: DomainContract.Repository,
+        remoteRepository: DomainContract.Repository,
+        flow: MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>
+    ): KoinApplication {
+        return koinApplication {
+            modules(
+                module {
+                    single(named(DomainContract.DomainKoinIds.LOCAL)) {
+                        localRepository
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.REMOTE)) {
+                        remoteRepository
+                    }
+
+                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
+                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
+                    }
+
+                    single {
+                        flow
+                    }
+
+                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
+                        SharedFlowWrapperStub()
+                    }
+                }
+            )
+        }
+    }
 
     @Test
     fun `It fulfils EntityStoreFactory`() {
@@ -101,31 +132,11 @@ class EntityStoreSpec {
             expected
         }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -199,31 +210,11 @@ class EntityStoreSpec {
             remoteEntity
         }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -262,31 +253,11 @@ class EntityStoreSpec {
         val remoteRepository = RepositoryStub()
         remoteRepository.fetchEntity = { _, _ -> null }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -323,31 +294,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.fetchEntity = { _, _ -> throw expected }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -387,31 +338,11 @@ class EntityStoreSpec {
         val remoteRepository = RepositoryStub()
         remoteRepository.fetchEntity = { _, _ -> throw expected }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -440,31 +371,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -551,31 +462,11 @@ class EntityStoreSpec {
             remoteEntity
         }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.unwrap() != initialEntity) {
@@ -623,31 +514,11 @@ class EntityStoreSpec {
         val remoteRepository = RepositoryStub()
         remoteRepository.fetchEntity = { _, _ -> null }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != initialEntity) {
@@ -696,31 +567,11 @@ class EntityStoreSpec {
         val remoteRepository = RepositoryStub()
         remoteRepository.fetchEntity = { _, _ -> throw expected }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != initialEntity) {
@@ -772,31 +623,11 @@ class EntityStoreSpec {
         val remoteRepository = RepositoryStub()
         remoteRepository.fetchEntity = { _, _ -> initialEntity }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != initialEntity) {
@@ -826,31 +657,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -893,31 +704,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value!!.label != entity.label) {
@@ -942,31 +733,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -1009,31 +780,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value!!.description != entity.description) {
@@ -1058,31 +809,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -1107,74 +838,6 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given setAlias is called it mutates the Alias with the given String at the given Index, if the latest State is an Success`() {
-        // Given
-        val index = 2
-        val newAlias: String = fixture.fixture()
-
-        val entity = MonolingualEntity(
-            id = fixture.fixture(),
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(size = 5),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(entity)
-        )
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
-
-        flow.onEach { item ->
-            if (item.value!!.aliases != entity.aliases) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).setAlias(index, newAlias)
-
-        // Then
-        runBlockingTestWithTimeout {
-            result.receive().unwrap() mustBe entity.copy(
-                aliases = entity.aliases.toMutableList().also { aliases ->
-                    aliases[index] = newAlias
-                }
-            )
-        }
-    }
-
-    @Test
     fun `Given setAliases is called with a String it emits a Failure, if the latest State is an failure`() {
         // Given
         val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
@@ -1182,31 +845,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -1249,31 +892,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value!!.aliases != entity.aliases) {
@@ -1301,31 +924,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.error !is EntityStoreError.InitialState) {
@@ -1353,372 +956,6 @@ class EntityStoreSpec {
     }
 
     @Test
-    fun `Given rollback is called, after create, it goes into enitial state`() {
-        // Given
-        val inMemoryEntity = MonolingualEntity(
-            id = "",
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = fixture.fixture(),
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(inMemoryEntity)
-        )
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
-
-        flow.onEach { item ->
-            if (item.value != inMemoryEntity) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).rollback()
-
-        // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                assertFailsWith<EntityStoreError.InvalidRollbackState> {
-                    result.receive().unwrap()
-                }
-            }
-        }
-    }
-
-    @Test
-    fun `Given rollback is called, while in Error state, it emits a Failure with InvalidState`() {
-        // Given
-        val expected = RuntimeException()
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Failure(expected)
-        )
-
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
-
-        flow.onEach { item -> result.send(item) }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).rollback()
-
-        // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                assertFails {
-                    result.receive().unwrap()
-                }
-
-                assertFailsWith<EntityStoreError.InvalidCreationState> {
-                    result.receive().unwrap()
-                }
-            }
-        }
-    }
-
-    @Test
-    fun `Given rollback is called, while in Success state, it rollsback to stored Entity`() {
-        // Given
-        val id: EntityId = fixture.fixture()
-        val language: LanguageTag = fixture.fixture()
-
-        val expected = MonolingualEntity(
-            id = id,
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = language,
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val inMemoryEntity = MonolingualEntity(
-            id = id,
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = language,
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(inMemoryEntity)
-        )
-
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val localRepository = RepositoryStub()
-
-        var capturedId: EntityId? = null
-        var capturedLanguage: LanguageTag? = null
-        localRepository.fetchEntity = { givenId, givenLanguage ->
-            capturedId = givenId
-            capturedLanguage = givenLanguage
-
-            expected
-        }
-
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
-
-        flow.onEach { item ->
-            if (item.value != inMemoryEntity) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).rollback()
-
-        // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() sameAs expected
-
-                capturedId mustBe id
-                capturedLanguage mustBe language
-            }
-        }
-    }
-
-    @Test
-    fun `Given rollback is called, while in Success state, it emits a Failure with MissingEntity if the LocalRepository returns null`() {
-        // Given
-        val id: EntityId = fixture.fixture()
-        val language: LanguageTag = fixture.fixture()
-
-        val inMemoryEntity = MonolingualEntity(
-            id = id,
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = language,
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(inMemoryEntity)
-        )
-
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val localRepository = RepositoryStub()
-
-        localRepository.fetchEntity = { _, _ -> null }
-
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
-
-        flow.onEach { item ->
-            if (item.value != inMemoryEntity) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).rollback()
-
-        // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.MissingEntity> {
-                    result.receive().unwrap()
-                }
-
-                error.message mustBe "Entity ($id) in Language ($language) not found."
-            }
-        }
-    }
-
-    @Test
-    fun `Given rollback is called, while in Success state, it emtis a Failure with any Exceptions from the LocalRepository`() {
-        // Given
-        val id: EntityId = fixture.fixture()
-        val language: LanguageTag = fixture.fixture()
-
-        val expected = IllegalStateException()
-
-        val inMemoryEntity = MonolingualEntity(
-            id = id,
-            type = EntityModelContract.EntityType.ITEM,
-            revision = fixture.fixture(),
-            language = language,
-            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
-            isEditable = fixture.fixture(),
-            label = fixture.fixture(),
-            description = fixture.fixture(),
-            aliases = fixture.listFixture(),
-        )
-
-        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
-            Success(inMemoryEntity)
-        )
-
-        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
-
-        val localRepository = RepositoryStub()
-
-        localRepository.fetchEntity = { _, _ -> throw expected }
-
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
-
-        flow.onEach { item ->
-            if (item.value != inMemoryEntity) {
-                result.send(item)
-            }
-        }.launchIn(testScope2)
-
-        // When
-        EntityStore(koin).rollback()
-
-        // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFails {
-                    result.receive().unwrap()
-                }
-
-                error sameAs expected
-            }
-        }
-    }
-
-    @Test
     fun `Given reset is called it goes back into the inital state`() {
         // Given
         val entity = MonolingualEntity(
@@ -1738,31 +975,11 @@ class EntityStoreSpec {
         )
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != entity) {
@@ -1774,11 +991,9 @@ class EntityStoreSpec {
         EntityStore(koin).reset()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                assertFailsWith<EntityStoreError.InitialState> {
-                    result.receive().unwrap()
-                }
+        runBlockingTestWithTimeout {
+            assertFailsWith<EntityStoreError.InitialState> {
+                result.receive().unwrap()
             }
         }
     }
@@ -1794,31 +1009,11 @@ class EntityStoreSpec {
 
         val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        RepositoryStub()
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        RepositoryStub()
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
 
         flow.onEach { item -> result.send(item) }.launchIn(testScope2)
 
@@ -1826,15 +1021,13 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                assertFails {
-                    result.receive().unwrap()
-                }
+        runBlockingTestWithTimeout {
+            assertFails {
+                result.receive().unwrap()
+            }
 
-                assertFailsWith<EntityStoreError.InvalidCreationState> {
-                    result.receive().unwrap()
-                }
+            assertFailsWith<EntityStoreError.InvalidCreationState> {
+                result.receive().unwrap()
             }
         }
     }
@@ -1888,31 +1081,11 @@ class EntityStoreSpec {
             expected
         }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -1924,13 +1097,242 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() sameAs expected
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() sameAs expected
 
-                capturedRemote mustBe inMemoryEntity
-                capturedLocal mustBe expected
+            capturedRemote mustBe inMemoryEntity
+            capturedLocal mustBe expected
+        }
+    }
+
+    @Test
+    fun `Given save is called after an EntityCreation, it creates a new Entity remotely and locally, while trimming its values`() {
+        // Given
+        val inMemoryEntity = MonolingualEntity(
+            id = "",
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = " ${fixture.fixture<String>()} ",
+            description = " ${fixture.fixture<String>()} ",
+            aliases = fixture.listFixture<String>().map { alias -> " $alias " },
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        var capturedRemote: EntityModelContract.MonolingualEntity? = null
+        remoteRepository.createEntity = { givenEntity ->
+            capturedRemote = givenEntity
+
+            expected
+        }
+
+        val localRepository = RepositoryStub()
+        var capturedLocal: EntityModelContract.MonolingualEntity? = null
+        localRepository.createEntity = { givenEntity ->
+            capturedLocal = givenEntity
+
+            expected
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
             }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).save()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() sameAs expected
+
+            capturedRemote mustBe inMemoryEntity.copy(
+                label = inMemoryEntity.label!!.trim(),
+                description = inMemoryEntity.description!!.trim(),
+                aliases = inMemoryEntity.aliases.map { alias -> alias.trim() }
+            )
+            capturedLocal mustBe expected
+        }
+    }
+
+    @Test
+    fun `Given save is called after an EntityCreation, it creates a new Entity remotely and locally, while filtering empty values`() {
+        // Given
+        val inMemoryEntity = MonolingualEntity(
+            id = "",
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = "",
+            description = "",
+            aliases = fixture.listFixture<String>().map { "" },
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        var capturedRemote: EntityModelContract.MonolingualEntity? = null
+        remoteRepository.createEntity = { givenEntity ->
+            capturedRemote = givenEntity
+
+            expected
+        }
+
+        val localRepository = RepositoryStub()
+        var capturedLocal: EntityModelContract.MonolingualEntity? = null
+        localRepository.createEntity = { givenEntity ->
+            capturedLocal = givenEntity
+
+            expected
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).save()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() sameAs expected
+
+            capturedRemote mustBe inMemoryEntity.copy(
+                label = null,
+                description = null,
+                aliases = emptyList()
+            )
+            capturedLocal mustBe expected
+        }
+    }
+
+    @Test
+    fun `Given save is called after an EntityCreation, it creates a new Entity remotely and locally, while filtering blank values`() {
+        // Given
+        val inMemoryEntity = MonolingualEntity(
+            id = "",
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = "  ",
+            description = "  ",
+            aliases = fixture.listFixture<String>().map { "  " },
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        var capturedRemote: EntityModelContract.MonolingualEntity? = null
+        remoteRepository.createEntity = { givenEntity ->
+            capturedRemote = givenEntity
+
+            expected
+        }
+
+        val localRepository = RepositoryStub()
+        var capturedLocal: EntityModelContract.MonolingualEntity? = null
+        localRepository.createEntity = { givenEntity ->
+            capturedLocal = givenEntity
+
+            expected
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).save()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() sameAs expected
+
+            capturedRemote mustBe inMemoryEntity.copy(
+                label = null,
+                description = null,
+                aliases = emptyList()
+            )
+            capturedLocal mustBe expected
         }
     }
 
@@ -1975,31 +1377,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.createEntity = { entity }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2011,14 +1393,12 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFails {
-                    result.receive().unwrap()
-                }
-
-                error sameAs expected
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
             }
+
+            error sameAs expected
         }
     }
 
@@ -2063,31 +1443,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.createEntity = { throw expected }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2099,14 +1459,12 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFails {
-                    result.receive().unwrap()
-                }
-
-                error sameAs expected
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
             }
+
+            error sameAs expected
         }
     }
 
@@ -2149,31 +1507,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.createEntity = { entity }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2185,14 +1523,12 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.CreationRemoteFailure> {
-                    result.receive().unwrap()
-                }
-
-                error.message mustBe "Cannot create Entity in Language (${inMemoryEntity.language})"
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.CreationRemoteFailure> {
+                result.receive().unwrap()
             }
+
+            error.message mustBe "Cannot create Entity in Language (${inMemoryEntity.language})"
         }
     }
 
@@ -2235,31 +1571,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.createEntity = { null }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2271,14 +1587,12 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.CreationLocalFailure> {
-                    result.receive().unwrap()
-                }
-
-                error.message mustBe "Cannot store created Entity (${entity.id}) in Language (${entity.language})"
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.CreationLocalFailure> {
+                result.receive().unwrap()
             }
+
+            error.message mustBe "Cannot store created Entity (${entity.id}) in Language (${entity.language})"
         }
     }
 
@@ -2332,31 +1646,11 @@ class EntityStoreSpec {
             expected
         }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2368,13 +1662,242 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                result.receive().unwrap() sameAs expected
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() sameAs expected
 
-                capturedRemote mustBe inMemoryEntity
-                capturedLocal mustBe expected
+            capturedRemote mustBe inMemoryEntity
+            capturedLocal mustBe expected
+        }
+    }
+
+    @Test
+    fun `Given save is called after an EntityUpdate, it creates a new Entity remotely and locally, while trimming its values`() {
+        // Given
+        val inMemoryEntity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = " ${fixture.fixture<String>()} ",
+            description = " ${fixture.fixture<String>()} ",
+            aliases = fixture.listFixture<String>().map { alias -> " $alias " },
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        var capturedRemote: EntityModelContract.MonolingualEntity? = null
+        remoteRepository.updateEntity = { givenEntity ->
+            capturedRemote = givenEntity
+
+            expected
+        }
+
+        val localRepository = RepositoryStub()
+        var capturedLocal: EntityModelContract.MonolingualEntity? = null
+        localRepository.updateEntity = { givenEntity ->
+            capturedLocal = givenEntity
+
+            expected
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
             }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).save()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() sameAs expected
+
+            capturedRemote mustBe inMemoryEntity.copy(
+                label = inMemoryEntity.label!!.trim(),
+                description = inMemoryEntity.description!!.trim(),
+                aliases = inMemoryEntity.aliases.map { alias -> alias.trim() }
+            )
+            capturedLocal mustBe expected
+        }
+    }
+
+    @Test
+    fun `Given save is called after an EntityUpdate, it creates a new Entity remotely and locally, while filtering empty values`() {
+        // Given
+        val inMemoryEntity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = "",
+            description = "",
+            aliases = fixture.listFixture<String>().map { "" },
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        var capturedRemote: EntityModelContract.MonolingualEntity? = null
+        remoteRepository.updateEntity = { givenEntity ->
+            capturedRemote = givenEntity
+
+            expected
+        }
+
+        val localRepository = RepositoryStub()
+        var capturedLocal: EntityModelContract.MonolingualEntity? = null
+        localRepository.updateEntity = { givenEntity ->
+            capturedLocal = givenEntity
+
+            expected
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).save()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() sameAs expected
+
+            capturedRemote mustBe inMemoryEntity.copy(
+                label = null,
+                description = null,
+                aliases = emptyList()
+            )
+            capturedLocal mustBe expected
+        }
+    }
+
+    @Test
+    fun `Given save is called after an EntityUpdate, it creates a new Entity remotely and locally, while filtering blank values`() {
+        // Given
+        val inMemoryEntity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = "   ",
+            description = "   ",
+            aliases = fixture.listFixture<String>().map { "   " },
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        var capturedRemote: EntityModelContract.MonolingualEntity? = null
+        remoteRepository.updateEntity = { givenEntity ->
+            capturedRemote = givenEntity
+
+            expected
+        }
+
+        val localRepository = RepositoryStub()
+        var capturedLocal: EntityModelContract.MonolingualEntity? = null
+        localRepository.updateEntity = { givenEntity ->
+            capturedLocal = givenEntity
+
+            expected
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).save()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() sameAs expected
+
+            capturedRemote mustBe inMemoryEntity.copy(
+                label = null,
+                description = null,
+                aliases = emptyList()
+            )
+            capturedLocal mustBe expected
         }
     }
 
@@ -2419,31 +1942,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.updateEntity = { entity }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2455,14 +1958,12 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFails {
-                    result.receive().unwrap()
-                }
-
-                error sameAs expected
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
             }
+
+            error sameAs expected
         }
     }
 
@@ -2507,31 +2008,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.updateEntity = { throw expected }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2543,14 +2024,12 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFails {
-                    result.receive().unwrap()
-                }
-
-                error sameAs expected
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
             }
+
+            error sameAs expected
         }
     }
 
@@ -2593,31 +2072,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.updateEntity = { entity }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2629,14 +2088,12 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.UpdateRemoteFailure> {
-                    result.receive().unwrap()
-                }
-
-                error.message mustBe "Cannot edit Entity (${inMemoryEntity.id}) in Language (${inMemoryEntity.language})"
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.UpdateRemoteFailure> {
+                result.receive().unwrap()
             }
+
+            error.message mustBe "Cannot edit Entity (${inMemoryEntity.id}) in Language (${inMemoryEntity.language})"
         }
     }
 
@@ -2679,31 +2136,11 @@ class EntityStoreSpec {
         val localRepository = RepositoryStub()
         localRepository.updateEntity = { null }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.LOCAL)) {
-                        localRepository
-                    }
-
-                    single<DomainContract.Repository>(named(DomainContract.DomainKoinIds.REMOTE)) {
-                        remoteRepository
-                    }
-
-                    single(named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)) {
-                        CoroutineWrapperContract.CoroutineScopeDispatcher { testScope1 }
-                    }
-
-                    single {
-                        flow
-                    }
-
-                    single<CoroutineWrapperContract.SharedFlowWrapper<EntityModelContract.MonolingualEntity, Exception>> {
-                        SharedFlowWrapperStub()
-                    }
-                }
-            )
-        }
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
 
         flow.onEach { item ->
             if (item.value != inMemoryEntity) {
@@ -2715,14 +2152,453 @@ class EntityStoreSpec {
         EntityStore(koin).save()
 
         // Then
-        runBlockingTest {
-            withTimeout(2000) {
-                val error = assertFailsWith<EntityStoreError.UpdateLocalFailure> {
-                    result.receive().unwrap()
-                }
-
-                error.message mustBe "Cannot store edited Entity (${entity.id}) in Language (${entity.language})"
+        runBlockingTestWithTimeout {
+            val error = assertFailsWith<EntityStoreError.UpdateLocalFailure> {
+                result.receive().unwrap()
             }
+
+            error.message mustBe "Cannot store edited Entity (${entity.id}) in Language (${entity.language})"
+        }
+    }
+
+    // rollback
+
+    @Test
+    fun `Given rollback is called, while in Rollback is in ErrorState, it emits an Failure`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val koin = initKoin(
+            RepositoryStub(),
+            RepositoryStub(),
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        // When
+        EntityStore(koin).rollback()
+
+        // Then
+        runBlockingTestWithTimeout {
+            assertFailsWith<EntityStoreError.InvalidRollbackState> {
+                result.receive().unwrap()
+            }
+        }
+    }
+
+    @Test
+    fun `Given rollback is called, after an unsuccessful save, it emits an Failure`() {
+        // Given
+        val inMemoryEntity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.updateEntity = { throw RuntimeException() }
+
+        val koin = initKoin(
+            RepositoryStub(),
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.save()
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive()
+        }
+
+        // When
+        store.rollback()
+        // Then
+        runBlockingTestWithTimeout {
+            assertFailsWith<EntityStoreError.InvalidRollbackState> {
+                result.receive().unwrap()
+            }
+        }
+    }
+
+    @Test
+    fun `Given rollback is called, after an successful save, it emits an Success with the saved Entity`() {
+        // Given
+        val inMemoryEntity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.updateEntity = { _ ->
+            expected
+        }
+
+        val localRepository = RepositoryStub()
+        localRepository.updateEntity = { _ ->
+            expected
+        }
+
+        var capturedEntityId: EntityId? = null
+        var capturedLanguage: LanguageTag? = null
+        localRepository.fetchEntity = { givenId, givenLanguageTag ->
+            capturedEntityId = givenId
+            capturedLanguage = givenLanguageTag
+
+            expected
+        }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.save()
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.create("de", EntityModelContract.EntityType.ITEM)
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.rollback()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe expected
+        }
+
+        capturedEntityId mustBe expected.id
+        capturedLanguage mustBe expected.language
+    }
+
+    @Test
+    fun `Given rollback is called, after an unsuccessful fetch, it emits an Failure`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+
+        val localRepository = RepositoryStub()
+        localRepository.fetchEntity = { _, _ -> null }
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.fetchEntity = { _, _ -> throw RuntimeException() }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+        // When
+        store.fetchEntity(id, language)
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive()
+        }
+
+        // When
+        store.rollback()
+        // Then
+        runBlockingTestWithTimeout {
+            assertFailsWith<EntityStoreError.InvalidRollbackState> {
+                result.receive().unwrap()
+            }
+        }
+    }
+
+    @Test
+    fun `Given rollback is called, after an successful fetch, it emits an Success`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val localRepository = RepositoryStub()
+        var capturedEntityId: String? = null
+        var capturedLanguage: String? = null
+        localRepository.fetchEntity = { givenId, givenLanguage ->
+            capturedEntityId = givenId
+            capturedLanguage = givenLanguage
+
+            expected
+        }
+
+        val koin = initKoin(
+            localRepository,
+            RepositoryStub(),
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.fetchEntity(id, language)
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.create("de", EntityModelContract.EntityType.ITEM)
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.rollback()
+
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap() mustBe expected
+        }
+
+        capturedEntityId mustBe expected.id
+        capturedLanguage mustBe expected.language
+    }
+
+    @Test
+    fun `Given rollback is called, after an reset, it emits an Failure`() {
+        // Given
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Failure(EntityStoreError.InitialState())
+        )
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val id: EntityId = fixture.fixture()
+        val language: LanguageTag = fixture.fixture()
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val localRepository = RepositoryStub()
+        localRepository.fetchEntity = { _, _ -> expected }
+
+        val koin = initKoin(
+            localRepository,
+            RepositoryStub(),
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.error !is EntityStoreError.InitialState) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.fetchEntity(id, language)
+        // Then
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.reset()
+        store.rollback()
+
+        // Then
+        runBlockingTestWithTimeout {
+            assertFailsWith<EntityStoreError.InvalidRollbackState> {
+                result.receive().unwrap()
+            }
+        }
+    }
+
+    @Test
+    fun `Given rollback is called, it emits an propagated Failure`() {
+        // Given
+        val errorMessage: String = fixture.fixture()
+
+        val inMemoryEntity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.DISTANT_PAST,
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val expected = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            isEditable = fixture.fixture(),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = fixture.listFixture(),
+        )
+
+        val flow = MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>>(
+            Success(inMemoryEntity)
+        )
+
+        val result = Channel<ResultContract<EntityModelContract.MonolingualEntity, Exception>>()
+
+        val remoteRepository = RepositoryStub()
+        remoteRepository.updateEntity = { _ ->
+            expected
+        }
+
+        val localRepository = RepositoryStub()
+        localRepository.updateEntity = { _ ->
+            expected
+        }
+
+        localRepository.fetchEntity = { _, _ -> throw RuntimeException(errorMessage) }
+
+        val koin = initKoin(
+            localRepository,
+            remoteRepository,
+            flow
+        )
+
+        flow.onEach { item ->
+            if (item.value != inMemoryEntity) {
+                result.send(item)
+            }
+        }.launchIn(testScope2)
+
+        val store = EntityStore(koin)
+
+        // When
+        store.save()
+        runBlockingTestWithTimeout {
+            result.receive().unwrap()
+        }
+
+        // When
+        store.rollback()
+
+        // Then
+        runBlockingTestWithTimeout {
+            val error = assertFails {
+                result.receive().unwrap()
+            }
+
+            error.message mustBe errorMessage
         }
     }
 }

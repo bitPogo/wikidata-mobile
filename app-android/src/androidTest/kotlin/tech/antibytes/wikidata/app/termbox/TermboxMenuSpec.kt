@@ -31,12 +31,14 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = title,
-                    onSearch = { /*TODO*/ },
-                    onEdit = { /*TODO*/ },
-                    onLanguageSearch = { /*TODO*/ },
-                    onRandomEntity = { /*TODO*/ }
+                    isEditable = true,
+                    onSearch = { },
+                    onRefresh = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
                 )
             }
         }
@@ -48,6 +50,10 @@ class TermboxMenuSpec {
 
         composeTestRule
             .onNodeWithContentDescription("Search for another entity")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithContentDescription("Refresh current entity")
             .assertIsDisplayed()
 
         composeTestRule
@@ -76,18 +82,49 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
+                    isEditable = true,
                     onSearch = onSearch,
-                    onEdit = { /*TODO*/ },
-                    onLanguageSearch = { /*TODO*/ },
-                    onRandomEntity = { /*TODO*/ }
+                    onRefresh = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
                 )
             }
         }
 
         composeTestRule
             .onNodeWithContentDescription("Search for another entity")
+            .performClick()
+
+        // Then
+        assertTrue(wasCalled)
+    }
+
+    @Test
+    fun Given_refresh_is_clicked_it_calls_the_delegated_function() {
+        // Given
+        var wasCalled = false
+        val onRefresh = { wasCalled = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermMenu(
+                    title = fixture.fixture(),
+                    isEditable = true,
+                    onSearch = { },
+                    onRefresh = onRefresh,
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Refresh current entity")
             .performClick()
 
         // Then
@@ -103,12 +140,14 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
-                    onSearch = { /*TODO*/ },
+                    isEditable = true,
+                    onSearch = { },
+                    onRefresh = { },
                     onEdit = onEdit,
-                    onLanguageSearch = { /*TODO*/ },
-                    onRandomEntity = { /*TODO*/ }
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
                 )
             }
         }
@@ -126,12 +165,14 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
-                    onSearch = { /*TODO*/ },
-                    onEdit = { /*TODO*/ },
-                    onLanguageSearch = { /*TODO*/ },
-                    onRandomEntity = { /*TODO*/ }
+                    isEditable = true,
+                    onRefresh = { },
+                    onSearch = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
                 )
             }
         }
@@ -159,11 +200,13 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
-                    onSearch = { /*TODO*/ },
-                    onEdit = { /*TODO*/ },
-                    onLanguageSearch = { /*TODO*/ },
+                    isEditable = true,
+                    onSearch = { },
+                    onRefresh = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
                     onRandomEntity = onRandom
                 )
             }
@@ -198,12 +241,14 @@ class TermboxMenuSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxMenu(
+                TermMenu(
                     title = fixture.fixture(),
-                    onSearch = { /*TODO*/ },
-                    onEdit = { /*TODO*/ },
+                    isEditable = true,
+                    onSearch = { },
+                    onRefresh = { },
+                    onEdit = { },
                     onLanguageSearch = onLanguageSearch,
-                    onRandomEntity = { /*TODO*/ }
+                    onRandomEntity = { }
                 )
             }
         }

@@ -25,9 +25,9 @@ class TermSearchViewModel(
     override val query: StateFlow<String> = _query
 
     init {
-        store.searchEntries.subscribeWithSuspendingFunction { searchResult ->
+        store.searchEntries.subscribe { searchResult ->
             if (searchResult.isSuccess()) {
-                _result.emit(searchResult.unwrap())
+                _result.update { searchResult.unwrap() }
             }
         }
     }

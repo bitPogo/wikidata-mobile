@@ -9,6 +9,7 @@ package tech.antibytes.wikidata.app.ui.atom
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -27,9 +28,11 @@ import tech.antibytes.wikidata.app.ui.theme.LightDarkGray
 // TODO: Get rid of this snowflake
 @Composable
 fun AliasEditField(
-    label: String?,
+    label: String? = null,
     value: String,
     onChange: (String) -> Unit,
+    modifier: Modifier.() -> Modifier = { this },
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val focusOuterState = remember { mutableStateOf(false) }
     val background = if (focusOuterState.value) {
@@ -72,8 +75,10 @@ fun AliasEditField(
             )
             .onFocusChanged { focusState ->
                 focusOuterState.value = focusState.hasFocus
-            },
+            }
+            .let { mod -> modifier.invoke(mod) },
         colors = colours,
+        keyboardOptions = keyboardOptions,
         shape = RoundedCornerShape(0.dp),
         isError = false,
     )

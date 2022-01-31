@@ -17,8 +17,8 @@ import tech.antibytes.wikidata.app.R
 import tech.antibytes.wikidata.app.ui.atom.TopSearchBar
 import tech.antibytes.wikidata.app.ui.theme.Blue
 import tech.antibytes.wikidata.app.ui.theme.DeepBlack
-import tech.antibytes.wikidata.app.ui.theme.LightBrightWhite
 import tech.antibytes.wikidata.app.ui.theme.LightDarkGray
+import tech.antibytes.wikidata.app.ui.theme.White
 
 @Composable
 fun LanguageSearchBar(
@@ -30,7 +30,7 @@ fun LanguageSearchBar(
         disabledTextColor = LightDarkGray,
         cursorColor = DeepBlack,
         placeholderColor = LightDarkGray,
-        backgroundColor = LightBrightWhite,
+        backgroundColor = White,
         focusedBorderColor = Color.Transparent,
         unfocusedBorderColor = Color.Transparent,
         disabledBorderColor = Color.Transparent,
@@ -50,10 +50,10 @@ fun LanguageSearchBar(
         textFieldShape = RoundedCornerShape(10.dp),
         textFieldModifier = {
             this.padding(
-                start = 5.dp,
-                end = 5.dp,
-                top = 5.dp,
-                bottom = 5.dp
+                start = 8.dp,
+                end = 8.dp,
+                top = 8.dp,
+                bottom = 8.dp
             )
         },
     )

@@ -18,7 +18,8 @@ fun TermEditorPreviewShort() {
         aliases = listOf(""),
         onLabelInput = {},
         onDescriptionInput = {},
-        onAliasInput = { _, _ -> Unit }
+        onAliasInput = { _, _ -> Unit },
+        onNewAliasInput = {}
     )
 }
 
@@ -31,6 +32,7 @@ fun TermEditorPreviewHuge() {
         aliases = listOf("Lorem", "ipsum", "dolor", "sit", "amet"),
         onLabelInput = {},
         onDescriptionInput = {},
-        onAliasInput = { _, _ -> Unit }
+        onAliasInput = { _, _ -> Unit },
+        onNewAliasInput = {}
     )
 }

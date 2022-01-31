@@ -22,7 +22,7 @@ import tech.antibytes.wikidata.app.ui.theme.Blue
 import tech.antibytes.wikidata.app.ui.theme.BrightWhite
 
 @Composable
-fun TermboxEditMenu(
+fun TermEditMenu(
     onCancel: () -> Unit,
     onSave: () -> Unit
 ) {

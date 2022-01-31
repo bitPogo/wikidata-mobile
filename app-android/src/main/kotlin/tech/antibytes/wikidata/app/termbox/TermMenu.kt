@@ -20,6 +20,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import tech.antibytes.wikidata.app.R
 import tech.antibytes.wikidata.app.ui.theme.Blue
-import tech.antibytes.wikidata.app.ui.theme.BrightWhite
+import tech.antibytes.wikidata.app.ui.theme.White
 
 @Composable
 private fun ActionsButtons(
+    isEditable: Boolean,
     onSearch: () -> Unit,
     onEdit: () -> Unit,
+    onRefresh: () -> Unit,
     onLanguageSearch: () -> Unit,
     onRandomEntity: () -> Unit
 ) {
@@ -53,7 +56,19 @@ private fun ActionsButtons(
             )
         }
 
-        IconButton(onClick = onEdit) {
+        IconButton(
+            onClick = onRefresh
+        ) {
+            Icon(
+                Icons.Outlined.Refresh,
+                stringResource(R.string.termbox_menu_refresh)
+            )
+        }
+
+        IconButton(
+            onClick = onEdit,
+            enabled = isEditable
+        ) {
             Icon(
                 Icons.Outlined.Edit,
                 stringResource(R.string.termbox_menu_edit)
@@ -101,24 +116,28 @@ private fun ActionsButtons(
 }
 
 @Composable
-fun TermboxMenu(
+fun TermMenu(
     title: String,
+    isEditable: Boolean,
     onSearch: () -> Unit,
     onEdit: () -> Unit,
+    onRefresh: () -> Unit,
     onLanguageSearch: () -> Unit,
     onRandomEntity: () -> Unit
 ) {
     TopAppBar(
         title = @Composable { Text(text = title) },
         backgroundColor = Blue,
-        contentColor = BrightWhite,
+        contentColor = White,
         modifier = Modifier.fillMaxWidth(),
         actions = @Composable {
             ActionsButtons(
-                onSearch,
-                onEdit,
-                onLanguageSearch,
-                onRandomEntity
+                isEditable = isEditable,
+                onSearch = onSearch,
+                onRefresh = onRefresh,
+                onEdit = onEdit,
+                onLanguageSearch = onLanguageSearch,
+                onRandomEntity = onRandomEntity
             )
         }
     )
