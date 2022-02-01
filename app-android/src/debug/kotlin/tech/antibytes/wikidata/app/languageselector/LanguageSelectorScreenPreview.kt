@@ -19,7 +19,7 @@ import java.util.Locale.KOREAN
 @Preview
 @Composable
 fun LanguageScreenPreview() {
-    LanguageSelectorScreen(viewModel = LanguageScreenViewModelStub())
+    LanguageSelectorScreen(languageSelectorViewModel = LanguageScreenViewModelStub())
 }
 
 private class LanguageScreenViewModelStub : LanguageSelectorContract.LanguageSelectorViewModel {

@@ -19,15 +19,20 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 import tech.antibytes.wikidata.app.R
 import tech.antibytes.wikidata.app.extension.useResourceOnNullOrBlank
+import tech.antibytes.wikidata.app.login.LoginContract
 import tech.antibytes.wikidata.app.ui.molecule.ScreenWithTopBar
 
 @Composable
-fun TermSearchScreen(viewModel: TermSearchContract.TermSearchViewModel) {
-    val query = viewModel.query.collectAsState()
-    val result = viewModel.result.collectAsState()
+fun TermSearchScreen(
+    navigator: TermSearchContract.Navigator = TermSearchContract.Navigator { },
+    termSearchViewModel: TermSearchContract.TermSearchViewModel = viewModel()
+) {
+    val query = termSearchViewModel.query.collectAsState()
+    val result = termSearchViewModel.result.collectAsState()
     val message = if (query.value.isEmpty()) {
         R.string.termsearch_missing_query
     } else {
@@ -38,7 +43,7 @@ fun TermSearchScreen(viewModel: TermSearchContract.TermSearchViewModel) {
         topBar = @Composable {
             TermSearchBar(
                 value = query.value,
-                onValueChange = viewModel::setQuery,
+                onValueChange = termSearchViewModel::setQuery,
                 onSearch = { }
             )
         },

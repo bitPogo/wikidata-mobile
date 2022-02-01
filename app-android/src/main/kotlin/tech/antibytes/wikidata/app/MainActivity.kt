@@ -60,8 +60,8 @@ class MainActivity : ComponentActivity() {
             WikidataMobileTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    TermboxScreen(
-                        viewModel = TermboxViewModel(
+                    /*TermboxScreen(
+                        termboxViewModel = TermboxViewModel(
                             entityStore = EntityStore.getInstance(
                                 client,
                                 database.entityQueries,
@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                             ),
                             language = MutableStateFlow(Locale.GERMAN),
                         )
-                    )
+                    )*/
                 }
             }
         }

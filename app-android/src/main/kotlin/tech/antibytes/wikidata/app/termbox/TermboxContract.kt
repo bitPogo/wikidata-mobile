@@ -35,4 +35,9 @@ interface TermboxContract {
             const val INITIAL_ENTITY = "Q214750"
         }
     }
+
+    interface Navigator {
+        fun goToLanguageSelector()
+        fun goToTermSearch()
+    }
 }

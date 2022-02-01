@@ -19,7 +19,8 @@ import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
-import tech.antibytes.wikidata.mock.TermboxViewModelAndroidStub
+import tech.antibytes.wikidata.mock.TermboxNavigatorStub
+import tech.antibytes.wikidata.mock.TermboxViewModelStub
 import java.util.Locale
 
 class TermboxScreenSpec {
@@ -37,7 +38,7 @@ class TermboxScreenSpec {
 
     private val currentLanguage = MutableStateFlow(Locale.ENGLISH)
 
-    private val viewModel = TermboxViewModelAndroidStub(
+    private val viewModel = TermboxViewModelStub(
         id,
         editability,
         label,
@@ -46,6 +47,8 @@ class TermboxScreenSpec {
         currentLanguage
     )
 
+    private val navigator = TermboxNavigatorStub()
+    
     @Before
     fun setUp() {
         viewModel.clear()
@@ -62,7 +65,10 @@ class TermboxScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxScreen(viewModel = viewModel)
+                TermboxScreen(
+                    navigator = navigator,
+                    termboxViewModel = viewModel
+                )
             }
         }
 
@@ -85,7 +91,10 @@ class TermboxScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxScreen(viewModel = viewModel)
+                TermboxScreen(
+                    navigator = navigator,
+                    termboxViewModel = viewModel
+                )
             }
         }
 
@@ -115,7 +124,10 @@ class TermboxScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermboxScreen(viewModel = viewModel)
+                TermboxScreen(
+                    navigator = navigator,
+                    termboxViewModel = viewModel
+                )
             }
         }
 

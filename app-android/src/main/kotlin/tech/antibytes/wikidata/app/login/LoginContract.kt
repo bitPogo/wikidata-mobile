@@ -28,4 +28,8 @@ interface LoginContract {
         object LoggedOut : LoginState()
         class AuthenticationError(val reason: Reason) : LoginState()
     }
+
+    fun interface Navigator {
+        fun goToTermbox()
+    }
 }

@@ -38,7 +38,10 @@ class TermSearchScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermSearchScreen(viewModel)
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -60,7 +63,10 @@ class TermSearchScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermSearchScreen(viewModel)
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -84,7 +90,10 @@ class TermSearchScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermSearchScreen(viewModel)
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -112,7 +121,10 @@ class TermSearchScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermSearchScreen(viewModel)
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -136,7 +148,10 @@ class TermSearchScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermSearchScreen(viewModel)
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -160,7 +175,10 @@ class TermSearchScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                TermSearchScreen(viewModel)
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 

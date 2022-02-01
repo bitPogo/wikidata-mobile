@@ -49,7 +49,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -75,7 +78,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -95,7 +101,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -123,7 +132,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -150,7 +162,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -174,7 +189,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 

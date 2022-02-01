@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.update
 @Preview
 @Composable
 fun DefaultLoginScreen() {
-    LoginScreen(LoginViewModelStub())
+    LoginScreen(
+        {},
+        LoginViewModelStub()
+    )
 }
 
 private class LoginViewModelStub : LoginContract.LoginViewModel {

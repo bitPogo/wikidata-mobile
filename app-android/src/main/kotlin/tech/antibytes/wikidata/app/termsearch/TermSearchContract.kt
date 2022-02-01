@@ -17,4 +17,8 @@ interface TermSearchContract {
         fun setQuery(query: String)
         fun search()
     }
+
+    fun interface Navigator {
+        fun goToTermbox()
+    }
 }

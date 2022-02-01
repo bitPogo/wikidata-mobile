@@ -112,6 +112,7 @@ dependencies {
     implementation(Dependency.android.compose.viewmodel)
     implementation(Dependency.android.compose.foundation)
     implementation(Dependency.android.compose.constrainLayout)
+    implementation(Dependency.android.compose.navigation)
 
     implementation(LocalDependency.sqldelight.android)
 

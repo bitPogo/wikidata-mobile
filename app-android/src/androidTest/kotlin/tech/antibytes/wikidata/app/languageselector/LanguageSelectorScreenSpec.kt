@@ -71,7 +71,10 @@ class LanguageSelectorScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LanguageSelectorScreen(viewModel)
+                LanguageSelectorScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -93,7 +96,10 @@ class LanguageSelectorScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LanguageSelectorScreen(viewModel)
+                LanguageSelectorScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -115,7 +121,10 @@ class LanguageSelectorScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LanguageSelectorScreen(viewModel)
+                LanguageSelectorScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -135,7 +144,10 @@ class LanguageSelectorScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LanguageSelectorScreen(viewModel)
+                LanguageSelectorScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -165,7 +177,10 @@ class LanguageSelectorScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LanguageSelectorScreen(viewModel)
+                LanguageSelectorScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 
@@ -198,7 +213,10 @@ class LanguageSelectorScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LanguageSelectorScreen(viewModel)
+                LanguageSelectorScreen(
+                    {},
+                    viewModel
+                )
             }
         }
 

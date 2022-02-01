@@ -10,20 +10,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import tech.antibytes.wikidata.app.ui.molecule.ScreenWithTopBar
 import java.util.Locale
 
 @Composable
-fun LanguageSelectorScreen(viewModel: LanguageSelectorContract.LanguageSelectorViewModel,) {
-    val languageQuery = viewModel.filter.collectAsState()
-    val selectedLanguage = viewModel.currentLanguage.collectAsState()
-    val selectableLanguages = viewModel.selection.collectAsState()
+fun LanguageSelectorScreen(
+    navigator: LanguageSelectorContract.Navigator = LanguageSelectorContract.Navigator { },
+    languageSelectorViewModel: LanguageSelectorContract.LanguageSelectorViewModel = viewModel()
+) {
+    val languageQuery = languageSelectorViewModel.filter.collectAsState()
+    val selectedLanguage = languageSelectorViewModel.currentLanguage.collectAsState()
+    val selectableLanguages = languageSelectorViewModel.selection.collectAsState()
 
     ScreenWithTopBar(
         topBar = @Composable {
             LanguageSearchBar(
                 value = languageQuery.value,
-                onValueChange = viewModel::setFilter
+                onValueChange = languageSelectorViewModel::setFilter
             )
         },
         content = @Composable {
@@ -33,7 +37,7 @@ fun LanguageSelectorScreen(viewModel: LanguageSelectorContract.LanguageSelectorV
                         id = idx,
                         value = language,
                         selected = selectedLanguage.value,
-                        onClick = viewModel::selectLanguage
+                        onClick = languageSelectorViewModel::selectLanguage
                     )
                 }
             }
