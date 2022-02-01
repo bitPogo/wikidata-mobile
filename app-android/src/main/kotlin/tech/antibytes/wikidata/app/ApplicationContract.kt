@@ -8,6 +8,10 @@ package tech.antibytes.wikidata.app
 
 interface ApplicationContract {
     enum class LogTag(val value: String) {
-        TERMBOX_VIEWMODEL("termbox_vm")
+        TERMBOX_VIEWMODEL("TERMBOX_VIEWMODEL"),
+        CLIENT_INFO("MWCLIENT_INFO"),
+        CLIENT_WARN("MWCLIENT_WARN"),
+        CLIENT_ERROR("MWCLIENT_ERROR"),
+        CLIENT_LOG("MWCLIENT_VERBOSE")
     }
 }

@@ -21,8 +21,8 @@ plugins {
     id("com.squareup.sqldelight")
 
     // Hilt
-    // kotlin("kapt")
-    // id("dagger.hilt.android.plugin")
+    kotlin("kapt")
+    id("dagger.hilt.android.plugin")
 
 }
 
@@ -84,15 +84,19 @@ android {
     }
 }
 
-/*
 kapt {
     correctErrorTypes = true
-}*/
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+}
 
 dependencies {
     implementation(Dependency.android.ktx.core)
     implementation(Dependency.android.ktx.lifecycle)
     implementation(Dependency.android.ktx.viewmodel)
+    implementation(Dependency.android.ktx.viewmodelCoroutine)
     implementation(Dependency.android.ktx.viewmodelSaver)
     implementation(Dependency.android.ktx.workmanager)
 
@@ -123,8 +127,8 @@ dependencies {
     implementation(project(":user-store"))
     implementation(project(":utils-coroutine"))
 
-    // implementation(LocalDependency.hilt.core)
-    // kapt(LocalDependency.hilt.compiler)
+    implementation(LocalDependency.hilt.core)
+    kapt(LocalDependency.hilt.compiler)
 
     // Debug
     debugImplementation(Dependency.android.compose.uiTooling)
@@ -139,8 +143,8 @@ dependencies {
     testImplementation(LocalDependency.antibytes.test.fixture)
     testImplementation(LocalDependency.antibytes.test.core)
 
-    // testImplementation(LocalDependency.hilt.test)
-    // kaptTest(LocalDependency.hilt.compiler)
+    testImplementation(LocalDependency.hilt.test)
+    kaptTest(LocalDependency.hilt.compiler)
 
     // InstrumentedTest
     androidTestImplementation(Dependency.android.test.junit)
@@ -150,8 +154,8 @@ dependencies {
     androidTestImplementation(Dependency.android.test.uiAutomator)
     androidTestImplementation(LocalDependency.antibytes.test.fixture)
 
-    // androidTestImplementation(LocalDependency.hilt.test)
-    // kaptAndroidTest(LocalDependency.hilt.compiler)
+    androidTestImplementation(LocalDependency.hilt.test)
+    kaptAndroidTest(LocalDependency.hilt.compiler)
 }
 
 sqldelight {

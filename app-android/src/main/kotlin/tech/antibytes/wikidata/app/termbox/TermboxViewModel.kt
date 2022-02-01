@@ -8,18 +8,23 @@ package tech.antibytes.wikidata.app.termbox
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
+import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.page.PageStoreContract
 import tech.antibytes.wikidata.app.ApplicationContract
 import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
 import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Named
 
-class TermboxViewModel(
-    private val currentLanguage: MutableStateFlow<Locale>,
+@HiltViewModel
+class TermboxViewModel @Inject constructor(
+    @Named("LanguageHandle") override val language: StateFlow<Locale>,
     private val entityStore: EntityStoreContract.EntityStore,
     private val pageStore: PageStoreContract.PageStore,
 ) : TermboxContract.TermboxViewModel, ViewModel() {
@@ -37,8 +42,6 @@ class TermboxViewModel(
 
     private val _aliases: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
     override val aliases: StateFlow<List<String>> = _aliases
-
-    override val language: StateFlow<Locale> = currentLanguage
 
     init {
         entityStore.entity.subscribeWithSuspendingFunction { entity ->
@@ -82,9 +85,13 @@ class TermboxViewModel(
 
     override fun refresh() = entityStore.refresh()
 
+    private fun getCurrentLanguageTag(): LanguageTag {
+        return language.value.toLanguageTag().replace('_', '-')
+    }
+
     override fun createNewItem() {
         entityStore.create(
-            language = currentLanguage.value.toLanguageTag().replace('_', '-'),
+            language = getCurrentLanguageTag(),
             type = EntityModelContract.EntityType.ITEM
         )
     }
@@ -102,7 +109,7 @@ class TermboxViewModel(
     override fun fetchItem(id: String) {
         entityStore.fetchEntity(
             id = id,
-            language = currentLanguage.value.toLanguageTag().replace('_', '-'),
+            language = getCurrentLanguageTag(),
         )
     }
 }

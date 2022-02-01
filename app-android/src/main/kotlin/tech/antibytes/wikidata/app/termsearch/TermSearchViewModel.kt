@@ -7,16 +7,20 @@
 package tech.antibytes.wikidata.app.termsearch
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import tech.antibytes.wikibase.store.page.PageStoreContract
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Named
 
-class TermSearchViewModel(
+@HiltViewModel
+class TermSearchViewModel @Inject constructor(
     private val store: PageStoreContract.PageStore,
-    private val currentLanguage: StateFlow<Locale>
+    @Named("LanguageHandle") private val currentLanguage: StateFlow<Locale>
 ) : TermSearchContract.TermSearchViewModel, ViewModel() {
     private val _result = MutableStateFlow<List<PageModelContract.SearchEntry>>(emptyList())
     override val result: StateFlow<List<PageModelContract.SearchEntry>> = _result
