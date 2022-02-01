@@ -90,9 +90,10 @@ private class TermSearchViewModelStub(
     override val query: StateFlow<String>
 
 ) : TermSearchContract.TermSearchViewModel {
-    override fun setQuery(query: String) { }
+    override fun setQuery(query: String) = Unit
 
-    override fun search() { }
+    override fun search() = Unit
+    override fun select(index: Int) = Unit
 }
 
 private data class SearchEntry(

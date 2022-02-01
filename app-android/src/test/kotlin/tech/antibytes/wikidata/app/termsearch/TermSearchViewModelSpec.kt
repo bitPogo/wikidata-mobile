@@ -14,6 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -27,7 +28,10 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
+import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
+import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
+import tech.antibytes.wikidata.mock.EntityStoreStub
 import tech.antibytes.wikidata.mock.PageStoreStub
 import tech.antibytes.wikidata.mock.SearchEntry
 import java.lang.RuntimeException
@@ -36,39 +40,61 @@ import java.util.Locale.ENGLISH
 
 class TermSearchViewModelSpec {
     private val fixture = kotlinFixture()
-    private val flow: MutableSharedFlow<ResultContract<List<PageModelContract.SearchEntry>, Exception>> = MutableSharedFlow()
-    private val flowSurface = SharedFlowWrapper.getInstance(
-        flow
+    private val pageFlow: MutableSharedFlow<ResultContract<List<PageModelContract.SearchEntry>, Exception>> = MutableSharedFlow()
+    private val pageFlowSurface = SharedFlowWrapper.getInstance(
+        pageFlow
     ) { CoroutineScope(Dispatchers.Default) }
 
-    private val store = PageStoreStub(
+    private val pageStore = PageStoreStub(
         SharedFlowWrapper.getInstance(MutableSharedFlow()) { CoroutineScope(Dispatchers.Default) },
-        flowSurface,
+        pageFlowSurface,
     )
 
     private val currentLanguage = MutableStateFlow(ENGLISH)
 
+    private val entityFlow: MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>> = MutableStateFlow(
+        Failure(EntityStoreError.InitialState())
+    )
+
+    private val entitySurfaceFlow = SharedFlowWrapper.getInstance(
+        entityFlow
+    ) { CoroutineScope(Dispatchers.Default) }
+
+    private val entityStore = EntityStoreStub(entitySurfaceFlow)
+
     @Before
     fun setUp() {
+        entityFlow.update { Failure(EntityStoreError.InitialState()) }
         currentLanguage.value = ENGLISH
-        store.clear()
+
+        pageStore.clear()
+        entityStore.clear()
     }
 
     @Test
     fun `It fulfils TermSearchViewModel`() {
-        val viewModel = TermSearchViewModel(store, currentLanguage)
+        val viewModel = TermSearchViewModel(
+            pageStore, entityStore,
+            currentLanguage
+        )
         viewModel fulfils TermSearchContract.TermSearchViewModel::class
         viewModel fulfils ViewModel::class
     }
 
     @Test
     fun `Its default query state is a empty String`() {
-        TermSearchViewModel(store, currentLanguage).query.value mustBe ""
+        TermSearchViewModel(
+            pageStore, entityStore,
+            currentLanguage
+        ).query.value mustBe ""
     }
 
     @Test
     fun `Its default result state is a empty List`() {
-        TermSearchViewModel(store, currentLanguage).result.value mustBe emptyList()
+        TermSearchViewModel(
+            pageStore, entityStore,
+            currentLanguage
+        ).result.value mustBe emptyList()
     }
 
     @Test
@@ -78,7 +104,10 @@ class TermSearchViewModelSpec {
         val result = Channel<String>()
 
         // When
-        val viewModel = TermSearchViewModel(store, currentLanguage)
+        val viewModel = TermSearchViewModel(
+            pageStore, entityStore,
+            currentLanguage
+        )
         CoroutineScope(Dispatchers.Default).launch {
             viewModel.query.collectLatest { state -> result.send(state) }
         }
@@ -121,17 +150,20 @@ class TermSearchViewModelSpec {
 
         var capturedQuery: String? = null
         var capturedLanguage: String? = null
-        store.searchItems = { givenQuery, givenLanguage ->
+        pageStore.searchItems = { givenQuery, givenLanguage ->
             capturedQuery = givenQuery
             capturedLanguage = givenLanguage
 
             CoroutineScope(Dispatchers.Default).launch {
-                flow.emit(Success(expected))
+                pageFlow.emit(Success(expected))
             }
         }
 
         // When
-        val viewModel = TermSearchViewModel(store, currentLanguage)
+        val viewModel = TermSearchViewModel(
+            pageStore, entityStore,
+            currentLanguage
+        )
         CoroutineScope(Dispatchers.Default).launch {
             viewModel.result.collectLatest { state -> searchResult.send(state) }
         }
@@ -169,17 +201,21 @@ class TermSearchViewModelSpec {
 
         var capturedQuery: String? = null
         var capturedLanguage: String? = null
-        store.searchItems = { givenQuery, givenLanguage ->
+        pageStore.searchItems = { givenQuery, givenLanguage ->
             capturedQuery = givenQuery
             capturedLanguage = givenLanguage
 
             CoroutineScope(Dispatchers.Default).launch {
-                flow.emit(Failure(RuntimeException()))
+                pageFlow.emit(Failure(RuntimeException()))
             }
         }
 
         // When
-        val viewModel = TermSearchViewModel(store, currentLanguage)
+        val viewModel = TermSearchViewModel(
+            pageStore,
+            entityStore,
+            currentLanguage
+        )
         CoroutineScope(Dispatchers.Default).launch {
             viewModel.result.collectLatest { state -> searchResult.send(state) }
         }
@@ -203,5 +239,62 @@ class TermSearchViewModelSpec {
         capturedLanguage mustBe language.toLanguageTag().replace('_', '-')
         capturedQuery mustBe query
         viewModel.result.value mustBe emptyList()
+    }
+
+    @Test
+    fun `Given select is called with a Index, it fetches the Entity at given Position`() {
+        // Given
+        val index = 1
+        val id: String = fixture.fixture()
+        val language = Locale.KOREA
+
+        currentLanguage.value = language
+
+        var capturedId: String? = null
+        var capturedLanguage: String? = null
+        entityStore.fetchEntity = { givenId, givenLanguage ->
+            capturedId = givenId
+            capturedLanguage = givenLanguage
+        }
+
+        // When
+        val viewModel = TermSearchViewModel(
+            pageStore,
+            entityStore,
+            currentLanguage
+        )
+
+        runBlocking {
+            pageFlow.emit(
+                Success(
+                    listOf(
+                        SearchEntry(
+                            id = fixture.fixture(),
+                            language = fixture.fixture(),
+                            label = fixture.fixture<String>(),
+                            description = null
+                        ),
+                        SearchEntry(
+                            id = id,
+                            language = fixture.fixture(),
+                            label = fixture.fixture<String>(),
+                            description = null
+                        ),
+                        SearchEntry(
+                            id = fixture.fixture(),
+                            language = fixture.fixture(),
+                            label = fixture.fixture<String>(),
+                            description = null
+                        )
+                    )
+                )
+            )
+        }
+
+        viewModel.select(index)
+
+        // Then
+        capturedId mustBe id
+        capturedLanguage mustBe language.toLanguageTag().replace('_', '-')
     }
 }
