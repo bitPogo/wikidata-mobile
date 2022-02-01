@@ -1,0 +1,263 @@
+/*
+ * Copyright (c) 2022 Matthias Geisler (bitPogo) / All rights reserved.
+ *
+ * Use of this source code is governed by Apache v2.0
+ */
+
+package tech.antibytes.wikidata.app.di
+
+import android.content.Context
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.slot
+import io.mockk.unmockkAll
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.After
+import org.junit.Test
+import tech.antibytes.mediawiki.MwClient
+import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.util.test.fulfils
+import tech.antibytes.util.test.mustBe
+import tech.antibytes.util.test.sameAs
+import tech.antibytes.wikibase.store.database.WikibaseDataBase
+import tech.antibytes.wikibase.store.database.entity.EntityQueries
+import tech.antibytes.wikibase.store.database.page.PageQueries
+import tech.antibytes.wikibase.store.entity.EntityStoreContract
+import tech.antibytes.wikibase.store.entity.domain.EntityStore
+import tech.antibytes.wikibase.store.page.PageStoreContract
+import tech.antibytes.wikibase.store.page.domain.PageStore
+import tech.antibytes.wikibase.store.user.UserStoreContract
+import tech.antibytes.wikibase.store.user.domain.UserStore
+import tech.antibytes.wikidata.app.BuildConfig
+import tech.antibytes.wikidata.app.util.DatabaseFactory
+import tech.antibytes.wikidata.app.util.SupportedWikibaseLanguages
+import java.util.Locale
+
+class DependencyProviderSpec {
+    @After
+    fun tearDown() {
+        unmockkAll()
+    }
+
+    @Test
+    fun `Given provideDatabase is called with a context, it delegates the call to the DatabaseFactory`() {
+        // Given
+        mockkObject(DatabaseFactory)
+        val context: Context = mockk(relaxed = true)
+
+        val dataBase: WikibaseDataBase = mockk()
+
+        every {
+            DatabaseFactory.create(
+                WikibaseDataBase.Schema,
+                context
+            )
+        } returns dataBase
+
+        // When
+        val actual = DependencyProvider.provideDatabase(context)
+
+        // Then
+        actual sameAs dataBase
+    }
+
+    @Test
+    fun `Given provideConnectivityManager is called with a context is creates a ConnectivityManager`() {
+        // Given
+        val context: Context = mockk(relaxed = true)
+
+        // When
+        val actual = DependencyProvider.provideConnectivityManager(context)
+
+        // Then
+        actual fulfils PublicApi.ConnectivityManager::class
+    }
+
+    @Test
+    fun `Given provideWikibaseLanguages is called, it delegates the call to SupportedWikibaseLanguages`() {
+        // Given
+        mockkObject(SupportedWikibaseLanguages)
+
+        val languages: List<Locale> = mockk()
+
+        every { SupportedWikibaseLanguages.get() } returns languages
+
+        // When
+        val actual = DependencyProvider.provideWikibaseLanguages()
+
+        // Then
+        actual sameAs languages
+    }
+
+    @Test
+    fun `Given provideLogger is called it creates a Logger`() {
+        // When
+        val actual = DependencyProvider.provideLogger()
+
+        // Then
+        actual fulfils PublicApi.Logger::class
+    }
+
+    @Test
+    fun `Given provideClient is called with a Logger and ConnectivityManager, it creates a Client`() {
+        mockkObject(MwClient)
+
+        val logger: PublicApi.Logger = mockk()
+        val connectivityManager: PublicApi.ConnectivityManager = mockk()
+
+        val client: PublicApi.Client = mockk()
+        val capturedDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+
+        every {
+            MwClient.getInstance(
+                BuildConfig.ENDPOINT,
+                logger,
+                connectivityManager,
+                capture(capturedDispatcher)
+            )
+        } returns client
+
+        // When
+        val actual = DependencyProvider.provideClient(logger, connectivityManager)
+
+        // Then
+        actual sameAs client
+        capturedDispatcher.captured
+            .dispatch()
+            .toString()
+            .contains("Dispatchers.IO") mustBe true
+    }
+
+    @Test
+    fun `Given provideEntityStore is called with a Client and DataBase, it creates a EntityStore`() {
+        mockkObject(EntityStore)
+
+        val client: PublicApi.Client = mockk()
+        val database: WikibaseDataBase = mockk()
+        val entityQueries: EntityQueries = mockk()
+        val capturedProducerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+        val capturedConsumerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+
+        val entityStore: EntityStoreContract.EntityStore = mockk()
+
+        every { database.entityQueries } returns entityQueries
+
+        every {
+            EntityStore.getInstance(
+                client,
+                entityQueries,
+                capture(capturedProducerDispatcher),
+                capture(capturedConsumerDispatcher)
+            )
+        } returns entityStore
+
+        // When
+        val actual = DependencyProvider.provideEntityStore(client, database)
+
+        // Then
+        actual sameAs entityStore
+        capturedProducerDispatcher.captured
+            .dispatch()
+            .toString()
+            .contains("Dispatchers.IO") mustBe true
+        capturedConsumerDispatcher.captured
+            .dispatch()
+            .toString()
+            .contains("Dispatchers.Default") mustBe true
+    }
+
+    @Test
+    fun `Given providePageStore is called with a Client and DataBase, it creates a PageStore`() {
+        mockkObject(PageStore)
+
+        val client: PublicApi.Client = mockk()
+        val database: WikibaseDataBase = mockk()
+        val pageQueries: PageQueries = mockk()
+        val capturedProducerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+        val capturedConsumerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+
+        val pageStore: PageStoreContract.PageStore = mockk()
+
+        every { database.pageQueries } returns pageQueries
+
+        every {
+            PageStore.getInstance(
+                client,
+                pageQueries,
+                capture(capturedProducerDispatcher),
+                capture(capturedConsumerDispatcher)
+            )
+        } returns pageStore
+
+        // When
+        val actual = DependencyProvider.providePageStore(client, database)
+
+        // Then
+        actual sameAs pageStore
+        capturedProducerDispatcher.captured
+            .dispatch()
+            .toString()
+            .contains("Dispatchers.IO") mustBe true
+        capturedConsumerDispatcher.captured
+            .dispatch()
+            .toString()
+            .contains("Dispatchers.Default") mustBe true
+    }
+
+    @Test
+    fun `Given provideUserStore is called with a Client, it creates a UserStore`() {
+        mockkObject(UserStore)
+
+        val client: PublicApi.Client = mockk()
+        val capturedProducerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+        val capturedConsumerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+
+        val userStore: UserStoreContract.UserStore = mockk()
+
+        every {
+            UserStore.getInstance(
+                client,
+                capture(capturedProducerDispatcher),
+                capture(capturedConsumerDispatcher)
+            )
+        } returns userStore
+
+        // When
+        val actual = DependencyProvider.provideUserStore(client)
+
+        // Then
+        actual sameAs userStore
+        capturedProducerDispatcher.captured
+            .dispatch()
+            .toString()
+            .contains("Dispatchers.IO") mustBe true
+        capturedConsumerDispatcher.captured
+            .dispatch()
+            .toString()
+            .contains("Dispatchers.Default") mustBe true
+    }
+
+    @Test
+    fun `Given provideMutableLanguageHandle is called, it provides a MutableStateFlow, with the default Locale`() {
+        // When
+        val actual = DependencyProvider.provideMutableLanguageHandle()
+
+        // Then
+        actual fulfils MutableStateFlow::class
+        actual.value mustBe Locale.getDefault()
+    }
+
+    @Test
+    fun `Given provideLanguageHandle is called with a MutableStateFlow, it reflects the given flow`() {
+        // Given
+        val flow = MutableStateFlow(Locale.ENGLISH)
+
+        // When
+        val actual = DependencyProvider.provideLanguageHandle(flow)
+
+        // Then
+        actual sameAs flow
+    }
+}
