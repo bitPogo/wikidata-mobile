@@ -186,7 +186,7 @@ class TermSearchViewModelSpec {
             }
         }
 
-        capturedLanguage mustBe language.toLanguageTag().replace('_', '-')
+        capturedLanguage mustBe language.toLanguageTag().replace('_', '-').lowercase()
         capturedQuery mustBe query
     }
 
@@ -236,7 +236,7 @@ class TermSearchViewModelSpec {
             delay(10)
         }
 
-        capturedLanguage mustBe language.toLanguageTag().replace('_', '-')
+        capturedLanguage mustBe language.toLanguageTag().replace('_', '-').lowercase()
         capturedQuery mustBe query
         viewModel.result.value mustBe emptyList()
     }
@@ -295,6 +295,6 @@ class TermSearchViewModelSpec {
 
         // Then
         capturedId mustBe id
-        capturedLanguage mustBe language.toLanguageTag().replace('_', '-')
+        capturedLanguage mustBe language.toLanguageTag().replace('_', '-').lowercase()
     }
 }

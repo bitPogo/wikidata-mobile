@@ -37,7 +37,10 @@ fun LanguageSelectorScreen(
                         id = idx,
                         value = language,
                         selected = selectedLanguage.value,
-                        onClick = languageSelectorViewModel::selectLanguage
+                        onClick = { id ->
+                            languageSelectorViewModel.selectLanguage(id)
+                            navigator.goToTermbox()
+                        }
                     )
                 }
             }

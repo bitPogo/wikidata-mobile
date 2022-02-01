@@ -7,10 +7,12 @@
 package tech.antibytes.wikidata.app
 
 import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.junit.Test
 import tech.antibytes.util.test.fulfils
@@ -28,13 +30,29 @@ class NavigatorSpec {
     fun `Given goToTermbox is called, it navigates to Termbox`() {
         // Given
         val navController: NavController = mockk()
+        val builder: NavOptionsBuilder = mockk(relaxed = true)
+        val capturedBuilder = slot<(NavOptionsBuilder) -> Unit>()
 
-        every { navController.navigate(any<String>()) } just Runs
+        every {
+            navController.navigate(
+                route = any(),
+                builder = capture(capturedBuilder)
+            )
+        } just Runs
 
         // When
         Navigator(navController).goToTermbox()
 
-        verify(exactly = 1) { navController.navigate(Routes.TERMBOX.name) }
+        capturedBuilder.captured.invoke(builder)
+
+        verify(exactly = 1) {
+            navController.navigate(
+                route = Routes.TERMBOX.name,
+                builder = any()
+            )
+        }
+
+        verify(exactly = 1) { builder.launchSingleTop = true }
     }
 
     @Test

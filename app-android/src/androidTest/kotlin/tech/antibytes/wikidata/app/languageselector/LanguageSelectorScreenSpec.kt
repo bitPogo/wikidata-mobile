@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -229,6 +230,39 @@ class LanguageSelectorScreenSpec {
             selection.lastIndex,
             capturedSelector
         )
+    }
+
+    @Test
+    fun Given_a_LanguageItem_is_selected_it_calls_the_Navigator() {
+        // Given
+        val selection = listOf(
+            ENGLISH,
+            GERMAN,
+            CHINESE,
+            KOREAN,
+        )
+
+        var wasCalled = false
+        val navigator = LanguageSelectorContract.Navigator { wasCalled = true }
+
+        viewModel.selectLanguage = {}
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                LanguageSelectorScreen(
+                    navigator,
+                    viewModel
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithText(selection.last().displayName)
+            .performClick()
+
+        // Then
+        assertTrue(wasCalled)
     }
 }
 

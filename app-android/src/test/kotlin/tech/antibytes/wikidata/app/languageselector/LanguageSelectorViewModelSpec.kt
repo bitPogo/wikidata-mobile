@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.setMain
@@ -77,7 +78,7 @@ class LanguageSelectorViewModelSpec {
                 aliases = emptyList()
             )
         )
-        
+
         Dispatchers.setMain(Dispatchers.Default)
     }
 
@@ -281,7 +282,7 @@ class LanguageSelectorViewModelSpec {
             aliases = emptyList()
         )
 
-        entityFlow.value = Success(entity)
+        entityFlow.update { Success(entity) }
 
         var capturedId: String? = null
         var capturedLanguage: String? = null

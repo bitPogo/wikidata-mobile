@@ -9,7 +9,7 @@ package tech.antibytes.wikidata.app.termsearch
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,11 +20,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 import tech.antibytes.wikidata.app.R
 import tech.antibytes.wikidata.app.extension.useResourceOnNullOrBlank
-import tech.antibytes.wikidata.app.login.LoginContract
 import tech.antibytes.wikidata.app.ui.molecule.ScreenWithTopBar
 
 @Composable
@@ -45,18 +43,20 @@ fun TermSearchScreen(
             TermSearchBar(
                 value = query.value,
                 onValueChange = termSearchViewModel::setQuery,
-                onSearch = { }
+                onSearch = termSearchViewModel::search
             )
         },
         content = @Composable {
             if (result.value.isNotEmpty()) {
                 LazyColumn {
-                    items(result.value) { entry: PageModelContract.SearchEntry ->
+                    itemsIndexed(result.value) { idx, entry: PageModelContract.SearchEntry ->
                         TermSearchItem(
-                            id = entry.id,
                             label = entry.label.useResourceOnNullOrBlank(R.string.termbox_missing_label),
                             description = entry.description.useResourceOnNullOrBlank(R.string.termbox_missing_description),
-                            onClick = {}
+                            onClick = {
+                                termSearchViewModel.select(idx)
+                                navigator.goToTermbox()
+                            }
                         )
                     }
                 }

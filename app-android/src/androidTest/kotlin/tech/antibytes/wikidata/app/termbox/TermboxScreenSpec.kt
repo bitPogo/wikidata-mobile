@@ -48,7 +48,7 @@ class TermboxScreenSpec {
     )
 
     private val navigator = TermboxNavigatorStub()
-    
+
     @Before
     fun setUp() {
         viewModel.clear()

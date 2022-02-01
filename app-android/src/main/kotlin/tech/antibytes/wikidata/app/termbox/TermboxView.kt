@@ -15,7 +15,8 @@ import tech.antibytes.wikidata.app.ui.molecule.ScreenWithTopBar
 @Composable
 fun TermboxView(
     onEditMode: () -> Unit,
-    viewModel: TermboxContract.TermboxViewModel
+    viewModel: TermboxContract.TermboxViewModel,
+    navigator: TermboxContract.Navigator
 ) {
     val title = viewModel.id.collectAsState()
     val label = viewModel.label.collectAsState()
@@ -28,10 +29,10 @@ fun TermboxView(
             TermMenu(
                 title = title.value,
                 isEditable = isEditable.value,
-                onSearch = { /*TODO*/ },
+                onSearch = navigator::goToTermSearch,
                 onEdit = onEditMode,
                 onRefresh = viewModel::refresh,
-                onLanguageSearch = { /*TODO*/ },
+                onLanguageSearch = navigator::goToLanguageSelector,
                 onRandomEntity = viewModel::randomItem
             )
         },

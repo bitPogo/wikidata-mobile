@@ -8,12 +8,15 @@ package tech.antibytes.wikidata.app.termsearch
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
@@ -189,13 +192,123 @@ class TermSearchScreenSpec {
             .onNodeWithText("No description defined")
             .assertIsDisplayed()
     }
+
+    @Test
+    fun Given_a_User_clicks_the_search_Icon_it_delegates_the_call_to_the_ViewModel() {
+        // Given
+        var wasCalled = false
+        viewModel.search = { wasCalled = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Apply your query")
+            .performClick()
+
+        // Then
+        assertTrue(wasCalled)
+    }
+
+    @Test
+    fun Given_a_User_clicks_on_a_result_it_delegates_the_call_to_the_ViewModel() {
+        // Given
+        val result = listOf(
+            SearchEntry(
+                label = fixture.fixture<String>()
+            ),
+            SearchEntry(
+                label = fixture.fixture<String>()
+            ),
+            SearchEntry(
+                label = fixture.fixture<String>()
+            )
+        )
+        val expected = 1
+
+        var capturedIndex: Int? = null
+        viewModel.select = { idx ->
+            capturedIndex = idx
+        }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
+            }
+        }
+
+        this.result.update { result }
+
+        composeTestRule
+            .onNodeWithText(result[expected].label!!)
+            .performClick()
+
+        // Then
+        assertEquals(
+            expected,
+            capturedIndex
+        )
+    }
+
+    @Test
+    fun Given_a_User_clicks_on_a_result_it_calls_the_Navigator() {
+        // Given
+        val result = listOf(
+            SearchEntry(
+                label = fixture.fixture<String>()
+            ),
+            SearchEntry(
+                label = fixture.fixture<String>()
+            ),
+            SearchEntry(
+                label = fixture.fixture<String>()
+            )
+        )
+        val expected = 1
+
+        var wasCalled = false
+        val navigator = TermSearchContract.Navigator { wasCalled = true }
+
+        viewModel.select = { }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermSearchScreen(
+                    navigator,
+                    viewModel
+                )
+            }
+        }
+
+        this.result.update { result }
+
+        composeTestRule
+            .onNodeWithText(result[expected].label!!)
+            .performClick()
+
+        // Then
+        assertTrue(wasCalled)
+    }
 }
 
 private class TermSearchViewModelStub(
     override val result: StateFlow<List<PageModelContract.SearchEntry>>,
     override val query: StateFlow<String>,
     var setQuery: ((String) -> Unit)? = null,
-    var search: (() -> Unit)? = null
+    var search: (() -> Unit)? = null,
+    var select: ((Int) -> Unit)? = null
 ) : TermSearchContract.TermSearchViewModel {
     override fun setQuery(query: String) {
         return setQuery?.invoke(query)
@@ -205,6 +318,11 @@ private class TermSearchViewModelStub(
     override fun search() {
         return search?.invoke()
             ?: throw RuntimeException("Missing Sideeffect search")
+    }
+
+    override fun select(index: Int) {
+        return select?.invoke(index)
+            ?: throw RuntimeException("Missing Sideeffect select")
     }
 }
 

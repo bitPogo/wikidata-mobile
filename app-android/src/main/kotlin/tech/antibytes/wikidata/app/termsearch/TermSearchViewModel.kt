@@ -6,17 +6,19 @@
 
 package tech.antibytes.wikidata.app.termsearch
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.page.PageStoreContract
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
+import tech.antibytes.wikidata.app.ApplicationContract
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Named
-import tech.antibytes.wikibase.store.entity.EntityStoreContract
 
 @HiltViewModel
 class TermSearchViewModel @Inject constructor(
@@ -34,12 +36,19 @@ class TermSearchViewModel @Inject constructor(
         pageStore.searchEntries.subscribe { searchResult ->
             if (searchResult.isSuccess()) {
                 _result.update { searchResult.unwrap() }
+            } else {
+                Log.d(
+                    ApplicationContract.LogTag.TERMSEARCH_VIEWMODEL.value,
+                    searchResult.error?.message ?: searchResult.error.toString()
+                )
             }
         }
     }
 
     private fun getLanguageTag(language: Locale): String {
-        return language.toLanguageTag().replace('_', '-')
+        return language.toLanguageTag()
+            .replace('_', '-')
+            .lowercase()
     }
 
     override fun setQuery(query: String) {

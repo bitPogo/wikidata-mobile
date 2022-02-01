@@ -12,7 +12,11 @@ import tech.antibytes.wikidata.app.navigation.NavigationContract.Routes
 class Navigator(
     private val router: NavController
 ) : NavigationContract.Navigator {
-    override fun goToTermbox() = router.navigate(Routes.TERMBOX.name)
+    override fun goToTermbox() {
+        router.navigate(Routes.TERMBOX.name) {
+            launchSingleTop = true
+        }
+    }
 
     override fun goToLanguageSelector() = router.navigate(Routes.LANGUAGE_SELECTION.name)
 

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
+import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
 import tech.antibytes.wikibase.store.page.PageStoreContract
 import tech.antibytes.wikidata.app.ApplicationContract
 import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
@@ -45,20 +46,24 @@ class TermboxViewModel @Inject constructor(
 
     init {
         entityStore.entity.subscribeWithSuspendingFunction { entity ->
-            if (entity.isSuccess()) {
-                distributeEntity(entity.unwrap())
-            } else {
-                Log.d(
-                    ApplicationContract.LogTag.TERMBOX_VIEWMODEL.value,
-                    entity.error?.message ?: entity.error.toString()
-                )
+            when {
+                entity.isSuccess() -> distributeEntity(entity.unwrap())
+                entity.error is EntityStoreError.InitialState -> fetchItem(INITIAL_ENTITY)
+                else -> {
+                    Log.d(
+                        ApplicationContract.LogTag.TERMBOX_VIEWMODEL.value,
+                        entity.error?.message ?: entity.error.toString()
+                    )
+                }
             }
         }
-
-        fetchItem(INITIAL_ENTITY)
     }
 
     private fun distributeEntity(entity: EntityModelContract.MonolingualEntity) {
+        Log.d(
+            ApplicationContract.LogTag.TERMBOX_VIEWMODEL.value,
+            "ID: ${entity.id}"
+        )
         _id.update { entity.id }
         edibility.update { entity.isEditable }
         _label.update { entity.label ?: "" }

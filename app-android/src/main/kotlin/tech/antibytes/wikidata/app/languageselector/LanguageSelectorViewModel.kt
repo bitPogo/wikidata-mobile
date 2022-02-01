@@ -14,11 +14,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import tech.antibytes.wikibase.store.entity.EntityStoreContract
+import tech.antibytes.wikidata.app.ApplicationContract
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Named
-import tech.antibytes.wikibase.store.entity.EntityStoreContract
-import tech.antibytes.wikidata.app.ApplicationContract
 
 @HiltViewModel
 class LanguageSelectorViewModel @Inject constructor(
@@ -52,13 +52,13 @@ class LanguageSelectorViewModel @Inject constructor(
     private fun applyFilter(filter: String): List<Locale> {
         return supportedLanguages.filter { locale ->
             locale.displayLanguage
-                .lowercase(Locale.getDefault())
+                .lowercase()
                 .contains(filter)
         }
     }
 
     private fun filterSelection(filter: String): List<Locale> {
-        val normalizedFilter = filter.lowercase(Locale.getDefault())
+        val normalizedFilter = filter.lowercase()
 
         return if (normalizedFilter.isEmpty()) {
             supportedLanguages

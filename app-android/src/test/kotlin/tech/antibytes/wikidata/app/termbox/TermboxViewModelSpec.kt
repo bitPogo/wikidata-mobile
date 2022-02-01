@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -106,9 +107,37 @@ class TermboxViewModelSpec {
             pageStore
         )
 
+        runBlocking {
+            delay(200)
+        }
+
         // Then
         capturedLanguageTag mustBe currentLanguageState.value.toLanguageTag().replace('_', '-')
         capturedId mustBe "Q214750"
+    }
+
+    @Test
+    fun `It will not fetches an Entity on initialisation, if the Store is already in use`() {
+        // Given
+        var capturedId: String? = null
+        var capturedLanguageTag: String? = null
+        entityStore.fetchEntity = { givenId, givenLanguage ->
+            capturedId = givenId
+            capturedLanguageTag = givenLanguage
+        }
+
+        entityFlow.update { Failure(RuntimeException()) }
+
+        // When
+        TermboxViewModel(
+            currentLanguageState,
+            entityStore,
+            pageStore
+        )
+
+        // Then
+        capturedLanguageTag mustBe null
+        capturedId mustBe null
     }
 
     @Test

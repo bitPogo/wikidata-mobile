@@ -23,7 +23,8 @@ fun TermboxViewPreview() {
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(listOf("dummy", "preview", "Lorem ipsum")),
             MutableStateFlow(ENGLISH)
-        )
+        ),
+        navigator = TermboxNavigatorPreviewStub()
     )
 }
 
@@ -39,7 +40,8 @@ fun TermboxViewPreviewWithEmptyLabel() {
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(listOf("dummy", "preview", "Lorem ipsum")),
             MutableStateFlow(ENGLISH)
-        )
+        ),
+        navigator = TermboxNavigatorPreviewStub()
     )
 }
 
@@ -55,7 +57,8 @@ fun TermboxViewPreviewWithEmptyDescription() {
             MutableStateFlow(""),
             MutableStateFlow(listOf("dummy", "preview", "Lorem ipsum")),
             MutableStateFlow(ENGLISH)
-        )
+        ),
+        navigator = TermboxNavigatorPreviewStub()
     )
 }
 
@@ -71,7 +74,8 @@ fun TermboxViewPreviewWithEmptyAliases() {
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(emptyList()),
             MutableStateFlow(ENGLISH)
-        )
+        ),
+        navigator = TermboxNavigatorPreviewStub()
     )
 }
 
@@ -87,6 +91,7 @@ fun TermboxViewPreviewProtected() {
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(emptyList()),
             MutableStateFlow(ENGLISH)
-        )
+        ),
+        navigator = TermboxNavigatorPreviewStub()
     )
 }
