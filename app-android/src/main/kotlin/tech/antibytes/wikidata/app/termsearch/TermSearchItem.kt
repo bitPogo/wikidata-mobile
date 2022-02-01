@@ -23,10 +23,9 @@ import tech.antibytes.wikidata.app.ui.theme.DarkWhite
 
 @Composable
 fun TermSearchItem(
-    id: String,
     label: String,
     description: String,
-    onClick: (String) -> Unit
+    onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -37,7 +36,7 @@ fun TermSearchItem(
                 end = 10.dp
             )
             .clickable(role = Role.Button) {
-                onClick(id)
+                onClick()
             }
             .background(
                 color = DarkWhite

@@ -18,4 +18,8 @@ interface LanguageSelectorContract {
         fun setFilter(newFilter: String)
         fun selectLanguage(selector: Int)
     }
+
+    fun interface Navigator {
+        fun goToTermbox()
+    }
 }

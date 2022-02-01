@@ -22,7 +22,8 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
-import tech.antibytes.wikidata.mock.TermboxViewModelAndroidStub
+import tech.antibytes.wikidata.mock.TermboxNavigatorStub
+import tech.antibytes.wikidata.mock.TermboxViewModelStub
 import java.util.Locale
 
 class TermboxViewSpec {
@@ -38,7 +39,7 @@ class TermboxViewSpec {
 
     private val currentLanguage = MutableStateFlow(Locale.ENGLISH)
 
-    private val viewModel = TermboxViewModelAndroidStub(
+    private val viewModel = TermboxViewModelStub(
         id,
         editability,
         label,
@@ -47,9 +48,12 @@ class TermboxViewSpec {
         currentLanguage
     )
 
+    private val navigator = TermboxNavigatorStub()
+
     @Before
     fun setUp() {
         viewModel.clear()
+        navigator.clear()
 
         id.update { "" }
         editability.update { true }
@@ -65,7 +69,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -90,7 +95,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -113,7 +119,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -136,7 +143,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -159,7 +167,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -182,7 +191,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -205,7 +215,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -228,7 +239,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -242,7 +254,7 @@ class TermboxViewSpec {
     }
 
     @Test
-    fun Given_a_User_click_on_random_entity_it_delegates_the_call_to_the_ViewModel() {
+    fun Given_a_User_clicks_on_random_entity_it_delegates_the_call_to_the_ViewModel() {
         // Given
         var wasClicked = false
         viewModel.randomItem = { wasClicked = true }
@@ -252,7 +264,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -270,7 +283,7 @@ class TermboxViewSpec {
     }
 
     @Test
-    fun Given_a_User_click_on_edit_entity_it_delegates_the_call_to_given_function() {
+    fun Given_a_User_clicks_on_edit_entity_it_delegates_the_call_to_given_function() {
         // Given
         var wasClicked = false
         val onEdit = { wasClicked = true }
@@ -280,7 +293,8 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = onEdit,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
@@ -294,7 +308,7 @@ class TermboxViewSpec {
     }
 
     @Test
-    fun Given_a_User_click_on_refresh_entity_it_delegates_the_call_to_given_function() {
+    fun Given_a_User_clicks_on_refresh_entity_it_delegates_the_call_to_given_function() {
         // Given
         var wasClicked = false
         viewModel.refresh = { wasClicked = true }
@@ -304,13 +318,68 @@ class TermboxViewSpec {
             WikidataMobileTheme {
                 TermboxView(
                     onEditMode = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navigator = navigator
                 )
             }
         }
 
         composeTestRule
             .onNodeWithContentDescription("Refresh current entity")
+            .performClick()
+
+        // Then
+        assertTrue(wasClicked)
+    }
+
+    @Test
+    fun Given_a_User_clicks_on_search_button_it_delegates_the_call_to_the_Navigator() {
+        // Given
+        var wasClicked = false
+        navigator.goToTermSearch = { wasClicked = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermboxView(
+                    onEditMode = {},
+                    viewModel = viewModel,
+                    navigator = navigator
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Search for another entity")
+            .performClick()
+
+        // Then
+        assertTrue(wasClicked)
+    }
+
+    @Test
+    fun Given_a_User_clicks_on_language_selection_it_delegates_the_call_to_the_Navigator() {
+        // Given
+        var wasClicked = false
+        navigator.goToLanguageSelector = { wasClicked = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermboxView(
+                    onEditMode = {},
+                    viewModel = viewModel,
+                    navigator = navigator
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Show more actions")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Select another language")
             .performClick()
 
         // Then

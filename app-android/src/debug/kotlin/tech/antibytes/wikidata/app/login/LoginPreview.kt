@@ -14,15 +14,31 @@ import kotlinx.coroutines.flow.update
 
 @Preview
 @Composable
-fun DefaultLoginScreen() {
-    LoginScreen(LoginViewModelStub())
+fun LoginScreenPreview() {
+    LoginScreen(
+        {},
+        LoginViewModelStub()
+    )
 }
 
-private class LoginViewModelStub : LoginContract.LoginViewModel {
-    override val isLoggedIn: StateFlow<LoginContract.LoginState> = MutableStateFlow(
+@Preview
+@Composable
+fun LoginScreenWithErrorPreview() {
+    LoginScreen(
+        {},
+        LoginViewModelStub(
+            MutableStateFlow(
+                LoginContract.LoginState.AuthenticationError(LoginContract.Reason.WRONG_USERNAME_OR_PASSWORD)
+            )
+        )
+    )
+}
+
+private class LoginViewModelStub(
+    override val loginState: StateFlow<LoginContract.LoginState> = MutableStateFlow(
         LoginContract.LoginState.LoggedOut
     )
-
+) : LoginContract.LoginViewModel {
     private val _username = MutableStateFlow("")
     override val username: StateFlow<String> = _username
 

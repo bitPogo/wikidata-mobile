@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -49,7 +50,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -75,7 +79,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -95,7 +102,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -123,7 +133,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -150,7 +163,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -174,7 +190,10 @@ class LoginScreenSpec {
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
-                LoginScreen(viewModel)
+                LoginScreen(
+                    {},
+                    viewModel,
+                )
             }
         }
 
@@ -185,10 +204,42 @@ class LoginScreenSpec {
         // Then
         assertTrue(wasClicked)
     }
+
+    @Test
+    fun Given_a_login_is_successful_it_calls_the_navigator() {
+        // Given
+        var wasCalled = false
+        val navigator = LoginContract.Navigator { wasCalled = true }
+
+        val loginState = MutableStateFlow<LoginContract.LoginState>(
+            LoginContract.LoginState.LoggedOut
+        )
+
+        viewModel.login = {}
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                LoginScreen(
+                    navigator,
+                    viewModel,
+                )
+            }
+        }
+
+        // Then
+        assertFalse(wasCalled)
+
+        // When
+        loginState.value = LoginContract.LoginState.LoggedIn
+
+        // Then
+        assertFalse(wasCalled)
+    }
 }
 
 private class LoginViewModelStub(
-    override val isLoggedIn: StateFlow<LoginContract.LoginState>,
+    override val loginState: StateFlow<LoginContract.LoginState>,
     override val username: StateFlow<String>,
     override val password: StateFlow<String>,
     var setUsername: ((String) -> Unit)? = null,

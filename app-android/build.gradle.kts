@@ -97,8 +97,6 @@ dependencies {
     implementation(Dependency.android.ktx.lifecycle)
     implementation(Dependency.android.ktx.viewmodel)
     implementation(Dependency.android.ktx.viewmodelCoroutine)
-    implementation(Dependency.android.ktx.viewmodelSaver)
-    implementation(Dependency.android.ktx.workmanager)
 
     implementation(Dependency.android.appCompact.core)
     implementation(Dependency.android.material)
@@ -108,10 +106,10 @@ dependencies {
     implementation(Dependency.android.compose.material)
     implementation(Dependency.android.compose.materialIcons)
     implementation(Dependency.android.compose.materialIconsExtended)
-    implementation(Dependency.android.compose.activity)
     implementation(Dependency.android.compose.viewmodel)
     implementation(Dependency.android.compose.foundation)
     implementation(Dependency.android.compose.constrainLayout)
+    implementation(Dependency.android.compose.navigation)
 
     implementation(LocalDependency.sqldelight.android)
 
@@ -127,6 +125,7 @@ dependencies {
     implementation(project(":user-store"))
     implementation(project(":utils-coroutine"))
 
+    implementation(LocalDependency.hilt.composeNavigation)
     implementation(LocalDependency.hilt.core)
     kapt(LocalDependency.hilt.compiler)
 

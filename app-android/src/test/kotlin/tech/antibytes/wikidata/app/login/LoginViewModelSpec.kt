@@ -56,7 +56,7 @@ class LoginViewModelSpec {
 
     @Test
     fun `Its default state is false`() {
-        LoginViewModel(store).isLoggedIn.value mustBe LoginContract.LoginState.LoggedOut
+        LoginViewModel(store).loginState.value mustBe LoginContract.LoginState.LoggedOut
     }
 
     @Test
@@ -88,6 +88,39 @@ class LoginViewModelSpec {
         runBlocking {
             withTimeout(2000) {
                 result.receive() mustBe username
+            }
+        }
+    }
+
+    @Test
+    fun `Given a username is updated, it trims the input`() {
+        // Given
+        val username = " ${fixture.fixture<String>()} "
+        val result = Channel<String>()
+
+        // When
+        val viewModel = LoginViewModel(store)
+
+        CoroutineScope(Dispatchers.Default).launch {
+            viewModel.username.collectLatest { givenUsername ->
+                result.send(givenUsername)
+            }
+        }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe ""
+            }
+        }
+
+        // When
+        viewModel.setUsername(username)
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe username.trim()
             }
         }
     }
@@ -126,6 +159,39 @@ class LoginViewModelSpec {
     }
 
     @Test
+    fun `Given a password is updated, it trims it`() {
+        // Given
+        val password = " ${fixture.fixture<String>()} "
+        val result = Channel<String>()
+
+        // When
+        val viewModel = LoginViewModel(store)
+
+        CoroutineScope(Dispatchers.Default).launch {
+            viewModel.password.collectLatest { givenPassword ->
+                result.send(givenPassword)
+            }
+        }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe ""
+            }
+        }
+
+        // When
+        viewModel.setPassword(password)
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe password.trim()
+            }
+        }
+    }
+
+    @Test
     fun `Given a login is called, it delegates the password and username to the store and emits its result and clears the password`() {
         // Given
         val username: String = fixture.fixture()
@@ -138,7 +204,7 @@ class LoginViewModelSpec {
         val viewModel = LoginViewModel(store)
 
         CoroutineScope(Dispatchers.Default).launch {
-            viewModel.isLoggedIn.collectLatest { isLoggedIn ->
+            viewModel.loginState.collectLatest { isLoggedIn ->
                 resultLogin.send(isLoggedIn)
             }
         }
@@ -196,7 +262,7 @@ class LoginViewModelSpec {
         val viewModel = LoginViewModel(store)
 
         CoroutineScope(Dispatchers.Default).launch {
-            viewModel.isLoggedIn.collectLatest { isLoggedIn ->
+            viewModel.loginState.collectLatest { isLoggedIn ->
                 result.send(isLoggedIn)
             }
         }

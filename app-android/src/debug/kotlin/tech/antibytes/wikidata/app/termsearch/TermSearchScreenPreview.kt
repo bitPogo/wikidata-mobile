@@ -18,7 +18,7 @@ import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 @Composable
 fun TermSearchScreenPreviewWithoutQueryAndResult() {
     TermSearchScreen(
-        viewModel = TermSearchViewModelStub(
+        termSearchViewModel = TermSearchViewModelStub(
             MutableStateFlow(emptyList()),
             MutableStateFlow("")
         )
@@ -29,7 +29,7 @@ fun TermSearchScreenPreviewWithoutQueryAndResult() {
 @Composable
 fun TermSearchScreenPreviewWithQueryAndNoResult() {
     TermSearchScreen(
-        viewModel = TermSearchViewModelStub(
+        termSearchViewModel = TermSearchViewModelStub(
             MutableStateFlow(emptyList()),
             MutableStateFlow("Test")
         )
@@ -40,7 +40,7 @@ fun TermSearchScreenPreviewWithQueryAndNoResult() {
 @Composable
 fun TermSearchScreenPreviewWithQueryAndResultWithoutLabelAndDescription() {
     TermSearchScreen(
-        viewModel = TermSearchViewModelStub(
+        termSearchViewModel = TermSearchViewModelStub(
             MutableStateFlow(
                 listOf(
                     SearchEntry()
@@ -55,7 +55,7 @@ fun TermSearchScreenPreviewWithQueryAndResultWithoutLabelAndDescription() {
 @Composable
 fun TermSearchScreenPreviewWithQueryAndResultWithLabel() {
     TermSearchScreen(
-        viewModel = TermSearchViewModelStub(
+        termSearchViewModel = TermSearchViewModelStub(
             MutableStateFlow(
                 listOf(
                     SearchEntry(
@@ -72,7 +72,7 @@ fun TermSearchScreenPreviewWithQueryAndResultWithLabel() {
 @Composable
 fun TermSearchScreenPreviewWithQueryAndResultWithDescription() {
     TermSearchScreen(
-        viewModel = TermSearchViewModelStub(
+        termSearchViewModel = TermSearchViewModelStub(
             MutableStateFlow(
                 listOf(
                     SearchEntry(
@@ -90,9 +90,10 @@ private class TermSearchViewModelStub(
     override val query: StateFlow<String>
 
 ) : TermSearchContract.TermSearchViewModel {
-    override fun setQuery(query: String) { }
+    override fun setQuery(query: String) = Unit
 
-    override fun search() { }
+    override fun search() = Unit
+    override fun select(index: Int) = Unit
 }
 
 private data class SearchEntry(

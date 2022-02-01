@@ -17,7 +17,7 @@ object Version {
         /**
          * [AnitBytes GradlePlugins](https://github.com/bitPogo/gradle-plugins)
          */
-        const val antibytes = "74f873c"
+        const val antibytes = "c81afcd"
 
         /**
          * [Spotless](https://plugins.gradle.org/plugin/com.diffplug.gradle.spotless)
@@ -31,7 +31,7 @@ object Version {
     }
 
     object Antibytes {
-        val test = "e670bc0"
+        val test = "c9c2a0c"
     }
 
     /**
@@ -43,4 +43,9 @@ object Version {
      * [Google Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
      */
     const val hilt = "2.38.1"
+
+    /**
+     * [Google Hilt Compose](https://developer.android.com/jetpack/androidx/releases/hilt)
+     */
+    const val hiltCompose = "1.0.0"
 }

@@ -13,23 +13,72 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withTimeout
+import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Test
+import tech.antibytes.util.coroutine.result.ResultContract
+import tech.antibytes.util.coroutine.result.Success
+import tech.antibytes.util.coroutine.wrapper.SharedFlowWrapper
+import tech.antibytes.util.test.fixture.fixture
+import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
+import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
+import tech.antibytes.wikidata.mock.EntityStoreStub
+import tech.antibytes.wikidata.mock.MonolingualEntity
 import java.util.Locale
 
 class LanguageSelectorViewModelSpec {
+    private val fixture = kotlinFixture()
     private val currentLanguageState = MutableStateFlow(Locale.ENGLISH)
+
+    private val entityFlow: MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>> = MutableStateFlow(
+        Success(
+            MonolingualEntity(
+                id = fixture.fixture(),
+                type = EntityModelContract.EntityType.ITEM,
+                revision = fixture.fixture(),
+                language = fixture.fixture(),
+                isEditable = fixture.fixture(),
+                lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+                label = fixture.fixture(),
+                description = fixture.fixture(),
+                aliases = emptyList()
+            )
+        )
+    )
+
+    private val entitySurfaceFlow = SharedFlowWrapper.getInstance(
+        entityFlow
+    ) { CoroutineScope(Dispatchers.Default) }
+
+    private val entityStore = EntityStoreStub(entitySurfaceFlow)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
         currentLanguageState.value = Locale.ENGLISH
+        entityStore.clear()
+
+        entityFlow.value = Success(
+            MonolingualEntity(
+                id = fixture.fixture(),
+                type = EntityModelContract.EntityType.ITEM,
+                revision = fixture.fixture(),
+                language = fixture.fixture(),
+                isEditable = fixture.fixture(),
+                lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+                label = fixture.fixture(),
+                description = fixture.fixture(),
+                aliases = emptyList()
+            )
+        )
+
         Dispatchers.setMain(Dispatchers.Default)
     }
 
@@ -37,7 +86,8 @@ class LanguageSelectorViewModelSpec {
     fun `It fulfils LanguageSelectorViewModel`() {
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            emptyList()
+            emptyList(),
+            entityStore
         )
         viewModel fulfils LanguageSelectorContract.LanguageSelectorViewModel::class
         viewModel fulfils ViewModel::class
@@ -47,7 +97,8 @@ class LanguageSelectorViewModelSpec {
     fun `Its filter is empty by default`() {
         LanguageSelectorViewModel(
             currentLanguageState,
-            emptyList()
+            emptyList(),
+            entityStore
         ).filter.value mustBe ""
     }
 
@@ -57,7 +108,8 @@ class LanguageSelectorViewModelSpec {
 
         LanguageSelectorViewModel(
             MutableStateFlow(expected),
-            emptyList()
+            emptyList(),
+            entityStore
         ).currentLanguage.value mustBe expected
     }
 
@@ -71,7 +123,8 @@ class LanguageSelectorViewModelSpec {
 
         LanguageSelectorViewModel(
             currentLanguageState,
-            expected
+            expected,
+            entityStore
         ).selection.value mustBe expected
     }
 
@@ -84,7 +137,8 @@ class LanguageSelectorViewModelSpec {
         // When
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            emptyList()
+            emptyList(),
+            entityStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -125,7 +179,8 @@ class LanguageSelectorViewModelSpec {
         // When
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            selection
+            selection,
+            entityStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -166,7 +221,8 @@ class LanguageSelectorViewModelSpec {
         // When
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            selection
+            selection,
+            entityStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -204,7 +260,7 @@ class LanguageSelectorViewModelSpec {
     }
 
     @Test
-    fun `Given selectLanguage is called with a Selector it changes the currentLanguage`() {
+    fun `Given selectLanguage is called with a Selector it changes the currentLanguage and fetches the Entity in that language`() {
         // Given
         val selection = listOf(
             Locale.KOREA,
@@ -214,10 +270,32 @@ class LanguageSelectorViewModelSpec {
         val selector = 0
         val result = Channel<Locale>()
 
+        val entity = MonolingualEntity(
+            id = fixture.fixture(),
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            isEditable = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = emptyList()
+        )
+
+        entityFlow.update { Success(entity) }
+
+        var capturedId: String? = null
+        var capturedLanguage: String? = null
+        entityStore.fetchEntity = { givenId, givenLanguage ->
+            capturedId = givenId
+            capturedLanguage = givenLanguage
+        }
+
         // When
         val viewModel = LanguageSelectorViewModel(
             currentLanguageState,
-            selection
+            selection,
+            entityStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -242,5 +320,8 @@ class LanguageSelectorViewModelSpec {
                 result.receive() mustBe selection[selector]
             }
         }
+
+        capturedId mustBe entity.id
+        capturedLanguage mustBe selection[selector].toLanguageTag().replace('_', '-')
     }
 }

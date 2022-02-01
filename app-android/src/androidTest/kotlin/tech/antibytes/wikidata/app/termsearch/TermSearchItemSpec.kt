@@ -10,7 +10,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
@@ -32,7 +32,6 @@ class TermSearchItemSpec {
         composeTestRule.setContent {
             WikidataMobileTheme {
                 TermSearchItem(
-                    id = fixture.fixture(),
                     label = label,
                     description = description,
                     onClick = {}
@@ -53,19 +52,15 @@ class TermSearchItemSpec {
     @Test
     fun Given_an_Item_is_clicked_it_delegates_the_call_and_id_to_the_given_lambda() {
         // Given
-        val id: String = fixture.fixture()
         val label: String = fixture.fixture()
 
-        var capturedId: String? = null
-        val onClick = { givenId: String ->
-            capturedId = givenId
-        }
+        var wasCalled = false
+        val onClick = { wasCalled = true }
 
         // When
         composeTestRule.setContent {
             WikidataMobileTheme {
                 TermSearchItem(
-                    id = id,
                     label = label,
                     description = fixture.fixture(),
                     onClick = onClick
@@ -78,9 +73,6 @@ class TermSearchItemSpec {
             .performClick()
 
         // Then
-        assertEquals(
-            id,
-            capturedId
-        )
+        assertTrue(wasCalled)
     }
 }

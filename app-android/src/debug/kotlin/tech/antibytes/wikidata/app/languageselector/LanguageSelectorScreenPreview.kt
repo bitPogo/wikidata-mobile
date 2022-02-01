@@ -19,7 +19,7 @@ import java.util.Locale.KOREAN
 @Preview
 @Composable
 fun LanguageScreenPreview() {
-    LanguageSelectorScreen(viewModel = LanguageScreenViewModelStub())
+    LanguageSelectorScreen(languageSelectorViewModel = LanguageScreenViewModelStub())
 }
 
 private class LanguageScreenViewModelStub : LanguageSelectorContract.LanguageSelectorViewModel {
@@ -34,11 +34,7 @@ private class LanguageScreenViewModelStub : LanguageSelectorContract.LanguageSel
     )
     override val filter: StateFlow<String> = MutableStateFlow("")
 
-    override fun setFilter(newFilter: String) {
-        /* Do nothing */
-    }
+    override fun setFilter(newFilter: String) = Unit
 
-    override fun selectLanguage(selector: Int) {
-        /* Do nothing */
-    }
+    override fun selectLanguage(selector: Int) = Unit
 }

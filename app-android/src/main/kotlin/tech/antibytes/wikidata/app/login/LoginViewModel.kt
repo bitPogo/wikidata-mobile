@@ -21,7 +21,7 @@ class LoginViewModel @Inject constructor(
     private val userStore: UserStoreContract.UserStore,
 ) : LoginContract.LoginViewModel, ViewModel() {
     private val _isLoggedIn = MutableStateFlow<LoginContract.LoginState>(LoginContract.LoginState.LoggedOut)
-    override val isLoggedIn: StateFlow<LoginContract.LoginState> = _isLoggedIn
+    override val loginState: StateFlow<LoginContract.LoginState> = _isLoggedIn
 
     private val _username = MutableStateFlow("")
     override val username: StateFlow<String> = _username
@@ -62,11 +62,11 @@ class LoginViewModel @Inject constructor(
     }
 
     override fun setUsername(username: String) {
-        _username.update { username }
+        _username.update { username.trim() }
     }
 
     override fun setPassword(password: String) {
-        _password.update { password }
+        _password.update { password.trim() }
     }
 
     override fun login() {

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface LoginContract {
     interface LoginViewModel {
-        val isLoggedIn: StateFlow<LoginState>
+        val loginState: StateFlow<LoginState>
         val username: StateFlow<String>
         val password: StateFlow<String>
 
@@ -27,5 +27,9 @@ interface LoginContract {
         object LoggedIn : LoginState()
         object LoggedOut : LoginState()
         class AuthenticationError(val reason: Reason) : LoginState()
+    }
+
+    fun interface Navigator {
+        fun goToTermbox()
     }
 }

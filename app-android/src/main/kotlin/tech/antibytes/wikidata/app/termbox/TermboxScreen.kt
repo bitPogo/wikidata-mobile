@@ -11,20 +11,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun TermboxScreen(viewModel: TermboxContract.TermboxViewModel) {
+fun TermboxScreen(
+    navigator: TermboxContract.Navigator,
+    termboxViewModel: TermboxContract.TermboxViewModel = hiltViewModel<TermboxViewModel>()
+) {
     var editState by remember { mutableStateOf(false) }
 
     if (editState) {
         TermboxEditView(
             onReadMode = { editState = false },
-            viewModel = viewModel
+            viewModel = termboxViewModel
         )
     } else {
         TermboxView(
             onEditMode = { editState = true },
-            viewModel = viewModel
+            viewModel = termboxViewModel,
+            navigator = navigator
         )
     }
 }

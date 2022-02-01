@@ -137,7 +137,7 @@ object DependencyProvider {
 
     @Singleton
     @Provides
-    fun provideUserStore(client: PublicApi.Client,): UserStoreContract.UserStore {
+    fun provideUserStore(client: PublicApi.Client): UserStoreContract.UserStore {
         return UserStore.getInstance(
             client = client,
             producerScope = { CoroutineScope(Dispatchers.IO) },

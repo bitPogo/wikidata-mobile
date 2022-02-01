@@ -17,33 +17,23 @@ class TermboxViewModelPreviewStub(
     override val aliases: StateFlow<List<String>>,
     override val language: StateFlow<Locale>
 ) : TermboxContract.TermboxViewModel {
-    override fun setLabel(newLabel: String) {
-    }
+    override fun setLabel(newLabel: String) = Unit
 
-    override fun setDescription(newDescription: String) {
-    }
+    override fun setDescription(newDescription: String) = Unit
 
-    override fun addAlias(newAlias: String) {
-    }
+    override fun addAlias(newAlias: String) = Unit
 
-    override fun setAlias(idx: Int, newAlias: String) {
-    }
+    override fun setAlias(idx: Int, newAlias: String) = Unit
 
-    override fun dischargeChanges() {
-    }
+    override fun dischargeChanges() = Unit
 
-    override fun saveChanges() {
-    }
+    override fun saveChanges() = Unit
 
-    override fun refresh() {
-    }
+    override fun refresh() = Unit
 
-    override fun createNewItem() {
-    }
+    override fun createNewItem() = Unit
 
-    override fun randomItem() {
-    }
+    override fun randomItem() = Unit
 
-    override fun fetchItem(id: String) {
-    }
+    override fun fetchItem(id: String) = Unit
 }
