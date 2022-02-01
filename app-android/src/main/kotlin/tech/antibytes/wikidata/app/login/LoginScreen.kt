@@ -17,9 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import tech.antibytes.wikidata.app.R
-import tech.antibytes.wikidata.app.languageselector.LanguageSelectorContract
 import tech.antibytes.wikidata.app.ui.atom.Logo
 import tech.antibytes.wikidata.app.ui.atom.PasswordField
 import tech.antibytes.wikidata.app.ui.atom.SimpleButton
@@ -28,7 +27,7 @@ import tech.antibytes.wikidata.app.ui.atom.SingleLineEditableText
 @Composable
 fun LoginScreen(
     navigator: LoginContract.Navigator = LoginContract.Navigator { },
-    loginViewModel: LoginContract.LoginViewModel = viewModel()
+    loginViewModel: LoginContract.LoginViewModel = hiltViewModel<LoginViewModel>()
 ) {
     val username = loginViewModel.username.collectAsState()
     val password = loginViewModel.password.collectAsState()

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 import tech.antibytes.wikidata.app.R
@@ -29,7 +30,7 @@ import tech.antibytes.wikidata.app.ui.molecule.ScreenWithTopBar
 @Composable
 fun TermSearchScreen(
     navigator: TermSearchContract.Navigator = TermSearchContract.Navigator { },
-    termSearchViewModel: TermSearchContract.TermSearchViewModel = viewModel()
+    termSearchViewModel: TermSearchContract.TermSearchViewModel = hiltViewModel<TermSearchViewModel>()
 ) {
     val query = termSearchViewModel.query.collectAsState()
     val result = termSearchViewModel.result.collectAsState()

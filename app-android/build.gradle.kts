@@ -128,6 +128,7 @@ dependencies {
     implementation(project(":user-store"))
     implementation(project(":utils-coroutine"))
 
+    implementation(LocalDependency.hilt.composeNavigation)
     implementation(LocalDependency.hilt.core)
     kapt(LocalDependency.hilt.compiler)
 

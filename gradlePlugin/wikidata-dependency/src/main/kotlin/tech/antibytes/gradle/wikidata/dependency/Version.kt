@@ -43,4 +43,9 @@ object Version {
      * [Google Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
      */
     const val hilt = "2.38.1"
+
+    /**
+     * [Google Hilt Compose](https://developer.android.com/jetpack/androidx/releases/hilt)
+     */
+    const val hiltCompose = "1.0.0"
 }
