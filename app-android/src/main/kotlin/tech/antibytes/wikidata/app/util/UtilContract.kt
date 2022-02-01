@@ -38,6 +38,7 @@ interface UtilContract {
                 "agq",
                 "ak",
                 "aln",
+                "als",
                 "alt",
                 "am",
                 "an",
@@ -62,6 +63,7 @@ interface UtilContract {
                 "ban-bali",
                 "bar",
                 "bas",
+                "bat-smg",
                 "bax",
                 "bbc",
                 "bbc-latn",
@@ -112,6 +114,7 @@ interface UtilContract {
                 "de-ch",
                 "de-formal",
                 "din",
+                "diq",
                 "dsb",
                 "dtp",
                 "dua",
@@ -296,6 +299,7 @@ interface UtilContract {
                 "nds-nl",
                 "ne",
                 "new",
+                "nrm",
                 "ng",
                 "nia",
                 "niu",
@@ -339,6 +343,7 @@ interface UtilContract {
                 "rgn",
                 "rif",
                 "rm",
+                "rmy",
                 "rn",
                 "ro",
                 "roa-rup",
@@ -370,6 +375,7 @@ interface UtilContract {
                 "shi-tfng",
                 "shn",
                 "si",
+                "simple",
                 "sk",
                 "sl",
                 "sli",
@@ -467,6 +473,35 @@ interface UtilContract {
                 "zh-tw",
                 "zh-yue",
                 "zu"
+            )
+        }
+    }
+
+    interface MwLocale {
+        val displayLanguage: String
+
+        fun toLanguageTag(): String
+        fun asLocale(): Locale
+
+
+        companion object {
+            val MW_MAPPING = mapOf(
+                "als" to "gsw-CH",
+                "bat-smg" to "sgs",
+                "be-x-old" to "be-tarask",
+                "bh" to "bho",
+                "cbk-zam" to "cbk",
+                "diq" to "zza",
+                "fiu-vro" to "vro",
+                "mo" to "ro-MD",
+                "nrm" to "nrf",
+                "simple" to "en-simple",
+                "sr-ec" to "sr-Cyr",
+                "sr-el" to "sr-Latn",
+                "rmy" to "rmo",
+                "zh-min-nan" to "nan",
+                "zh-my" to "cmn-MY",
+                "zh-sg" to "cmn-SG",
             )
         }
     }

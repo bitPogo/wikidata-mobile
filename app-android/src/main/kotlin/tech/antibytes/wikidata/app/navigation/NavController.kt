@@ -31,7 +31,7 @@ fun Routing() {
     val controller = rememberNavController()
     val router by remember { mutableStateOf(Navigator(controller)) }
 
-    NavHost(navController = controller, startDestination = Routes.LOGIN_SCREEN.name) {
+    NavHost(navController = controller, startDestination = Routes.LANGUAGE_SELECTION.name) {
         composable(route = Routes.LOGIN_SCREEN.name) {
             Log.d("ROUTING", "GOTO ${Routes.LOGIN_SCREEN.name}")
             LoginScreen(navigator = router)
