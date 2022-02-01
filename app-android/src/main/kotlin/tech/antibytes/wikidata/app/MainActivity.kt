@@ -34,49 +34,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val client = MwClient.getInstance(
-            "test.wikidata.org",
-            object : PublicApi.Logger {
-                override fun info(message: String) { }
-
-                override fun warn(message: String) { }
-
-                override fun error(exception: Throwable, message: String?) { }
-
-                override fun log(message: String) {
-                    println("HTTP: $message")
-                }
-            },
-            ConnectivityManager(applicationContext),
-            { CoroutineScope(Dispatchers.IO) }
-        )
-
-        val database = DatabaseFactory.create(
-            WikibaseDataBase.Schema,
-            applicationContext
-        )
-
         setContent {
             WikidataMobileTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    /*TermboxScreen(
-                        termboxViewModel = TermboxViewModel(
-                            entityStore = EntityStore.getInstance(
-                                client,
-                                database.entityQueries,
-                                { CoroutineScope(Dispatchers.IO) },
-                                { CoroutineScope(Dispatchers.Default) }
-                            ),
-                            pageStore = PageStore.getInstance(
-                                client,
-                                database.pageQueries,
-                                { CoroutineScope(Dispatchers.IO) },
-                                { CoroutineScope(Dispatchers.Default) }
-                            ),
-                            language = MutableStateFlow(Locale.GERMAN),
-                        )
-                    )*/
+
                 }
             }
         }
