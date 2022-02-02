@@ -52,7 +52,7 @@ class LanguageSelectorViewModel @Inject constructor(
 
     private fun applyFilter(filter: String): List<MwLocale> {
         return supportedLanguages.filter { locale ->
-            locale.displayName.contains(filter)
+            locale.displayName.lowercase().contains(filter)
         }
     }
 

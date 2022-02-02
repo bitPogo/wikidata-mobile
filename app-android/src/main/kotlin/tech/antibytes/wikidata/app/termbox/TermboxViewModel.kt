@@ -59,10 +59,6 @@ class TermboxViewModel @Inject constructor(
     }
 
     private fun distributeEntity(entity: EntityModelContract.MonolingualEntity) {
-        Log.d(
-            ApplicationContract.LogTag.TERMBOX_VIEWMODEL.value,
-            "ID: ${entity.id}"
-        )
         _id.update { entity.id }
         edibility.update { entity.isEditable }
         _label.update { entity.label ?: "" }

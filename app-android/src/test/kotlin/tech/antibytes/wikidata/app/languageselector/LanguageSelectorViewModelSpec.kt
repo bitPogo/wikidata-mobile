@@ -212,6 +212,49 @@ class LanguageSelectorViewModelSpec {
     }
 
     @Test
+    fun `Given setFilter is called is changes the selection, while normalizing the displayName`() {
+        // Given
+        val selection: List<UtilContract.MwLocale> = listOf(
+            MwLocaleStub(fixture.fixture(), fixture.fixture<String>().uppercase(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture<String>().uppercase(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture<String>().uppercase(), fixture.fixture())
+        )
+
+        val newFilterValue = selection[1].displayName.substring(0, 4)
+        val result = Channel<List<UtilContract.MwLocale>>()
+
+        // When
+        val viewModel = LanguageSelectorViewModel(
+            currentLanguageState,
+            selection,
+            entityStore
+        )
+
+        CoroutineScope(Dispatchers.Default).launch {
+            viewModel.selection.collectLatest { givenSelection ->
+                result.send(givenSelection)
+            }
+        }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe selection
+            }
+        }
+
+        // When
+        viewModel.setFilter(newFilterValue)
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe listOf(selection[1])
+            }
+        }
+    }
+
+    @Test
     fun `Given setFilter is called with a empty String it reverts the selection`() {
         // Given
         val selection: List<UtilContract.MwLocale> = listOf(
