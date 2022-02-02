@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS QrCode(
+    id TEXT NOT NULL UNIQUE PRIMARY KEY,
+    encodedQrCode TEXT NOT NULL
+);
+
+addQrCode:
+INSERT INTO QrCode(id, encodedQrCode)
+VALUES (?, ?)
+;
+
+fetchQrCode:
+SELECT encodedQrCode
+FROM QrCode
+WHERE id = :whereId
+;

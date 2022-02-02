@@ -139,6 +139,7 @@ dependencies {
     testImplementation(Dependency.android.test.junit)
     testImplementation(Dependency.android.test.junit4)
     testImplementation(Dependency.multiplatform.test.mockk.junit)
+    testImplementation(Dependency.android.test.ktx)
     testImplementation(Dependency.android.test.composeJunit4)
     testImplementation(Dependency.android.test.robolectric)
     testImplementation(LocalDependency.antibytes.test.fixture)
