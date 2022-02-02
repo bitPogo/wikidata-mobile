@@ -4,18 +4,20 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.qr.transfer.service
+package tech.antibytes.wikidata.app.qr.data
 
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.QRCodeWriter
+import tech.antibytes.wikidata.app.qr.QrCodeStoreContract.Companion.ARRAY_SIZE
 import tech.antibytes.wikidata.app.qr.QrCodeStoreContract.Companion.SIZE
-import tech.antibytes.wikidata.app.qr.transfer.QrCodeServiceContract
 
 internal class QrCodeService(
-    private val qrCodeWriter: QRCodeWriter = QRCodeWriter()
-) : QrCodeServiceContract {
+    private val qrCodeWriter: QRCodeWriter = QRCodeWriter(),
+    private val size: Int = SIZE,
+    private val arraySize: Int = ARRAY_SIZE
+) : QrCodeDataContract.Service {
 
     private fun toByte(boolean: Boolean): Byte {
         return if (boolean) {
@@ -25,12 +27,12 @@ internal class QrCodeService(
         }
     }
 
-    private fun convertIntoByteArray(qrCode: BitMatrix) : ByteArray {
-        val array = ByteArray(ARRAY_SIZE)
+    private fun convertIntoByteArray(qrCode: BitMatrix): ByteArray {
+        val array = ByteArray(arraySize)
 
         var idx = 0
-        for (x in 0 until SIZE) {
-            for (y in 0 until SIZE) {
+        for (x in 0 until size) {
+            for (y in 0 until size) {
                 array[idx] = toByte(qrCode.get(x, y))
                 idx++
             }
@@ -55,6 +57,5 @@ internal class QrCodeService(
 
     private companion object {
         val HINTS = mapOf(EncodeHintType.MARGIN to 1)
-        const val ARRAY_SIZE = SIZE * SIZE
     }
 }

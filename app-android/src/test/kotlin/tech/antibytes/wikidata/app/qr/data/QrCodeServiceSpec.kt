@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.qr.transfer.service
+package tech.antibytes.wikidata.app.qr.data
 
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -18,7 +18,6 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.wikidata.app.qr.transfer.QrCodeServiceContract
 import java.util.Base64
 
 class QrCodeServiceSpec {
@@ -27,7 +26,7 @@ class QrCodeServiceSpec {
 
     @Test
     fun `It fulfils QrCodeServiceContract`() {
-        QrCodeService() fulfils QrCodeServiceContract::class
+        QrCodeService() fulfils QrCodeDataContract.Service::class
     }
 
     @Test

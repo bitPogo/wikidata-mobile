@@ -18,5 +18,6 @@ interface QrCodeStoreContract {
 
     companion object {
         const val SIZE = 175
+        const val ARRAY_SIZE = SIZE * SIZE
     }
 }
