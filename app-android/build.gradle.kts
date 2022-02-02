@@ -119,6 +119,8 @@ dependencies {
 
     implementation(Dependency.multiplatform.ktor.logger)
 
+    implementation(LocalDependency.zing)
+
     implementation(project(":mw-client"))
     implementation(project(":entity-store"))
     implementation(project(":page-store"))
