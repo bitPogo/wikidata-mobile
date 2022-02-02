@@ -16,20 +16,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikidata.app.ApplicationContract
-import java.util.Locale
+import tech.antibytes.wikidata.app.di.MutableLanguageHandle
+import tech.antibytes.wikidata.app.di.SupportedLanguages
+import tech.antibytes.wikidata.app.util.UtilContract.MwLocale
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class LanguageSelectorViewModel @Inject constructor(
-    @Named("MutableLanguageHandle") private val languageState: MutableStateFlow<Locale>,
-    private val supportedLanguages: List<Locale>,
+    @MutableLanguageHandle private val languageState: @JvmSuppressWildcards(true) MutableStateFlow<MwLocale>,
+    @SupportedLanguages private val supportedLanguages: @JvmSuppressWildcards(true) List<MwLocale>,
     private val entityStore: EntityStoreContract.EntityStore
 ) : LanguageSelectorContract.LanguageSelectorViewModel, ViewModel() {
-    override val currentLanguage: StateFlow<Locale> = languageState
+    override val currentLanguage: StateFlow<MwLocale> = languageState
 
-    private val _selection: MutableStateFlow<List<Locale>> = MutableStateFlow(supportedLanguages)
-    override val selection: StateFlow<List<Locale>> = _selection
+    private val _selection: MutableStateFlow<List<MwLocale>> = MutableStateFlow(supportedLanguages)
+    override val selection: StateFlow<List<MwLocale>> = _selection
 
     private val _filter: MutableStateFlow<String> = MutableStateFlow("")
     override val filter: StateFlow<String> = _filter
@@ -49,15 +50,13 @@ class LanguageSelectorViewModel @Inject constructor(
         }
     }
 
-    private fun applyFilter(filter: String): List<Locale> {
+    private fun applyFilter(filter: String): List<MwLocale> {
         return supportedLanguages.filter { locale ->
-            locale.displayLanguage
-                .lowercase()
-                .contains(filter)
+            locale.displayName.contains(filter)
         }
     }
 
-    private fun filterSelection(filter: String): List<Locale> {
+    private fun filterSelection(filter: String): List<MwLocale> {
         val normalizedFilter = filter.lowercase()
 
         return if (normalizedFilter.isEmpty()) {
@@ -74,15 +73,11 @@ class LanguageSelectorViewModel @Inject constructor(
         }
     }
 
-    private fun getLanguageTag(language: Locale): String {
-        return language.toLanguageTag().replace('_', '-')
-    }
-
     override fun selectLanguage(selector: Int) {
         languageState.update { _selection.value[selector] }
         entityStore.fetchEntity(
             id.value,
-            getLanguageTag(_selection.value[selector])
+            _selection.value[selector].toLanguageTag()
         )
     }
 }

@@ -22,13 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tech.antibytes.wikidata.app.ui.theme.BrightBlue
-import java.util.Locale
+import tech.antibytes.wikidata.app.util.UtilContract
 
 @Composable
 fun LanguageItem(
     id: Int,
-    value: Locale,
-    selected: Locale,
+    value: UtilContract.MwLocale,
+    selected: UtilContract.MwLocale,
     onClick: (Int) -> Unit
 ) {
     Row(
@@ -45,7 +45,7 @@ fun LanguageItem(
             )
     ) {
         RadioButton(
-            selected = value == selected,
+            selected = value.asLocale() == selected.asLocale(),
             onClick = { /* Do nothing */ },
             colors = RadioButtonDefaults.colors(
                 selectedColor = BrightBlue

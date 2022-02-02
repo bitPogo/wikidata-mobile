@@ -9,12 +9,13 @@ package tech.antibytes.wikidata.app.util
 import java.util.Locale
 
 class MwLocale(languageTag: String) : UtilContract.MwLocale {
-    private val mwLanguageTag: String = languageTag.lowercase()
+    private val mwLanguageTag: String = languageTag.lowercase().replace('_', '-')
 
     private val locale = Locale.forLanguageTag(
         UtilContract.MwLocale.MW_MAPPING.getOrElse(mwLanguageTag) { mwLanguageTag }
     )
     override val displayLanguage: String = locale.displayLanguage
+    override val displayName: String = locale.displayName
 
     override fun toLanguageTag(): String = mwLanguageTag
 

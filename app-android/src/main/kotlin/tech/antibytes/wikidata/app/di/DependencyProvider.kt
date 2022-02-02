@@ -30,10 +30,19 @@ import tech.antibytes.wikidata.app.ApplicationContract
 import tech.antibytes.wikidata.app.BuildConfig
 import tech.antibytes.wikidata.app.util.ConnectivityManager
 import tech.antibytes.wikidata.app.util.DatabaseFactory
+import tech.antibytes.wikidata.app.util.MwLocale
 import tech.antibytes.wikidata.app.util.SupportedWikibaseLanguages
+import tech.antibytes.wikidata.app.util.UtilContract
 import java.util.Locale
-import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+annotation class SupportedLanguages
+@Qualifier
+annotation class MutableLanguageHandle
+@Qualifier
+annotation class LanguageState
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -57,7 +66,8 @@ object DependencyProvider {
 
     @Singleton
     @Provides
-    fun provideWikibaseLanguages(): List<Locale> = SupportedWikibaseLanguages.get()
+    @SupportedLanguages
+    fun provideWikibaseLanguages(): List<UtilContract.MwLocale> = SupportedWikibaseLanguages.get()
 
     @Singleton
     @Provides
@@ -147,17 +157,17 @@ object DependencyProvider {
 
     @Singleton
     @Provides
-    @Named("MutableLanguageHandle")
-    fun provideMutableLanguageHandle(): MutableStateFlow<Locale> {
+    @MutableLanguageHandle
+    fun provideMutableLanguageHandle(): MutableStateFlow<UtilContract.MwLocale> {
         return MutableStateFlow(
-            Locale.getDefault() // TODO
+            MwLocale(Locale.getDefault().toLanguageTag()) // TODO
         )
     }
 
     @Singleton
     @Provides
-    @Named("LanguageHandle")
-    fun provideLanguageHandle(
-        @Named("MutableLanguageHandle") language: MutableStateFlow<Locale>
-    ): StateFlow<Locale> = language
+    @LanguageState
+    fun provideLanguageState(
+        @MutableLanguageHandle language: MutableStateFlow<UtilContract.MwLocale>
+    ): StateFlow<UtilContract.MwLocale> = language
 }

@@ -8,15 +8,15 @@ package tech.antibytes.wikidata.app.languageselector
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import java.util.Locale
+import tech.antibytes.wikidata.app.util.MwLocale
 
 @Preview
 @Composable
 fun LanguageItemPreviewSelected() {
     LanguageItem(
         id = 23,
-        value = Locale.GERMANY,
-        selected = Locale.GERMANY,
+        value = MwLocale("de-DE"),
+        selected = MwLocale("de-DE"),
         {}
     )
 }
@@ -26,8 +26,8 @@ fun LanguageItemPreviewSelected() {
 fun LanguageItemPreviewUnSelected() {
     LanguageItem(
         id = 42,
-        value = Locale.ENGLISH,
-        selected = Locale.GERMANY,
+        value = MwLocale("en"),
+        selected = MwLocale("de-DE"),
         {}
     )
 }

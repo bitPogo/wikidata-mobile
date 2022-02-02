@@ -10,7 +10,6 @@ import org.junit.Test
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.util.UtilContract.SupportedWikibaseLanguages.Companion.LANGUAGES
-import java.util.Locale
 
 class SupportedWikibaseLanguagesSpec {
     @Test
@@ -19,16 +18,19 @@ class SupportedWikibaseLanguagesSpec {
     }
 
     @Test
-    fun `Given get is called, it returns a sorted List of the supported Languages`() {
+    fun `Given get is called, it returns a sorted and filtered List of the supported Languages`() {
         // Given
         val expected = LANGUAGES
-            .map { tag -> Locale.forLanguageTag(tag) }
+            .map { tag -> MwLocale(tag) }
+            .distinctBy { locale -> locale.displayName }
             .sortedBy { locale -> locale.displayName }
 
         // When
         val actual = SupportedWikibaseLanguages.get()
 
         // Then
-        actual mustBe expected
+        expected.forEachIndexed { idx, language ->
+            actual[idx].displayName mustBe language.displayName
+        }
     }
 }

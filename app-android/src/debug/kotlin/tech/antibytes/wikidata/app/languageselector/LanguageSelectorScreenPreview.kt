@@ -10,10 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.Locale
-import java.util.Locale.CHINESE
-import java.util.Locale.ENGLISH
-import java.util.Locale.GERMAN
+import tech.antibytes.wikidata.app.util.MwLocale
+import tech.antibytes.wikidata.app.util.UtilContract
 import java.util.Locale.KOREAN
 
 @Preview
@@ -23,13 +21,13 @@ fun LanguageScreenPreview() {
 }
 
 private class LanguageScreenViewModelStub : LanguageSelectorContract.LanguageSelectorViewModel {
-    override val currentLanguage: StateFlow<Locale> = MutableStateFlow(ENGLISH)
-    override val selection: StateFlow<List<Locale>> = MutableStateFlow(
+    override val currentLanguage: StateFlow<UtilContract.MwLocale> = MutableStateFlow(MwLocale("de"))
+    override val selection: StateFlow<List<UtilContract.MwLocale>> = MutableStateFlow(
         listOf(
-            ENGLISH,
-            GERMAN,
-            CHINESE,
-            KOREAN,
+            MwLocale("en"),
+            MwLocale("de"),
+            MwLocale("zh"),
+            MwLocale(KOREAN.toLanguageTag()),
         )
     )
     override val filter: StateFlow<String> = MutableStateFlow("")

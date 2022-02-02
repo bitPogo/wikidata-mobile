@@ -8,7 +8,7 @@ package tech.antibytes.wikidata.mock
 
 import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.wikidata.app.termbox.TermboxContract
-import java.util.Locale
+import tech.antibytes.wikidata.app.util.UtilContract
 
 class TermboxViewModelStub(
     override val id: StateFlow<String>,
@@ -16,7 +16,7 @@ class TermboxViewModelStub(
     override val label: StateFlow<String>,
     override val description: StateFlow<String>,
     override val aliases: StateFlow<List<String>>,
-    override val language: StateFlow<Locale>,
+    override val language: StateFlow<UtilContract.MwLocale>,
     var setLabel: ((String) -> Unit)? = null,
     var setDescription: ((String) -> Unit)? = null,
     var addAlias: ((String) -> Unit)? = null,

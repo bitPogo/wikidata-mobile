@@ -6,12 +6,11 @@
 
 package tech.antibytes.wikidata.app.util
 
-import java.util.Locale
-
 object SupportedWikibaseLanguages : UtilContract.SupportedWikibaseLanguages {
-    override fun get(): List<Locale> {
+    override fun get(): List<UtilContract.MwLocale> {
         return UtilContract.SupportedWikibaseLanguages.LANGUAGES
-            .map { tag -> Locale.forLanguageTag(tag) }
+            .map { tag -> MwLocale(tag) }
+            .distinctBy { locale -> locale.displayName }
             .sortedBy { locale -> locale.displayName }
     }
 }

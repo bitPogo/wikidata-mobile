@@ -22,7 +22,7 @@ interface UtilContract {
 
     // TODO Map Build a WMF Wrapper for the special snowflakes
     interface SupportedWikibaseLanguages {
-        fun get(): List<Locale>
+        fun get(): List<MwLocale>
 
         companion object {
             val LANGUAGES = listOf(
@@ -299,7 +299,7 @@ interface UtilContract {
                 "nds-nl",
                 "ne",
                 "new",
-                "nrm",
+                // TODO: "nrm",
                 "ng",
                 "nia",
                 "niu",
@@ -343,7 +343,7 @@ interface UtilContract {
                 "rgn",
                 "rif",
                 "rm",
-                "rmy",
+                // TODO: "rmy",
                 "rn",
                 "ro",
                 "roa-rup",
@@ -479,10 +479,10 @@ interface UtilContract {
 
     interface MwLocale {
         val displayLanguage: String
+        val displayName: String
 
         fun toLanguageTag(): String
         fun asLocale(): Locale
-
 
         companion object {
             val MW_MAPPING = mapOf(
@@ -496,12 +496,12 @@ interface UtilContract {
                 "mo" to "ro-MD",
                 "nrm" to "nrf",
                 "simple" to "en-simple",
-                "sr-ec" to "sr-Cyr",
+                "sr-ec" to "sr-Cyrl",
                 "sr-el" to "sr-Latn",
                 "rmy" to "rmo",
                 "zh-min-nan" to "nan",
-                "zh-my" to "cmn-MY",
-                "zh-sg" to "cmn-SG",
+                "zh-my" to "zh-MY-cmn",
+                "zh-sg" to "zh-SG-cmn",
             )
         }
     }

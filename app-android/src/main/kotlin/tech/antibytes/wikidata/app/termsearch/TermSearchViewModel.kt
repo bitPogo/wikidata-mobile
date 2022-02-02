@@ -16,15 +16,15 @@ import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.page.PageStoreContract
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
 import tech.antibytes.wikidata.app.ApplicationContract
-import java.util.Locale
+import tech.antibytes.wikidata.app.di.LanguageState
+import tech.antibytes.wikidata.app.util.UtilContract.MwLocale
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class TermSearchViewModel @Inject constructor(
     private val pageStore: PageStoreContract.PageStore,
     private val entityStore: EntityStoreContract.EntityStore,
-    @Named("LanguageHandle") private val currentLanguage: StateFlow<Locale>
+    @LanguageState private val currentLanguage: @JvmSuppressWildcards(true) StateFlow<MwLocale>
 ) : TermSearchContract.TermSearchViewModel, ViewModel() {
     private val _result = MutableStateFlow<List<PageModelContract.SearchEntry>>(emptyList())
     override val result: StateFlow<List<PageModelContract.SearchEntry>> = _result
@@ -45,12 +45,6 @@ class TermSearchViewModel @Inject constructor(
         }
     }
 
-    private fun getLanguageTag(language: Locale): String {
-        return language.toLanguageTag()
-            .replace('_', '-')
-            .lowercase()
-    }
-
     override fun setQuery(query: String) {
         _query.update { query }
     }
@@ -58,7 +52,7 @@ class TermSearchViewModel @Inject constructor(
     override fun search() {
         pageStore.searchItems(
             _query.value,
-            getLanguageTag(currentLanguage.value)
+            currentLanguage.value.toLanguageTag()
         )
     }
 
@@ -67,7 +61,7 @@ class TermSearchViewModel @Inject constructor(
 
         entityStore.fetchEntity(
             item.id,
-            getLanguageTag(currentLanguage.value)
+            currentLanguage.value.toLanguageTag()
         )
     }
 }

@@ -20,18 +20,12 @@ import tech.antibytes.wikidata.app.navigation.NavigationContract.Routes
 import tech.antibytes.wikidata.app.termbox.TermboxScreen
 import tech.antibytes.wikidata.app.termsearch.TermSearchScreen
 
-/*
-WikidataMobileTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
- */
-
 @Composable
 fun Routing() {
     val controller = rememberNavController()
     val router by remember { mutableStateOf(Navigator(controller)) }
 
-    NavHost(navController = controller, startDestination = Routes.LANGUAGE_SELECTION.name) {
+    NavHost(navController = controller, startDestination = Routes.LOGIN_SCREEN.name) {
         composable(route = Routes.LOGIN_SCREEN.name) {
             Log.d("ROUTING", "GOTO ${Routes.LOGIN_SCREEN.name}")
             LoginScreen(navigator = router)

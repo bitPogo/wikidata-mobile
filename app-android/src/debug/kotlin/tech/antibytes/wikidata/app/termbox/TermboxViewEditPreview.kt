@@ -9,7 +9,7 @@ package tech.antibytes.wikidata.app.termbox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.Locale.ENGLISH
+import tech.antibytes.wikidata.app.util.MwLocale
 
 @Preview
 @Composable
@@ -22,7 +22,7 @@ fun TermboxViewEditPreview() {
             MutableStateFlow("Test"),
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(listOf("dummy", "preview", "Lorem ipsum")),
-            MutableStateFlow(ENGLISH)
+            MutableStateFlow(MwLocale("en"))
         )
     )
 }

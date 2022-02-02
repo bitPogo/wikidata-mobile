@@ -7,12 +7,12 @@
 package tech.antibytes.wikidata.app.languageselector
 
 import kotlinx.coroutines.flow.StateFlow
-import java.util.Locale
+import tech.antibytes.wikidata.app.util.UtilContract.MwLocale
 
 interface LanguageSelectorContract {
     interface LanguageSelectorViewModel {
-        val currentLanguage: StateFlow<Locale>
-        val selection: StateFlow<List<Locale>>
+        val currentLanguage: StateFlow<MwLocale>
+        val selection: StateFlow<List<MwLocale>>
         val filter: StateFlow<String>
 
         fun setFilter(newFilter: String)

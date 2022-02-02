@@ -34,19 +34,26 @@ class MwLocaleSpec {
     @Test
     fun `Given toLanguageTag is called returns normalized LanguageTags`() {
         // Given
-        val tag = "en-US"
+        val tag = "en_US"
 
         // When
         val actual = MwLocale(tag).toLanguageTag()
 
         // Then
-        actual mustBe tag.lowercase()
+        actual mustBe tag.lowercase().replace('_', '-')
     }
 
     @Test
     fun `Given displayLanguage is called returns custom IETF BCP 47 defined displayLanguage`() {
         UtilContract.MwLocale.MW_MAPPING.forEach { (mwTag, ietfTag) ->
             MwLocale(mwTag).displayLanguage mustBe Locale.forLanguageTag(ietfTag).displayLanguage
+        }
+    }
+
+    @Test
+    fun `Given displayName is called returns custom IETF BCP 47 defined displayName`() {
+        UtilContract.MwLocale.MW_MAPPING.forEach { (mwTag, ietfTag) ->
+            MwLocale(mwTag).displayName mustBe Locale.forLanguageTag(ietfTag).displayName
         }
     }
 }
