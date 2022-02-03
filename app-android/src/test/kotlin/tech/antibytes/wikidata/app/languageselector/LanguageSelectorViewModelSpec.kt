@@ -29,13 +29,16 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
+import tech.antibytes.wikidata.app.util.UtilContract
 import tech.antibytes.wikidata.mock.EntityStoreStub
 import tech.antibytes.wikidata.mock.MonolingualEntity
-import java.util.Locale
+import tech.antibytes.wikidata.mock.MwLocaleStub
 
 class LanguageSelectorViewModelSpec {
     private val fixture = kotlinFixture()
-    private val currentLanguageState = MutableStateFlow(Locale.ENGLISH)
+    private val currentLanguageState = MutableStateFlow<UtilContract.MwLocale>(
+        MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
+    )
 
     private val entityFlow: MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>> = MutableStateFlow(
         Success(
@@ -62,7 +65,7 @@ class LanguageSelectorViewModelSpec {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
-        currentLanguageState.value = Locale.ENGLISH
+        currentLanguageState.value = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         entityStore.clear()
 
         entityFlow.value = Success(
@@ -104,7 +107,7 @@ class LanguageSelectorViewModelSpec {
 
     @Test
     fun `Its currentLanguage is the injected language by default`() {
-        val expected = Locale.JAPAN
+        val expected = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
 
         LanguageSelectorViewModel(
             MutableStateFlow(expected),
@@ -115,10 +118,10 @@ class LanguageSelectorViewModelSpec {
 
     @Test
     fun `Its selectedLanguages are the injected languages by default`() {
-        val expected = listOf(
-            Locale.CANADA,
-            Locale.CHINESE,
-            Locale.ENGLISH
+        val expected: List<UtilContract.MwLocale> = listOf(
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         )
 
         LanguageSelectorViewModel(
@@ -168,13 +171,14 @@ class LanguageSelectorViewModelSpec {
     @Test
     fun `Given setFilter is called is changes the selection`() {
         // Given
-        val newFilterValue = "Eng"
-        val selection = listOf(
-            Locale.KOREA,
-            Locale.CHINESE,
-            Locale.ENGLISH
+        val selection: List<UtilContract.MwLocale> = listOf(
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         )
-        val result = Channel<List<Locale>>()
+
+        val newFilterValue = selection[1].displayName.substring(0, 4)
+        val result = Channel<List<UtilContract.MwLocale>>()
 
         // When
         val viewModel = LanguageSelectorViewModel(
@@ -202,7 +206,50 @@ class LanguageSelectorViewModelSpec {
         // Then
         runBlocking {
             withTimeout(2000) {
-                result.receive() mustBe listOf(Locale.ENGLISH)
+                result.receive() mustBe listOf(selection[1])
+            }
+        }
+    }
+
+    @Test
+    fun `Given setFilter is called is changes the selection, while normalizing the displayName`() {
+        // Given
+        val selection: List<UtilContract.MwLocale> = listOf(
+            MwLocaleStub(fixture.fixture(), fixture.fixture<String>().uppercase(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture<String>().uppercase(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture<String>().uppercase(), fixture.fixture())
+        )
+
+        val newFilterValue = selection[1].displayName.substring(0, 4)
+        val result = Channel<List<UtilContract.MwLocale>>()
+
+        // When
+        val viewModel = LanguageSelectorViewModel(
+            currentLanguageState,
+            selection,
+            entityStore
+        )
+
+        CoroutineScope(Dispatchers.Default).launch {
+            viewModel.selection.collectLatest { givenSelection ->
+                result.send(givenSelection)
+            }
+        }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe selection
+            }
+        }
+
+        // When
+        viewModel.setFilter(newFilterValue)
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe listOf(selection[1])
             }
         }
     }
@@ -210,13 +257,14 @@ class LanguageSelectorViewModelSpec {
     @Test
     fun `Given setFilter is called with a empty String it reverts the selection`() {
         // Given
-        val newFilterValue = "Eng"
-        val selection = listOf(
-            Locale.KOREA,
-            Locale.CHINESE,
-            Locale.ENGLISH
+        val selection: List<UtilContract.MwLocale> = listOf(
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         )
-        val result = Channel<List<Locale>>()
+
+        val newFilterValue = selection[1].displayName.substring(0, 4)
+        val result = Channel<List<UtilContract.MwLocale>>()
 
         // When
         val viewModel = LanguageSelectorViewModel(
@@ -244,7 +292,7 @@ class LanguageSelectorViewModelSpec {
         // Then
         runBlocking {
             withTimeout(2000) {
-                result.receive() mustBe listOf(Locale.ENGLISH)
+                result.receive() mustBe listOf(selection[1])
             }
         }
 
@@ -262,13 +310,14 @@ class LanguageSelectorViewModelSpec {
     @Test
     fun `Given selectLanguage is called with a Selector it changes the currentLanguage and fetches the Entity in that language`() {
         // Given
-        val selection = listOf(
-            Locale.KOREA,
-            Locale.CHINESE,
-            Locale.ENGLISH
+        val selection: List<UtilContract.MwLocale> = listOf(
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture()),
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         )
+
         val selector = 0
-        val result = Channel<Locale>()
+        val result = Channel<UtilContract.MwLocale>()
 
         val entity = MonolingualEntity(
             id = fixture.fixture(),

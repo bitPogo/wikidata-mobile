@@ -18,6 +18,8 @@ import org.junit.Test
 import tech.antibytes.mediawiki.MwClient
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.util.test.fixture.fixture
+import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
@@ -32,10 +34,15 @@ import tech.antibytes.wikibase.store.user.UserStoreContract
 import tech.antibytes.wikibase.store.user.domain.UserStore
 import tech.antibytes.wikidata.app.BuildConfig
 import tech.antibytes.wikidata.app.util.DatabaseFactory
+import tech.antibytes.wikidata.app.util.MwLocale
 import tech.antibytes.wikidata.app.util.SupportedWikibaseLanguages
+import tech.antibytes.wikidata.app.util.UtilContract
+import tech.antibytes.wikidata.mock.MwLocaleStub
 import java.util.Locale
 
 class DependencyProviderSpec {
+    private val fixture = kotlinFixture()
+
     @After
     fun tearDown() {
         unmockkAll()
@@ -80,7 +87,7 @@ class DependencyProviderSpec {
         // Given
         mockkObject(SupportedWikibaseLanguages)
 
-        val languages: List<Locale> = mockk()
+        val languages: List<UtilContract.MwLocale> = mockk()
 
         every { SupportedWikibaseLanguages.get() } returns languages
 
@@ -246,16 +253,18 @@ class DependencyProviderSpec {
 
         // Then
         actual fulfils MutableStateFlow::class
-        actual.value mustBe Locale.getDefault()
+        actual.value.asLocale() mustBe Locale.getDefault()
     }
 
     @Test
-    fun `Given provideLanguageHandle is called with a MutableStateFlow, it reflects the given flow`() {
+    fun `Given provideLanguageState is called with a StateFlow, it reflects the given flow`() {
         // Given
-        val flow = MutableStateFlow(Locale.ENGLISH)
+        val flow = MutableStateFlow<UtilContract.MwLocale>(
+            MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
+        )
 
         // When
-        val actual = DependencyProvider.provideLanguageHandle(flow)
+        val actual = DependencyProvider.provideLanguageState(flow)
 
         // Then
         actual sameAs flow

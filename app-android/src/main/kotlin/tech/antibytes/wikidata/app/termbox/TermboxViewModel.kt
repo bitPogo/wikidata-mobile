@@ -14,18 +14,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
-import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
 import tech.antibytes.wikibase.store.page.PageStoreContract
 import tech.antibytes.wikidata.app.ApplicationContract
+import tech.antibytes.wikidata.app.di.LanguageState
 import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
-import java.util.Locale
+import tech.antibytes.wikidata.app.util.UtilContract.MwLocale
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class TermboxViewModel @Inject constructor(
-    @Named("LanguageHandle") override val language: StateFlow<Locale>,
+    @LanguageState override val language: @JvmSuppressWildcards(true) StateFlow<MwLocale>,
     private val entityStore: EntityStoreContract.EntityStore,
     private val pageStore: PageStoreContract.PageStore,
 ) : TermboxContract.TermboxViewModel, ViewModel() {
@@ -60,10 +59,6 @@ class TermboxViewModel @Inject constructor(
     }
 
     private fun distributeEntity(entity: EntityModelContract.MonolingualEntity) {
-        Log.d(
-            ApplicationContract.LogTag.TERMBOX_VIEWMODEL.value,
-            "ID: ${entity.id}"
-        )
         _id.update { entity.id }
         edibility.update { entity.isEditable }
         _label.update { entity.label ?: "" }
@@ -90,13 +85,9 @@ class TermboxViewModel @Inject constructor(
 
     override fun refresh() = entityStore.refresh()
 
-    private fun getCurrentLanguageTag(): LanguageTag {
-        return language.value.toLanguageTag().replace('_', '-')
-    }
-
     override fun createNewItem() {
         entityStore.create(
-            language = getCurrentLanguageTag(),
+            language = language.value.toLanguageTag(),
             type = EntityModelContract.EntityType.ITEM
         )
     }
@@ -114,7 +105,7 @@ class TermboxViewModel @Inject constructor(
     override fun fetchItem(id: String) {
         entityStore.fetchEntity(
             id = id,
-            language = getCurrentLanguageTag(),
+            language = language.value.toLanguageTag(),
         )
     }
 }

@@ -26,25 +26,41 @@ import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
+import tech.antibytes.wikidata.app.util.UtilContract
+import tech.antibytes.wikidata.mock.MwLocaleAndroidStub
 import java.util.Locale
-import java.util.Locale.CHINESE
 import java.util.Locale.ENGLISH
-import java.util.Locale.FRENCH
-import java.util.Locale.GERMAN
-import java.util.Locale.KOREAN
 
 class LanguageSelectorScreenSpec {
     @get:Rule
     val composeTestRule = createComposeRule()
     private val fixture = kotlinFixture()
 
-    private val currentLanguage = MutableStateFlow(ENGLISH)
-    private val selection = MutableStateFlow(
+    private val currentLanguage = MutableStateFlow<UtilContract.MwLocale>(
+        MwLocaleAndroidStub(
+            fixture.fixture<String>().substring(0, 9),
+            fixture.fixture<String>().substring(0, 9),
+            ENGLISH
+        ),
+    )
+    private val selection = MutableStateFlow<List<UtilContract.MwLocale>>(
         listOf(
-            ENGLISH,
-            GERMAN,
-            CHINESE,
-            KOREAN,
+            currentLanguage.value,
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.GERMAN
+            ),
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.KOREAN
+            ),
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.JAPAN
+            ),
         )
     )
     private val filter = MutableStateFlow("")
@@ -55,13 +71,31 @@ class LanguageSelectorScreenSpec {
     fun setUp() {
         viewModel.clear()
 
-        currentLanguage.update { ENGLISH }
+        currentLanguage.update {
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                ENGLISH
+            )
+        }
         selection.update {
             listOf(
-                ENGLISH,
-                GERMAN,
-                CHINESE,
-                KOREAN,
+                currentLanguage.value,
+                MwLocaleAndroidStub(
+                    fixture.fixture<String>().substring(0, 9),
+                    fixture.fixture<String>().substring(0, 9),
+                    Locale.GERMAN
+                ),
+                MwLocaleAndroidStub(
+                    fixture.fixture<String>().substring(0, 9),
+                    fixture.fixture<String>().substring(0, 9),
+                    Locale.KOREAN
+                ),
+                MwLocaleAndroidStub(
+                    fixture.fixture<String>().substring(0, 9),
+                    fixture.fixture<String>().substring(0, 9),
+                    Locale.JAPAN
+                ),
             )
         }
         filter.update { "" }
@@ -85,7 +119,7 @@ class LanguageSelectorScreenSpec {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText(ENGLISH.displayName)
+            .onNodeWithText(currentLanguage.value.displayName)
             .assertIsDisplayed()
     }
 
@@ -116,7 +150,7 @@ class LanguageSelectorScreenSpec {
     fun It_propagates_Selection_changes_of_the_Viewmodel() {
         // Given
         val selection = listOf(
-            FRENCH,
+            MwLocaleAndroidStub(fixture.fixture(), fixture.fixture(), ENGLISH),
         )
 
         // When
@@ -133,14 +167,14 @@ class LanguageSelectorScreenSpec {
 
         // Then
         composeTestRule
-            .onNodeWithText(FRENCH.displayName)
+            .onNodeWithText(selection[0].displayName)
             .assertIsDisplayed()
     }
 
     @Test
     fun It_propagates_Selector_changes_of_the_Viewmodel() {
         // Given
-        val selector = GERMAN
+        val selector = selection.value[1]
 
         // When
         composeTestRule.setContent {
@@ -160,7 +194,7 @@ class LanguageSelectorScreenSpec {
 
         // Then
         composeTestRule
-            .onNodeWithText(GERMAN.displayName)
+            .onNodeWithText(selection.value[1].displayName)
             .onChildAt(0)
             .assertIsSelected()
     }
@@ -200,11 +234,29 @@ class LanguageSelectorScreenSpec {
     fun Given_a_LanguageItem_is_selected_it_propagates_it_to_the_ViewModel() {
         // Given
         val selection = listOf(
-            ENGLISH,
-            GERMAN,
-            CHINESE,
-            KOREAN,
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                ENGLISH
+            ),
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.GERMAN
+            ),
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.KOREAN
+            ),
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.JAPAN
+            ),
         )
+
+        this.selection.update { selection }
 
         var capturedSelector: Int? = null
         viewModel.selectLanguage = { givenSelector ->
@@ -236,11 +288,29 @@ class LanguageSelectorScreenSpec {
     fun Given_a_LanguageItem_is_selected_it_calls_the_Navigator() {
         // Given
         val selection = listOf(
-            ENGLISH,
-            GERMAN,
-            CHINESE,
-            KOREAN,
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                ENGLISH
+            ),
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.GERMAN
+            ),
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.KOREAN
+            ),
+            MwLocaleAndroidStub(
+                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture<String>().substring(0, 9),
+                Locale.JAPAN
+            ),
         )
+
+        this.selection.update { selection }
 
         var wasCalled = false
         val navigator = LanguageSelectorContract.Navigator { wasCalled = true }
@@ -267,8 +337,8 @@ class LanguageSelectorScreenSpec {
 }
 
 private class LanguageSelectorViewModelStub(
-    override val currentLanguage: StateFlow<Locale>,
-    override val selection: StateFlow<List<Locale>>,
+    override val currentLanguage: StateFlow<UtilContract.MwLocale>,
+    override val selection: StateFlow<List<UtilContract.MwLocale>>,
     override val filter: StateFlow<String>,
     var setFilter: ((String) -> Unit)? = null,
     var selectLanguage: ((Int) -> Unit)? = null

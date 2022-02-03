@@ -15,17 +15,27 @@ import androidx.compose.ui.test.performClick
 import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import tech.antibytes.util.test.fixture.fixture
+import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
-import java.util.Locale
+import tech.antibytes.wikidata.mock.MwLocaleAndroidStub
+import java.util.Locale.ENGLISH
+import java.util.Locale.GERMAN
+import java.util.Locale.KOREAN
 
 class LanguageItemSpec {
     @get:Rule
     val composeTestRule = createComposeRule()
+    private val fixture = kotlinFixture()
 
     @Test
     fun It_renders_a_LanguageItem() {
         // Given
-        val value = Locale.GERMAN
+        val value = MwLocaleAndroidStub(
+            fixture.fixture(),
+            fixture.fixture(),
+            ENGLISH
+        )
 
         // When
         composeTestRule.setContent {
@@ -33,7 +43,11 @@ class LanguageItemSpec {
                 LanguageItem(
                     23,
                     value = value,
-                    selected = Locale.CANADA,
+                    selected = MwLocaleAndroidStub(
+                        fixture.fixture(),
+                        fixture.fixture(),
+                        GERMAN
+                    ),
                     {}
                 )
             }
@@ -49,7 +63,11 @@ class LanguageItemSpec {
     fun It_selects_items() {
         // Given
         val id = 23
-        val value = Locale.GERMAN
+        val value = MwLocaleAndroidStub(
+            fixture.fixture(),
+            fixture.fixture(),
+            ENGLISH
+        )
 
         // When
         composeTestRule.setContent {
@@ -74,7 +92,11 @@ class LanguageItemSpec {
     fun Given_the_item_is_clicked_it_delegates_the_call_and_its_value_to_the_given_lambda() {
         // Given
         val id = 23
-        val value = Locale.GERMAN
+        val value = MwLocaleAndroidStub(
+            fixture.fixture(),
+            fixture.fixture(),
+            KOREAN
+        )
 
         var capturedId: Int? = null
         val onClick = { givenId: Int ->
@@ -86,7 +108,11 @@ class LanguageItemSpec {
                 LanguageItem(
                     id,
                     value = value,
-                    selected = Locale.CANADA,
+                    selected = MwLocaleAndroidStub(
+                        fixture.fixture(),
+                        fixture.fixture(),
+                        KOREAN
+                    ),
                     onClick
                 )
             }

@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import tech.antibytes.wikidata.app.ui.molecule.ScreenWithTopBar
-import java.util.Locale
+import tech.antibytes.wikidata.app.util.UtilContract
 
 @Composable
 fun LanguageSelectorScreen(
@@ -32,7 +32,7 @@ fun LanguageSelectorScreen(
         },
         content = @Composable {
             LazyColumn {
-                itemsIndexed(selectableLanguages.value) { idx: Int, language: Locale ->
+                itemsIndexed(selectableLanguages.value) { idx: Int, language: UtilContract.MwLocale ->
                     LanguageItem(
                         id = idx,
                         value = language,

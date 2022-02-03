@@ -20,12 +20,6 @@ import tech.antibytes.wikidata.app.navigation.NavigationContract.Routes
 import tech.antibytes.wikidata.app.termbox.TermboxScreen
 import tech.antibytes.wikidata.app.termsearch.TermSearchScreen
 
-/*
-WikidataMobileTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
- */
-
 @Composable
 fun Routing() {
     val controller = rememberNavController()

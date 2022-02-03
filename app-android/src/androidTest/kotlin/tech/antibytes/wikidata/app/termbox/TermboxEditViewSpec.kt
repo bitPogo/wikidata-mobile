@@ -24,8 +24,9 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
+import tech.antibytes.wikidata.mock.MwLocaleAndroidStub
 import tech.antibytes.wikidata.mock.TermboxViewModelStub
-import java.util.Locale
+import java.util.Locale.ENGLISH
 
 class TermboxEditViewSpec {
     @get:Rule
@@ -38,7 +39,9 @@ class TermboxEditViewSpec {
     private val description = MutableStateFlow("")
     private val aliases = MutableStateFlow(emptyList<String>())
 
-    private val currentLanguage = MutableStateFlow(Locale.ENGLISH)
+    private val currentLanguage = MutableStateFlow(
+        MwLocaleAndroidStub(fixture.fixture(), fixture.fixture(), ENGLISH)
+    )
 
     private val viewModel = TermboxViewModelStub(
         id,

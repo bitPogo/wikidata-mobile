@@ -7,7 +7,7 @@
 package tech.antibytes.wikidata.app.termbox
 
 import kotlinx.coroutines.flow.StateFlow
-import java.util.Locale
+import tech.antibytes.wikidata.app.util.UtilContract
 
 interface TermboxContract {
     interface TermboxViewModel {
@@ -16,7 +16,7 @@ interface TermboxContract {
         val label: StateFlow<String>
         val description: StateFlow<String>
         val aliases: StateFlow<List<String>>
-        val language: StateFlow<Locale>
+        val language: StateFlow<UtilContract.MwLocale>
 
         fun setLabel(newLabel: String)
         fun setDescription(newDescription: String)

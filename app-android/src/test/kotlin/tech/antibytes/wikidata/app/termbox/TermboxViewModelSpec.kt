@@ -37,15 +37,16 @@ import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
 import tech.antibytes.wikidata.mock.EntityStoreStub
 import tech.antibytes.wikidata.mock.MonolingualEntity
+import tech.antibytes.wikidata.mock.MwLocaleStub
 import tech.antibytes.wikidata.mock.PageStoreStub
 import java.lang.Exception
-import java.util.Locale
-import java.util.Locale.KOREAN
 
 @RunWith(RobolectricTestRunner::class)
 class TermboxViewModelSpec {
     private val fixture = kotlinFixture()
-    private val currentLanguageState = MutableStateFlow(Locale.ENGLISH)
+    private val currentLanguageState = MutableStateFlow(
+        MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
+    )
 
     private val entityFlow: MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>> = MutableStateFlow(
         Failure(EntityStoreError.InitialState())
@@ -112,7 +113,7 @@ class TermboxViewModelSpec {
         }
 
         // Then
-        capturedLanguageTag mustBe currentLanguageState.value.toLanguageTag().replace('_', '-')
+        capturedLanguageTag mustBe currentLanguageState.value.toLanguageTag()
         capturedId mustBe "Q214750"
     }
 
@@ -205,7 +206,7 @@ class TermboxViewModelSpec {
     @Test
     fun `It emits the given Language`() {
         // Given
-        val language = KOREAN
+        val language = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
 
         currentLanguageState.value = language
 
@@ -760,7 +761,7 @@ class TermboxViewModelSpec {
     fun `Given fetchItem is called with an Id it delegates, while using the currentLanguage the call to EntityStore`() {
         // Given
         val id: String = fixture.fixture()
-        val language = KOREAN
+        val language = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
 
         currentLanguageState.update { language }
 
@@ -780,14 +781,14 @@ class TermboxViewModelSpec {
         ).fetchItem(id)
 
         // Then
-        capturedLanguageTag mustBe language.toLanguageTag().replace('_', '-')
+        capturedLanguageTag mustBe language.toLanguageTag()
         capturedId mustBe id
     }
 
     @Test
     fun `Given createNewItem is called it delegates, while using the currentLanguage the call to EntityStore`() {
         // Given
-        val language = KOREAN
+        val language = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
 
         currentLanguageState.update { language }
 
@@ -807,7 +808,7 @@ class TermboxViewModelSpec {
         ).createNewItem()
 
         // Then
-        capturedLanguageTag mustBe language.toLanguageTag().replace('_', '-')
+        capturedLanguageTag mustBe language.toLanguageTag()
         capturedType mustBe EntityModelContract.EntityType.ITEM
     }
 
@@ -815,7 +816,7 @@ class TermboxViewModelSpec {
     fun `Given randomItem is called it calls the PageStore and fetches the Entity for the given Id`() {
         // Given
         val id: String = fixture.fixture()
-        val language = KOREAN
+        val language = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
 
         currentLanguageState.update { language }
 
@@ -839,7 +840,7 @@ class TermboxViewModelSpec {
         ).fetchItem(id)
 
         // Then
-        capturedLanguageTag mustBe language.toLanguageTag().replace('_', '-')
+        capturedLanguageTag mustBe language.toLanguageTag()
         capturedId mustBe id
     }
 }

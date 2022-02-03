@@ -7,6 +7,7 @@
 package tech.antibytes.wikidata.app.termsearch
 
 import androidx.lifecycle.ViewModel
+import io.mockk.mockk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -31,12 +32,12 @@ import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
+import tech.antibytes.wikidata.app.util.UtilContract
 import tech.antibytes.wikidata.mock.EntityStoreStub
+import tech.antibytes.wikidata.mock.MwLocaleStub
 import tech.antibytes.wikidata.mock.PageStoreStub
 import tech.antibytes.wikidata.mock.SearchEntry
 import java.lang.RuntimeException
-import java.util.Locale
-import java.util.Locale.ENGLISH
 
 class TermSearchViewModelSpec {
     private val fixture = kotlinFixture()
@@ -50,7 +51,7 @@ class TermSearchViewModelSpec {
         pageFlowSurface,
     )
 
-    private val currentLanguage = MutableStateFlow(ENGLISH)
+    private val currentLanguage = MutableStateFlow(mockk<UtilContract.MwLocale>())
 
     private val entityFlow: MutableStateFlow<ResultContract<EntityModelContract.MonolingualEntity, Exception>> = MutableStateFlow(
         Failure(EntityStoreError.InitialState())
@@ -65,7 +66,7 @@ class TermSearchViewModelSpec {
     @Before
     fun setUp() {
         entityFlow.update { Failure(EntityStoreError.InitialState()) }
-        currentLanguage.value = ENGLISH
+        currentLanguage.value = mockk()
 
         pageStore.clear()
         entityStore.clear()
@@ -134,7 +135,7 @@ class TermSearchViewModelSpec {
     fun `Given search is called it delegates the query state to the store`() {
         // Given
         val query: String = fixture.fixture()
-        val language = Locale.KOREA
+        val language: UtilContract.MwLocale = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         val searchResult = Channel<List<PageModelContract.SearchEntry>>()
 
         currentLanguage.value = language
@@ -142,7 +143,7 @@ class TermSearchViewModelSpec {
         val expected = listOf(
             SearchEntry(
                 id = fixture.fixture(),
-                language = language.toLanguageTag().replace('_', '-'),
+                language = language.toLanguageTag(),
                 label = fixture.fixture<String>(),
                 description = null
             )
@@ -194,7 +195,7 @@ class TermSearchViewModelSpec {
     fun `Given search is called it delegates the query state to the store, while ignoring Errors`() {
         // Given
         val query: String = fixture.fixture()
-        val language = Locale.KOREA
+        val language: UtilContract.MwLocale = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         val searchResult = Channel<List<PageModelContract.SearchEntry>>()
 
         currentLanguage.value = language
@@ -246,7 +247,7 @@ class TermSearchViewModelSpec {
         // Given
         val index = 1
         val id: String = fixture.fixture()
-        val language = Locale.KOREA
+        val language: UtilContract.MwLocale = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
 
         currentLanguage.value = language
 

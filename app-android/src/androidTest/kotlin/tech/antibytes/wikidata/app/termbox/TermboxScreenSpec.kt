@@ -19,9 +19,10 @@ import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
+import tech.antibytes.wikidata.mock.MwLocaleAndroidStub
 import tech.antibytes.wikidata.mock.TermboxNavigatorStub
 import tech.antibytes.wikidata.mock.TermboxViewModelStub
-import java.util.Locale
+import java.util.Locale.ENGLISH
 
 class TermboxScreenSpec {
     @get:Rule
@@ -36,7 +37,9 @@ class TermboxScreenSpec {
     private val description = MutableStateFlow("")
     private val aliases = MutableStateFlow(emptyList<String>())
 
-    private val currentLanguage = MutableStateFlow(Locale.ENGLISH)
+    private val currentLanguage = MutableStateFlow(
+        MwLocaleAndroidStub(fixture.fixture(), fixture.fixture(), ENGLISH)
+    )
 
     private val viewModel = TermboxViewModelStub(
         id,
