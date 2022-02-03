@@ -19,7 +19,8 @@ fun DefaultTermboxMenuWithEnabledEditButton() {
         {},
         {},
         {},
-        {}
+        {},
+        {},
     )
 }
 
@@ -33,6 +34,7 @@ fun DefaultTermboxMenuWithDisabledEditButton() {
         {},
         {},
         {},
-        {}
+        {},
+        {},
     )
 }

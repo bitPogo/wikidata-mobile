@@ -11,6 +11,7 @@
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="login_login">Log In</string>
+    <string name="termbox_menu_add_new_entity">Add an entity</string>
     <string name="termbox_menu_edit">Edit current entity</string>
     <string name="termbox_menu_refresh">Refresh current entity</string>
     <string name="termbox_menu_show_more">Show more actions</string>
