@@ -39,4 +39,6 @@ object Dependency {
         const val composeNavigation = "androidx.hilt:hilt-navigation-compose:${Version.hiltCompose}"
         const val test = "com.google.dagger:hilt-android-testing:${Version.hilt}"
     }
+
+    const val zing = "com.google.zxing:core:${Version.zxing}"
 }

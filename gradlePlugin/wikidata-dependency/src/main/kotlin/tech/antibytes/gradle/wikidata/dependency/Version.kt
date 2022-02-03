@@ -48,4 +48,9 @@ object Version {
      * [Google Hilt Compose](https://developer.android.com/jetpack/androidx/releases/hilt)
      */
     const val hiltCompose = "1.0.0"
+
+    /**
+     * [ZXing](https://github.com/zxing/zxing)
+     */
+    const val zxing = "3.4.1"
 }

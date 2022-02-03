@@ -10,14 +10,15 @@ import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.slot
 import io.mockk.unmockkAll
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Test
 import tech.antibytes.mediawiki.MwClient
 import tech.antibytes.mediawiki.PublicApi
-import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
@@ -34,7 +35,6 @@ import tech.antibytes.wikibase.store.user.UserStoreContract
 import tech.antibytes.wikibase.store.user.domain.UserStore
 import tech.antibytes.wikidata.app.BuildConfig
 import tech.antibytes.wikidata.app.util.DatabaseFactory
-import tech.antibytes.wikidata.app.util.MwLocale
 import tech.antibytes.wikidata.app.util.SupportedWikibaseLanguages
 import tech.antibytes.wikidata.app.util.UtilContract
 import tech.antibytes.wikidata.mock.MwLocaleStub
@@ -115,26 +115,22 @@ class DependencyProviderSpec {
         val connectivityManager: PublicApi.ConnectivityManager = mockk()
 
         val client: PublicApi.Client = mockk()
-        val capturedDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+        val dispatcher = CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Default) }
 
         every {
             MwClient.getInstance(
                 BuildConfig.ENDPOINT,
                 logger,
                 connectivityManager,
-                capture(capturedDispatcher)
+                dispatcher
             )
         } returns client
 
         // When
-        val actual = DependencyProvider.provideClient(logger, connectivityManager)
+        val actual = DependencyProvider.provideClient(logger, connectivityManager, dispatcher)
 
         // Then
         actual sameAs client
-        capturedDispatcher.captured
-            .dispatch()
-            .toString()
-            .contains("Dispatchers.IO") mustBe true
     }
 
     @Test
@@ -144,8 +140,8 @@ class DependencyProviderSpec {
         val client: PublicApi.Client = mockk()
         val database: WikibaseDataBase = mockk()
         val entityQueries: EntityQueries = mockk()
-        val capturedProducerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
-        val capturedConsumerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+        val ioDispatcher = CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Default) }
+        val flowDispatcher = CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Main) }
 
         val entityStore: EntityStoreContract.EntityStore = mockk()
 
@@ -155,24 +151,16 @@ class DependencyProviderSpec {
             EntityStore.getInstance(
                 client,
                 entityQueries,
-                capture(capturedProducerDispatcher),
-                capture(capturedConsumerDispatcher)
+                ioDispatcher,
+                flowDispatcher
             )
         } returns entityStore
 
         // When
-        val actual = DependencyProvider.provideEntityStore(client, database)
+        val actual = DependencyProvider.provideEntityStore(client, database, ioDispatcher, flowDispatcher)
 
         // Then
         actual sameAs entityStore
-        capturedProducerDispatcher.captured
-            .dispatch()
-            .toString()
-            .contains("Dispatchers.IO") mustBe true
-        capturedConsumerDispatcher.captured
-            .dispatch()
-            .toString()
-            .contains("Dispatchers.Default") mustBe true
     }
 
     @Test
@@ -182,8 +170,8 @@ class DependencyProviderSpec {
         val client: PublicApi.Client = mockk()
         val database: WikibaseDataBase = mockk()
         val pageQueries: PageQueries = mockk()
-        val capturedProducerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
-        val capturedConsumerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+        val ioDispatcher = CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Default) }
+        val flowDispatcher = CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Main) }
 
         val pageStore: PageStoreContract.PageStore = mockk()
 
@@ -193,24 +181,16 @@ class DependencyProviderSpec {
             PageStore.getInstance(
                 client,
                 pageQueries,
-                capture(capturedProducerDispatcher),
-                capture(capturedConsumerDispatcher)
+                ioDispatcher,
+                flowDispatcher
             )
         } returns pageStore
 
         // When
-        val actual = DependencyProvider.providePageStore(client, database)
+        val actual = DependencyProvider.providePageStore(client, database, ioDispatcher, flowDispatcher)
 
         // Then
         actual sameAs pageStore
-        capturedProducerDispatcher.captured
-            .dispatch()
-            .toString()
-            .contains("Dispatchers.IO") mustBe true
-        capturedConsumerDispatcher.captured
-            .dispatch()
-            .toString()
-            .contains("Dispatchers.Default") mustBe true
     }
 
     @Test
@@ -218,32 +198,24 @@ class DependencyProviderSpec {
         mockkObject(UserStore)
 
         val client: PublicApi.Client = mockk()
-        val capturedProducerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
-        val capturedConsumerDispatcher = slot<CoroutineWrapperContract.CoroutineScopeDispatcher>()
+        val ioDispatcher = CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Default) }
+        val flowDispatcher = CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Main) }
 
         val userStore: UserStoreContract.UserStore = mockk()
 
         every {
             UserStore.getInstance(
                 client,
-                capture(capturedProducerDispatcher),
-                capture(capturedConsumerDispatcher)
+                ioDispatcher,
+                flowDispatcher
             )
         } returns userStore
 
         // When
-        val actual = DependencyProvider.provideUserStore(client)
+        val actual = DependencyProvider.provideUserStore(client, ioDispatcher, flowDispatcher)
 
         // Then
         actual sameAs userStore
-        capturedProducerDispatcher.captured
-            .dispatch()
-            .toString()
-            .contains("Dispatchers.IO") mustBe true
-        capturedConsumerDispatcher.captured
-            .dispatch()
-            .toString()
-            .contains("Dispatchers.Default") mustBe true
     }
 
     @Test
@@ -268,5 +240,27 @@ class DependencyProviderSpec {
 
         // Then
         actual sameAs flow
+    }
+
+    @Test
+    fun `Given provideIODispatcher is called, it returns a CoroutineScopeDispatcher`() {
+        // When
+        val dispatcher = DependencyProvider.provideIODispatcher()
+
+        // Then
+        dispatcher.dispatch()
+            .toString()
+            .contains("Dispatchers.IO") mustBe true
+    }
+
+    @Test
+    fun `Given provideStoreDispatcher is called, it returns a CoroutineScopeDispatcher`() {
+        // When
+        val dispatcher = DependencyProvider.provideStoreDispatcher()
+
+        // Then
+        dispatcher.dispatch()
+            .toString()
+            .contains("Dispatchers.Default") mustBe true
     }
 }

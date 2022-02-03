@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.mediawiki.MwClient
 import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.wikibase.store.database.WikibaseDataBase
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.EntityStore
@@ -43,6 +44,10 @@ annotation class SupportedLanguages
 annotation class MutableLanguageHandle
 @Qualifier
 annotation class LanguageState
+@Qualifier
+annotation class IODispatcher
+@Qualifier
+annotation class FlowDispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -105,15 +110,30 @@ object DependencyProvider {
 
     @Singleton
     @Provides
+    @IODispatcher
+    fun provideIODispatcher(): CoroutineScopeDispatcher {
+        return CoroutineScopeDispatcher { CoroutineScope(Dispatchers.IO) }
+    }
+
+    @Singleton
+    @Provides
+    @FlowDispatcher
+    fun provideStoreDispatcher(): CoroutineScopeDispatcher {
+        return CoroutineScopeDispatcher { CoroutineScope(Dispatchers.Default) }
+    }
+
+    @Singleton
+    @Provides
     fun provideClient(
         logger: PublicApi.Logger,
         connectivityManager: PublicApi.ConnectivityManager,
+        @IODispatcher dispatcher: CoroutineScopeDispatcher
     ): PublicApi.Client {
         return MwClient.getInstance(
             host = BuildConfig.ENDPOINT,
             logger = logger,
             connection = connectivityManager,
-            dispatcher = { CoroutineScope(Dispatchers.IO) }
+            dispatcher = dispatcher
         )
     }
 
@@ -121,13 +141,15 @@ object DependencyProvider {
     @Provides
     fun provideEntityStore(
         client: PublicApi.Client,
-        dataBase: WikibaseDataBase
+        dataBase: WikibaseDataBase,
+        @IODispatcher ioDispatcher: CoroutineScopeDispatcher,
+        @FlowDispatcher flowDispatcher: CoroutineScopeDispatcher
     ): EntityStoreContract.EntityStore {
         return EntityStore.getInstance(
             client = client,
             database = dataBase.entityQueries,
-            producerScope = { CoroutineScope(Dispatchers.IO) },
-            consumerScope = { CoroutineScope(Dispatchers.Default) },
+            producerScope = ioDispatcher,
+            consumerScope = flowDispatcher,
         )
     }
 
@@ -135,23 +157,29 @@ object DependencyProvider {
     @Provides
     fun providePageStore(
         client: PublicApi.Client,
-        dataBase: WikibaseDataBase
+        dataBase: WikibaseDataBase,
+        @IODispatcher ioDispatcher: CoroutineScopeDispatcher,
+        @FlowDispatcher flowDispatcher: CoroutineScopeDispatcher
     ): PageStoreContract.PageStore {
         return PageStore.getInstance(
             client = client,
             database = dataBase.pageQueries,
-            producerScope = { CoroutineScope(Dispatchers.IO) },
-            consumerScope = { CoroutineScope(Dispatchers.Default) },
+            producerScope = ioDispatcher,
+            consumerScope = flowDispatcher,
         )
     }
 
     @Singleton
     @Provides
-    fun provideUserStore(client: PublicApi.Client): UserStoreContract.UserStore {
+    fun provideUserStore(
+        client: PublicApi.Client,
+        @IODispatcher ioDispatcher: CoroutineScopeDispatcher,
+        @FlowDispatcher flowDispatcher: CoroutineScopeDispatcher
+    ): UserStoreContract.UserStore {
         return UserStore.getInstance(
             client = client,
-            producerScope = { CoroutineScope(Dispatchers.IO) },
-            consumerScope = { CoroutineScope(Dispatchers.Default) },
+            producerScope = ioDispatcher,
+            consumerScope = flowDispatcher,
         )
     }
 

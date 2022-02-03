@@ -6,6 +6,7 @@
 
 package tech.antibytes.wikidata.app.termbox
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,9 @@ import tech.antibytes.wikibase.store.page.PageStoreContract
 import tech.antibytes.wikidata.app.ApplicationContract
 import tech.antibytes.wikidata.app.di.LanguageState
 import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
+import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.QRCODE_TEMPLATE
 import tech.antibytes.wikidata.app.util.UtilContract.MwLocale
+import tech.antibytes.wikidata.lib.qr.QrCodeStoreContract
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +30,7 @@ class TermboxViewModel @Inject constructor(
     @LanguageState override val language: @JvmSuppressWildcards(true) StateFlow<MwLocale>,
     private val entityStore: EntityStoreContract.EntityStore,
     private val pageStore: PageStoreContract.PageStore,
+    private val qrCodeStore: QrCodeStoreContract.QrCodeStore,
 ) : TermboxContract.TermboxViewModel, ViewModel() {
     private val _id = MutableStateFlow("")
     override val id: StateFlow<String> = _id
@@ -43,7 +47,10 @@ class TermboxViewModel @Inject constructor(
     private val _aliases: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
     override val aliases: StateFlow<List<String>> = _aliases
 
-    init {
+    private val _qrCode: MutableStateFlow<Bitmap?> = MutableStateFlow(null)
+    override val qrCode: StateFlow<Bitmap?> = _qrCode
+
+    private fun subscribeOnEntity() {
         entityStore.entity.subscribeWithSuspendingFunction { entity ->
             when {
                 entity.isSuccess() -> distributeEntity(entity.unwrap())
@@ -58,12 +65,48 @@ class TermboxViewModel @Inject constructor(
         }
     }
 
+    private fun subscribeOnQrCode() {
+        qrCodeStore.qrCode.subscribe { qrCode ->
+            if (qrCode.isError()) {
+                Log.d(
+                    ApplicationContract.LogTag.TERMBOX_VIEWMODEL.value,
+                    qrCode.error?.message ?: qrCode.error.toString()
+                )
+
+                clearQrCode()
+            } else {
+                _qrCode.update { qrCode.unwrap() }
+            }
+        }
+    }
+
+    init {
+        subscribeOnEntity()
+        subscribeOnQrCode()
+    }
+
+    private fun fetchQrCode(id: String) = qrCodeStore.fetch(QRCODE_TEMPLATE + id)
+
+    private fun clearQrCode() {
+        _qrCode.update { null }
+    }
+
+    private fun upDateQrCode(id: String) {
+        if (id.isNotEmpty()) {
+            fetchQrCode(id)
+        } else {
+            clearQrCode()
+        }
+    }
+
     private fun distributeEntity(entity: EntityModelContract.MonolingualEntity) {
         _id.update { entity.id }
         edibility.update { entity.isEditable }
         _label.update { entity.label ?: "" }
         _description.update { entity.description ?: "" }
         _aliases.update { entity.aliases }
+
+        upDateQrCode(entity.id)
     }
 
     override fun setLabel(newLabel: String) = entityStore.setLabel(newLabel)

@@ -6,7 +6,9 @@
 
 package tech.antibytes.wikidata.app.termbox
 
+import android.graphics.Bitmap
 import kotlinx.coroutines.flow.StateFlow
+import tech.antibytes.wikidata.app.BuildConfig
 import tech.antibytes.wikidata.app.util.UtilContract
 
 interface TermboxContract {
@@ -17,6 +19,7 @@ interface TermboxContract {
         val description: StateFlow<String>
         val aliases: StateFlow<List<String>>
         val language: StateFlow<UtilContract.MwLocale>
+        val qrCode: StateFlow<Bitmap?>
 
         fun setLabel(newLabel: String)
         fun setDescription(newDescription: String)
@@ -33,6 +36,7 @@ interface TermboxContract {
 
         companion object {
             const val INITIAL_ENTITY = "Q214750"
+            const val QRCODE_TEMPLATE = "https://${BuildConfig.ENDPOINT}/wiki/"
         }
     }
 

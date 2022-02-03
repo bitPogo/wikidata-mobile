@@ -11,7 +11,7 @@ import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.LanguageTag
 
-interface MapperContract {
+internal interface MapperContract {
     interface RemoteEntityMapper {
         fun toMonolingualEntity(
             language: LanguageTag,

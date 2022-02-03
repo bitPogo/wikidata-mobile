@@ -118,6 +118,9 @@ dependencies {
     implementation(Dependency.multiplatform.serialization.json)
 
     implementation(Dependency.multiplatform.ktor.logger)
+    implementation(Dependency.multiplatform.koin.core)
+
+    implementation(LocalDependency.zing)
 
     implementation(project(":mw-client"))
     implementation(project(":entity-store"))
@@ -137,6 +140,7 @@ dependencies {
     testImplementation(Dependency.android.test.junit)
     testImplementation(Dependency.android.test.junit4)
     testImplementation(Dependency.multiplatform.test.mockk.junit)
+    testImplementation(Dependency.android.test.ktx)
     testImplementation(Dependency.android.test.composeJunit4)
     testImplementation(Dependency.android.test.robolectric)
     testImplementation(LocalDependency.antibytes.test.fixture)

@@ -22,7 +22,8 @@ fun TermboxScreenPreview() {
             MutableStateFlow("Test"),
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(emptyList()),
-            MutableStateFlow(MwLocale("en"))
+            MutableStateFlow(MwLocale("en")),
+            MutableStateFlow(QrCodeStub.qrCode)
         )
     )
 }

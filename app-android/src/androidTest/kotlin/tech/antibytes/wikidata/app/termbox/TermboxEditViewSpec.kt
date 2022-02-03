@@ -6,6 +6,7 @@
 
 package tech.antibytes.wikidata.app.termbox
 
+import android.graphics.Bitmap
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -38,6 +39,7 @@ class TermboxEditViewSpec {
     private val label = MutableStateFlow("")
     private val description = MutableStateFlow("")
     private val aliases = MutableStateFlow(emptyList<String>())
+    private val qrCode = MutableStateFlow<Bitmap?>(null)
 
     private val currentLanguage = MutableStateFlow(
         MwLocaleAndroidStub(fixture.fixture(), fixture.fixture(), ENGLISH)
@@ -49,7 +51,8 @@ class TermboxEditViewSpec {
         label,
         description,
         aliases,
-        currentLanguage
+        currentLanguage,
+        qrCode
     )
 
     @Before

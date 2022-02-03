@@ -23,7 +23,8 @@ fun TermboxViewPreview() {
             MutableStateFlow("Test"),
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(listOf("dummy", "preview", "Lorem ipsum")),
-            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag()))
+            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag())),
+            MutableStateFlow(QrCodeStub.qrCode)
         ),
         navigator = TermboxNavigatorPreviewStub()
     )
@@ -40,7 +41,8 @@ fun TermboxViewPreviewWithEmptyLabel() {
             MutableStateFlow(""),
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(listOf("dummy", "preview", "Lorem ipsum")),
-            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag()))
+            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag())),
+            MutableStateFlow(QrCodeStub.qrCode)
         ),
         navigator = TermboxNavigatorPreviewStub()
     )
@@ -57,7 +59,8 @@ fun TermboxViewPreviewWithEmptyDescription() {
             MutableStateFlow("Test"),
             MutableStateFlow(""),
             MutableStateFlow(listOf("dummy", "preview", "Lorem ipsum")),
-            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag()))
+            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag())),
+            MutableStateFlow(QrCodeStub.qrCode)
         ),
         navigator = TermboxNavigatorPreviewStub()
     )
@@ -74,7 +77,8 @@ fun TermboxViewPreviewWithEmptyAliases() {
             MutableStateFlow("Test"),
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(emptyList()),
-            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag()))
+            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag())),
+            MutableStateFlow(QrCodeStub.qrCode)
         ),
         navigator = TermboxNavigatorPreviewStub()
     )
@@ -91,7 +95,8 @@ fun TermboxViewPreviewProtected() {
             MutableStateFlow("Test"),
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(emptyList()),
-            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag()))
+            MutableStateFlow(MwLocale(ENGLISH.toLanguageTag())),
+            MutableStateFlow(QrCodeStub.qrCode)
         ),
         navigator = TermboxNavigatorPreviewStub()
     )
