@@ -68,7 +68,7 @@ class TermboxMenuSpec {
         composeTestRule
             .onNodeWithText("Add an entity")
             .assertDoesNotExist()
-        
+
         composeTestRule
             .onNodeWithText("Select a random entity")
             .assertDoesNotExist()
@@ -194,7 +194,7 @@ class TermboxMenuSpec {
         composeTestRule
             .onNodeWithText("Add an entity")
             .assertIsDisplayed()
-        
+
         composeTestRule
             .onNodeWithText("Select a random entity")
             .assertIsDisplayed()
@@ -238,7 +238,7 @@ class TermboxMenuSpec {
         composeTestRule
             .onNodeWithText("Add an entity")
             .assertDoesNotExist()
-        
+
         composeTestRule
             .onNodeWithText("Select a random entity")
             .assertDoesNotExist()

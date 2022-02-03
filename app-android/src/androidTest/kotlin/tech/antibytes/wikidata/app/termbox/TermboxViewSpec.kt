@@ -396,4 +396,36 @@ class TermboxViewSpec {
         // Then
         assertTrue(wasClicked)
     }
+
+    @Test
+    fun Given_a_user_clicks_on_addEntity_it_delegates_the_call_to_Viewmodel_and_transits_to_edit_mode() {
+        // Given
+        var createItemInvoked = false
+        var editModeInvoked = false
+
+        viewModel.createNewItem = { createItemInvoked = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermboxView(
+                    onEditMode = { editModeInvoked = true },
+                    viewModel = viewModel,
+                    navigator = navigator
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Show more actions")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Add an entity")
+            .performClick()
+
+        // Then
+        assertTrue(createItemInvoked)
+        assertTrue(editModeInvoked)
+    }
 }
