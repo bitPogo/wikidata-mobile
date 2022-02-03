@@ -21,11 +21,11 @@ import tech.antibytes.wikidata.lib.qr.QrCodeStoreContract
 import tech.antibytes.wikidata.lib.qr.data.QrCodeDataContract
 import tech.antibytes.wikidata.lib.qr.domain.DomainContract
 import tech.antibytes.wikidata.mock.qr.QrCodeQueriesStub
-import tech.antibytes.wikidata.mock.qr.domain.ServiceRepositoryStub
-import tech.antibytes.wikidata.mock.qr.domain.StorageRepositoryStub
 import tech.antibytes.wikidata.mock.qr.data.Base64Stub
 import tech.antibytes.wikidata.mock.qr.data.MapperStub
 import tech.antibytes.wikidata.mock.qr.data.QrCodeServiceStub
+import tech.antibytes.wikidata.mock.qr.domain.ServiceRepositoryStub
+import tech.antibytes.wikidata.mock.qr.domain.StorageRepositoryStub
 
 class DependencyProviderSpec {
     @Test
@@ -133,4 +133,3 @@ private class WikibaseDatabaseStub(
         TODO("Not yet implemented")
     }
 }
-

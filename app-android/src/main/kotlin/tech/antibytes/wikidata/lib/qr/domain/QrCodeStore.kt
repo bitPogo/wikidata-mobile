@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
-import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.util.coroutine.wrapper.SharedFlowWrapper
 import tech.antibytes.wikidata.app.di.FlowDispatcher
 import tech.antibytes.wikidata.app.di.IODispatcher

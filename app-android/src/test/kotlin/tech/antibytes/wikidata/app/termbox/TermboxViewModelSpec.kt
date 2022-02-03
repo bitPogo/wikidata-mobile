@@ -29,7 +29,6 @@ import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.coroutine.wrapper.SharedFlowWrapper
-import tech.antibytes.util.test.BuildConfig
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
@@ -38,7 +37,7 @@ import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
-import tech.antibytes.wikidata.app.BuildConfig.ENDPOINT
+import tech.antibytes.wikidata.app.BuildConfig
 import tech.antibytes.wikidata.mock.EntityStoreStub
 import tech.antibytes.wikidata.mock.MonolingualEntity
 import tech.antibytes.wikidata.mock.MwLocaleStub
@@ -66,7 +65,6 @@ class TermboxViewModelSpec {
     private val pageSurfaceFlow = SharedFlowWrapper.getInstance(
         pageFlow
     ) { CoroutineScope(Dispatchers.Default) }
-
 
     private val qrCodeFlow: MutableSharedFlow<ResultContract<Bitmap, Exception>> = MutableSharedFlow()
 
@@ -993,7 +991,7 @@ class TermboxViewModelSpec {
         runBlocking {
             withTimeout(2000) {
                 result.receive()
-                capturedUrl mustBe "https://${ENDPOINT}/wiki/$id"
+                capturedUrl mustBe "https://${BuildConfig.ENDPOINT}/wiki/$id"
             }
         }
     }

@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.mediawiki.MwClient
 import tech.antibytes.mediawiki.PublicApi
+import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.wikibase.store.database.WikibaseDataBase
 import tech.antibytes.wikibase.store.entity.EntityStoreContract
 import tech.antibytes.wikibase.store.entity.domain.EntityStore
@@ -36,7 +37,6 @@ import tech.antibytes.wikidata.app.util.UtilContract
 import java.util.Locale
 import javax.inject.Qualifier
 import javax.inject.Singleton
-import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 
 @Qualifier
 annotation class SupportedLanguages

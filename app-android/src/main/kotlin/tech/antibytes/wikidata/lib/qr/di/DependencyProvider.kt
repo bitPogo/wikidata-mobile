@@ -10,7 +10,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.wikibase.store.database.WikibaseDataBase
 import tech.antibytes.wikidata.app.di.FlowDispatcher
@@ -24,6 +23,7 @@ import tech.antibytes.wikidata.lib.qr.data.repository.QrCodeServiceRepository
 import tech.antibytes.wikidata.lib.qr.data.repository.QrCodeStorageRepository
 import tech.antibytes.wikidata.lib.qr.domain.DomainContract
 import tech.antibytes.wikidata.lib.qr.domain.QrCodeStore
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

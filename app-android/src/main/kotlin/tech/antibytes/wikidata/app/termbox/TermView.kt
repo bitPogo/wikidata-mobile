@@ -6,7 +6,7 @@
 
 package tech.antibytes.wikidata.app.termbox
 
-import androidx.compose.foundation.Image
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -24,9 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,12 +33,11 @@ import tech.antibytes.wikidata.app.R
 
 @Composable
 fun TermView(
+    qrCode: Bitmap?,
     label: String,
     description: String,
     aliases: List<String>
 ) {
-    val noEntityImage: Painter = painterResource(id = R.drawable.missing_entity_image)
-
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,12 +54,12 @@ fun TermView(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Image(
-                    painter = noEntityImage,
-                    contentDescription = null,
+                QrCode(
+                    qrCode = qrCode,
                     modifier = Modifier
                         .background(Color.Transparent)
-                        .width(250.dp)
+                        .width(200.dp)
+                        .width(200.dp)
                         .clip(RoundedCornerShape(10.dp)),
                     contentScale = ContentScale.FillWidth
                 )

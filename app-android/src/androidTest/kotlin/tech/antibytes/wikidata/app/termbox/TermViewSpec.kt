@@ -31,6 +31,7 @@ class TermViewSpec {
         composeTestRule.setContent {
             WikidataMobileTheme {
                 TermView(
+                    qrCode = null,
                     label = label,
                     description = description,
                     aliases = emptyList()
@@ -57,6 +58,7 @@ class TermViewSpec {
         composeTestRule.setContent {
             WikidataMobileTheme {
                 TermView(
+                    qrCode = null,
                     label = fixture.fixture(),
                     description = fixture.fixture(),
                     aliases = aliases
@@ -79,6 +81,7 @@ class TermViewSpec {
         composeTestRule.setContent {
             WikidataMobileTheme {
                 TermView(
+                    qrCode = null,
                     label = fixture.fixture(),
                     description = fixture.fixture(),
                     aliases = aliases

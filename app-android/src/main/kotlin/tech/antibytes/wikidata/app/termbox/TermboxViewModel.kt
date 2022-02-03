@@ -20,10 +20,10 @@ import tech.antibytes.wikibase.store.page.PageStoreContract
 import tech.antibytes.wikidata.app.ApplicationContract
 import tech.antibytes.wikidata.app.di.LanguageState
 import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
-import tech.antibytes.wikidata.app.util.UtilContract.MwLocale
-import javax.inject.Inject
 import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.QRCODE_TEMPLATE
+import tech.antibytes.wikidata.app.util.UtilContract.MwLocale
 import tech.antibytes.wikidata.lib.qr.QrCodeStoreContract
+import javax.inject.Inject
 
 @HiltViewModel
 class TermboxViewModel @Inject constructor(

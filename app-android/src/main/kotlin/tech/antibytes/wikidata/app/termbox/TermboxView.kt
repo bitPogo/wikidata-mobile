@@ -18,6 +18,7 @@ fun TermboxView(
     viewModel: TermboxContract.TermboxViewModel,
     navigator: TermboxContract.Navigator
 ) {
+    val qrCode = viewModel.qrCode.collectAsState()
     val title = viewModel.id.collectAsState()
     val label = viewModel.label.collectAsState()
     val description = viewModel.description.collectAsState()
@@ -38,6 +39,7 @@ fun TermboxView(
         },
         content = @Composable {
             TermView(
+                qrCode = qrCode.value,
                 label = label.value.useResourceOnNullOrBlank(R.string.termbox_missing_label),
                 description = description.value.useResourceOnNullOrBlank(R.string.termbox_missing_description),
                 aliases = aliases.value

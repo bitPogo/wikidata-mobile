@@ -8,22 +8,13 @@ package tech.antibytes.wikidata.lib.qr.domain
 
 import android.graphics.Bitmap
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.core.KoinApplication
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 import org.robolectric.RobolectricTestRunner
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.test.fixture.fixture
@@ -31,7 +22,6 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.lib.qr.QrCodeStoreContract
-import tech.antibytes.wikidata.mock.qr.QrCodeQueriesStub
 import tech.antibytes.wikidata.mock.qr.domain.ServiceRepositoryStub
 import tech.antibytes.wikidata.mock.qr.domain.StorageRepositoryStub
 
