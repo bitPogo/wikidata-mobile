@@ -36,6 +36,7 @@ import tech.antibytes.wikidata.app.ui.theme.White
 private fun ActionsButtons(
     isEditable: Boolean,
     onSearch: () -> Unit,
+    onNew: () -> Unit,
     onEdit: () -> Unit,
     onRefresh: () -> Unit,
     onLanguageSearch: () -> Unit,
@@ -94,6 +95,17 @@ private fun ActionsButtons(
                 DropdownMenuItem(
                     onClick = {
                         expanded.value = false
+                        onNew.invoke()
+                    }
+                ) {
+                    Text(stringResource(R.string.termbox_menu_add_new_entity))
+                }
+
+                Divider()
+
+                DropdownMenuItem(
+                    onClick = {
+                        expanded.value = false
                         onLanguageSearch.invoke()
                     }
                 ) {
@@ -120,6 +132,7 @@ fun TermMenu(
     title: String,
     isEditable: Boolean,
     onSearch: () -> Unit,
+    onNew: () -> Unit,
     onEdit: () -> Unit,
     onRefresh: () -> Unit,
     onLanguageSearch: () -> Unit,
@@ -134,6 +147,7 @@ fun TermMenu(
             ActionsButtons(
                 isEditable = isEditable,
                 onSearch = onSearch,
+                onNew = onNew,
                 onRefresh = onRefresh,
                 onEdit = onEdit,
                 onLanguageSearch = onLanguageSearch,

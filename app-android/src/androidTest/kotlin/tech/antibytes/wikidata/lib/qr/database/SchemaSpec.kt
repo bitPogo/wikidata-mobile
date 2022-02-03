@@ -47,4 +47,24 @@ class SchemaSpec {
             actual
         )
     }
+
+    @Test
+    fun It_adds_QrCodes_while_ignoring_duplicates() {
+        // Given
+        val id: String = fixture.fixture()
+        val qrCode: String = fixture.fixture()
+
+        // When
+        val qrCodeQueries: QrCodeQueries = db.dataBase.qrCodeQueries
+        qrCodeQueries.addQrCode(id, qrCode)
+        qrCodeQueries.addQrCode(id, qrCode)
+
+        val actual = qrCodeQueries.fetchQrCode(id).executeAsOneOrNull()
+
+        // Then
+        assertEquals(
+            qrCode,
+            actual
+        )
+    }
 }

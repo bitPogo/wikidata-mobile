@@ -35,6 +35,7 @@ class TermboxMenuSpec {
                     title = title,
                     isEditable = true,
                     onSearch = { },
+                    onNew = { },
                     onRefresh = { },
                     onEdit = { },
                     onLanguageSearch = { },
@@ -65,6 +66,10 @@ class TermboxMenuSpec {
             .assertIsDisplayed()
 
         composeTestRule
+            .onNodeWithText("Add an entity")
+            .assertDoesNotExist()
+
+        composeTestRule
             .onNodeWithText("Select a random entity")
             .assertDoesNotExist()
 
@@ -86,6 +91,7 @@ class TermboxMenuSpec {
                     title = fixture.fixture(),
                     isEditable = true,
                     onSearch = onSearch,
+                    onNew = { },
                     onRefresh = { },
                     onEdit = { },
                     onLanguageSearch = { },
@@ -115,6 +121,7 @@ class TermboxMenuSpec {
                     title = fixture.fixture(),
                     isEditable = true,
                     onSearch = { },
+                    onNew = { },
                     onRefresh = onRefresh,
                     onEdit = { },
                     onLanguageSearch = { },
@@ -144,6 +151,7 @@ class TermboxMenuSpec {
                     title = fixture.fixture(),
                     isEditable = true,
                     onSearch = { },
+                    onNew = { },
                     onRefresh = { },
                     onEdit = onEdit,
                     onLanguageSearch = { },
@@ -170,6 +178,7 @@ class TermboxMenuSpec {
                     isEditable = true,
                     onRefresh = { },
                     onSearch = { },
+                    onNew = { },
                     onEdit = { },
                     onLanguageSearch = { },
                     onRandomEntity = { }
@@ -182,6 +191,10 @@ class TermboxMenuSpec {
             .performClick()
 
         // Then
+        composeTestRule
+            .onNodeWithText("Add an entity")
+            .assertIsDisplayed()
+
         composeTestRule
             .onNodeWithText("Select a random entity")
             .assertIsDisplayed()
@@ -204,6 +217,7 @@ class TermboxMenuSpec {
                     title = fixture.fixture(),
                     isEditable = true,
                     onSearch = { },
+                    onNew = { },
                     onRefresh = { },
                     onEdit = { },
                     onLanguageSearch = { },
@@ -221,6 +235,10 @@ class TermboxMenuSpec {
             .performClick()
 
         // Then
+        composeTestRule
+            .onNodeWithText("Add an entity")
+            .assertDoesNotExist()
+
         composeTestRule
             .onNodeWithText("Select a random entity")
             .assertDoesNotExist()
@@ -245,6 +263,7 @@ class TermboxMenuSpec {
                     title = fixture.fixture(),
                     isEditable = true,
                     onSearch = { },
+                    onNew = { },
                     onRefresh = { },
                     onEdit = { },
                     onLanguageSearch = onLanguageSearch,
@@ -262,6 +281,56 @@ class TermboxMenuSpec {
             .performClick()
 
         // Then
+        composeTestRule
+            .onNodeWithText("Add an entity")
+            .assertDoesNotExist()
+
+        composeTestRule
+            .onNodeWithText("Select a random entity")
+            .assertDoesNotExist()
+
+        composeTestRule
+            .onNodeWithText("Select another language")
+            .assertDoesNotExist()
+
+        assertTrue(wasCalled)
+    }
+
+    @Test
+    fun Given_show_more_and_add_entity_is_clicked_it_delegates_the_call_to_the_given_function_while_closing_the_addional_item() {
+        // Given
+        var wasCalled = false
+        val onAddEntity = { wasCalled = true }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermMenu(
+                    title = fixture.fixture(),
+                    isEditable = true,
+                    onSearch = { },
+                    onNew = onAddEntity,
+                    onRefresh = { },
+                    onEdit = { },
+                    onLanguageSearch = { },
+                    onRandomEntity = { }
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Show more actions")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Add an entity")
+            .performClick()
+
+        // Then
+        composeTestRule
+            .onNodeWithText("Add an entity")
+            .assertDoesNotExist()
+
         composeTestRule
             .onNodeWithText("Select a random entity")
             .assertDoesNotExist()

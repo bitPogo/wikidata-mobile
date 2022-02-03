@@ -31,6 +31,10 @@ fun TermboxView(
                 title = title.value,
                 isEditable = isEditable.value,
                 onSearch = navigator::goToTermSearch,
+                onNew = {
+                    viewModel.createNewItem()
+                    onEditMode.invoke()
+                },
                 onEdit = onEditMode,
                 onRefresh = viewModel::refresh,
                 onLanguageSearch = navigator::goToLanguageSelector,

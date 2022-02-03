@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS QrCode(
 );
 
 addQrCode:
-INSERT INTO QrCode(id, encodedQrCode)
+INSERT OR IGNORE INTO QrCode(id, encodedQrCode)
 VALUES (?, ?)
 ;
 
