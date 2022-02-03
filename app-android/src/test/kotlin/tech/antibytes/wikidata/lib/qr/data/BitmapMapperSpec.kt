@@ -19,7 +19,7 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
-import tech.antibytes.wikidata.mock.qr.transfer.Base64Stub
+import tech.antibytes.wikidata.mock.qr.data.Base64Stub
 
 @RunWith(RobolectricTestRunner::class)
 class BitmapMapperSpec {

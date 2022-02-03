@@ -19,7 +19,7 @@ import tech.antibytes.wikidata.lib.qr.domain.DomainContract
 import tech.antibytes.wikidata.mock.qr.QrCodeQueriesStub
 import tech.antibytes.wikidata.mock.qr.QueryStub
 import tech.antibytes.wikidata.mock.qr.SqlCursorStub
-import tech.antibytes.wikidata.mock.qr.transfer.MapperStub
+import tech.antibytes.wikidata.mock.qr.data.MapperStub
 
 @RunWith(RobolectricTestRunner::class)
 class StorageRepositorySpec {

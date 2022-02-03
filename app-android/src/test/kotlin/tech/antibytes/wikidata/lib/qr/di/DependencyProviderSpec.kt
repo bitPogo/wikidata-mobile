@@ -23,9 +23,9 @@ import tech.antibytes.wikidata.lib.qr.domain.DomainContract
 import tech.antibytes.wikidata.mock.qr.QrCodeQueriesStub
 import tech.antibytes.wikidata.mock.qr.domain.ServiceRepositoryStub
 import tech.antibytes.wikidata.mock.qr.domain.StorageRepositoryStub
-import tech.antibytes.wikidata.mock.qr.transfer.Base64Stub
-import tech.antibytes.wikidata.mock.qr.transfer.MapperStub
-import tech.antibytes.wikidata.mock.qr.transfer.QrCodeServiceStub
+import tech.antibytes.wikidata.mock.qr.data.Base64Stub
+import tech.antibytes.wikidata.mock.qr.data.MapperStub
+import tech.antibytes.wikidata.mock.qr.data.QrCodeServiceStub
 
 class DependencyProviderSpec {
     @Test

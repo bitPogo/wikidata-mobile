@@ -6,6 +6,7 @@
 
 package tech.antibytes.wikidata.app.termbox
 
+import android.graphics.Bitmap
 import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.wikidata.app.util.UtilContract
 
@@ -15,7 +16,8 @@ class TermboxViewModelPreviewStub(
     override val label: StateFlow<String>,
     override val description: StateFlow<String>,
     override val aliases: StateFlow<List<String>>,
-    override val language: StateFlow<UtilContract.MwLocale>
+    override val language: StateFlow<UtilContract.MwLocale>,
+    override val qrCode: StateFlow<Bitmap?>
 ) : TermboxContract.TermboxViewModel {
     override fun setLabel(newLabel: String) = Unit
 

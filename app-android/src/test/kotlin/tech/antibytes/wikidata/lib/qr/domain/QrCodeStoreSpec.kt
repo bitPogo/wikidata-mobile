@@ -195,13 +195,6 @@ class QrCodeStoreSpec {
             throw expected
         }
 
-        var capturedStoringUrl: String? = null
-        var capturedStoringBitmap: Bitmap? = null
-        storageRepository.storeQrCode = { givenUrl, givenBitmap ->
-            capturedStoringUrl = givenUrl
-            capturedStoringBitmap = givenBitmap
-        }
-
         // When
         val store = QrCodeStore(
             serviceRepository,

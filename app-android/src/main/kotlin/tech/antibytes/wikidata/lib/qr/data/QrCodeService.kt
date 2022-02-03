@@ -42,10 +42,8 @@ internal class QrCodeService constructor(
     }
 
     override suspend fun create(url: String): ByteArray {
-        val qrString = "url:$url"
-
         val matrix = qrCodeWriter.encode(
-            qrString,
+            url,
             BarcodeFormat.QR_CODE,
             SIZE,
             SIZE,

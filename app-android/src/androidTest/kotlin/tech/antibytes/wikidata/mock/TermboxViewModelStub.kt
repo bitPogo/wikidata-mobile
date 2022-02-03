@@ -6,6 +6,7 @@
 
 package tech.antibytes.wikidata.mock
 
+import android.graphics.Bitmap
 import kotlinx.coroutines.flow.StateFlow
 import tech.antibytes.wikidata.app.termbox.TermboxContract
 import tech.antibytes.wikidata.app.util.UtilContract
@@ -17,6 +18,7 @@ class TermboxViewModelStub(
     override val description: StateFlow<String>,
     override val aliases: StateFlow<List<String>>,
     override val language: StateFlow<UtilContract.MwLocale>,
+    override val qrCode: StateFlow<Bitmap?>,
     var setLabel: ((String) -> Unit)? = null,
     var setDescription: ((String) -> Unit)? = null,
     var addAlias: ((String) -> Unit)? = null,

@@ -22,7 +22,8 @@ fun TermboxViewEditPreview() {
             MutableStateFlow("Test"),
             MutableStateFlow("A Simple Preview"),
             MutableStateFlow(listOf("dummy", "preview", "Lorem ipsum")),
-            MutableStateFlow(MwLocale("en"))
+            MutableStateFlow(MwLocale("en")),
+            MutableStateFlow(null)
         )
     )
 }

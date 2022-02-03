@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.mock.qr.transfer
+package tech.antibytes.wikidata.mock.qr.data
 
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError

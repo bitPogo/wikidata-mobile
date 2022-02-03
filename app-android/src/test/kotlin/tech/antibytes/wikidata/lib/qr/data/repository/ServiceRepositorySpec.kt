@@ -17,10 +17,9 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
-import tech.antibytes.wikidata.lib.qr.data.repository.QrCodeServiceRepository
 import tech.antibytes.wikidata.lib.qr.domain.DomainContract
-import tech.antibytes.wikidata.mock.qr.transfer.MapperStub
-import tech.antibytes.wikidata.mock.qr.transfer.QrCodeServiceStub
+import tech.antibytes.wikidata.mock.qr.data.MapperStub
+import tech.antibytes.wikidata.mock.qr.data.QrCodeServiceStub
 
 @RunWith(RobolectricTestRunner::class)
 class ServiceRepositorySpec {

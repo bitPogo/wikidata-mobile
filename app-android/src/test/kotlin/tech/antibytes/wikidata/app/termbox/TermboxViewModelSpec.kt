@@ -6,6 +6,7 @@
 
 package tech.antibytes.wikidata.app.termbox
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,17 +29,21 @@ import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.coroutine.wrapper.SharedFlowWrapper
+import tech.antibytes.util.test.BuildConfig
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
+import tech.antibytes.util.test.sameAs
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.lang.EntityStoreError
+import tech.antibytes.wikidata.app.BuildConfig.ENDPOINT
 import tech.antibytes.wikidata.mock.EntityStoreStub
 import tech.antibytes.wikidata.mock.MonolingualEntity
 import tech.antibytes.wikidata.mock.MwLocaleStub
 import tech.antibytes.wikidata.mock.PageStoreStub
+import tech.antibytes.wikidata.mock.QrCodeStoreStub
 import java.lang.Exception
 
 @RunWith(RobolectricTestRunner::class)
@@ -62,6 +67,13 @@ class TermboxViewModelSpec {
         pageFlow
     ) { CoroutineScope(Dispatchers.Default) }
 
+
+    private val qrCodeFlow: MutableSharedFlow<ResultContract<Bitmap, Exception>> = MutableSharedFlow()
+
+    private val qrCodeSurfaceFlow = SharedFlowWrapper.getInstance(
+        qrCodeFlow
+    ) { CoroutineScope(Dispatchers.Default) }
+
     private val entityStore = EntityStoreStub(
         entitySurfaceFlow,
     )
@@ -70,12 +82,18 @@ class TermboxViewModelSpec {
         SharedFlowWrapper.getInstance(MutableSharedFlow()) { CoroutineScope(Dispatchers.Default) }
     )
 
+    private val qrCodeStore = QrCodeStoreStub(
+        qrCodeSurfaceFlow
+    )
+
     @Before
     fun setUp() {
         entityStore.clear()
         pageStore.clear()
+        qrCodeStore.clear()
 
         entityStore.fetchEntity = { _, _ -> Unit }
+        qrCodeStore.fetch = { }
 
         entityFlow.update { Failure(EntityStoreError.InitialState()) }
     }
@@ -85,7 +103,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
         viewModel fulfils TermboxContract.TermboxViewModel::class
         viewModel fulfils ViewModel::class
@@ -105,7 +124,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         runBlocking {
@@ -133,7 +153,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         // Then
@@ -147,7 +168,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         // Then
@@ -176,7 +198,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -204,6 +227,60 @@ class TermboxViewModelSpec {
     }
 
     @Test
+    fun `It has an null for an QrCode by default`() {
+        // When
+        val viewModel = TermboxViewModel(
+            currentLanguageState,
+            entityStore,
+            pageStore,
+            qrCodeStore
+        )
+
+        // Then
+        viewModel.qrCode.value mustBe null
+    }
+
+    @Test
+    fun `It distributes an emitted QrCode`() {
+        // Given
+        val qrCode = Bitmap.createBitmap(2, 2, Bitmap.Config.RGB_565)
+        val result = Channel<Bitmap?>()
+
+        // When
+        val viewModel = TermboxViewModel(
+            currentLanguageState,
+            entityStore,
+            pageStore,
+            qrCodeStore
+        )
+
+        CoroutineScope(Dispatchers.Default).launch {
+            viewModel.qrCode.collectLatest {
+                result.send(it)
+            }
+        }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe null
+            }
+        }
+
+        // When
+        CoroutineScope(Dispatchers.Default).launch {
+            qrCodeFlow.emit(Success(qrCode))
+        }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() sameAs qrCode
+            }
+        }
+    }
+
+    @Test
     fun `It emits the given Language`() {
         // Given
         val language = MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
@@ -214,7 +291,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         // Then
@@ -227,7 +305,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         // Then
@@ -256,7 +335,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -289,7 +369,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         // Then
@@ -318,7 +399,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -366,7 +448,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -408,7 +491,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         // Then
@@ -437,7 +521,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -485,7 +570,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -527,7 +613,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         // Then
@@ -556,7 +643,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -597,7 +685,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).setLabel(newLabel)
 
         // Then
@@ -618,7 +707,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).setDescription(newDescription)
 
         // Then
@@ -642,7 +732,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).setAlias(index, newAlias)
 
         // Then
@@ -665,7 +756,8 @@ class TermboxViewModelSpec {
         val viewModel = TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         )
 
         entityFlow.update {
@@ -712,7 +804,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).dischargeChanges()
 
         // Then
@@ -731,7 +824,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).saveChanges()
 
         // Then
@@ -750,7 +844,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).saveChanges()
 
         // Then
@@ -777,7 +872,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).fetchItem(id)
 
         // Then
@@ -804,7 +900,8 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).createNewItem()
 
         // Then
@@ -836,11 +933,124 @@ class TermboxViewModelSpec {
         TermboxViewModel(
             currentLanguageState,
             entityStore,
-            pageStore
+            pageStore,
+            qrCodeStore
         ).fetchItem(id)
 
         // Then
         capturedLanguageTag mustBe language.toLanguageTag()
         capturedId mustBe id
+    }
+
+    @Test
+    fun `Given a Id has been changed it updates the QrCode if the Id is not empty`() {
+        // Given
+        val id: String = fixture.fixture()
+        val result = Channel<String>()
+
+        val entity = MonolingualEntity(
+            id = id,
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            isEditable = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = emptyList()
+        )
+
+        var capturedUrl: String? = null
+        qrCodeStore.fetch = { givenUrl ->
+            capturedUrl = givenUrl
+        }
+
+        // When
+        val viewModel = TermboxViewModel(
+            currentLanguageState,
+            entityStore,
+            pageStore,
+            qrCodeStore
+        )
+
+        CoroutineScope(Dispatchers.Default).launch {
+            viewModel.id.collectLatest {
+                result.send(it)
+            }
+        }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive()
+            }
+        }
+
+        // When
+        entityFlow.update { Success(entity) }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive()
+                capturedUrl mustBe "https://${ENDPOINT}/wiki/$id"
+            }
+        }
+    }
+
+    @Test
+    fun `Given a Id has been changed it updates the QrCode to null if the Id is empty`() {
+        // Given
+        val id = ""
+        val bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.RGB_565)
+        val result = Channel<Bitmap?>()
+
+        val entity = MonolingualEntity(
+            id = id,
+            type = EntityModelContract.EntityType.ITEM,
+            revision = fixture.fixture(),
+            language = fixture.fixture(),
+            isEditable = fixture.fixture(),
+            lastModification = Instant.fromEpochMilliseconds(fixture.fixture()),
+            label = fixture.fixture(),
+            description = fixture.fixture(),
+            aliases = emptyList()
+        )
+
+        // When
+        val viewModel = TermboxViewModel(
+            currentLanguageState,
+            entityStore,
+            pageStore,
+            qrCodeStore
+        )
+
+        CoroutineScope(Dispatchers.Default).launch {
+            viewModel.qrCode.collectLatest {
+                result.send(it)
+            }
+        }
+
+        val job = CoroutineScope(Dispatchers.Default).launch {
+            qrCodeFlow.emit(Success(bitmap))
+        }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                job.join()
+                result.receive() mustBe bitmap
+            }
+        }
+
+        // When
+        entityFlow.update { Success(entity) }
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                result.receive() mustBe null
+            }
+        }
     }
 }

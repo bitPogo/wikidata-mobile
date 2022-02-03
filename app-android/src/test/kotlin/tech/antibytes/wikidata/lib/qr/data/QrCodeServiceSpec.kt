@@ -51,7 +51,7 @@ class QrCodeServiceSpec {
 
         every {
             writer.encode(
-                "url:$url",
+                "$url",
                 BarcodeFormat.QR_CODE,
                 175,
                 175,
