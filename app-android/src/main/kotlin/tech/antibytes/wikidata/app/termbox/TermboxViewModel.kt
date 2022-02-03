@@ -21,12 +21,14 @@ import tech.antibytes.wikidata.app.di.LanguageState
 import tech.antibytes.wikidata.app.termbox.TermboxContract.TermboxViewModel.Companion.INITIAL_ENTITY
 import tech.antibytes.wikidata.app.util.UtilContract.MwLocale
 import javax.inject.Inject
+import tech.antibytes.wikidata.lib.qr.QrCodeStoreContract
 
 @HiltViewModel
 class TermboxViewModel @Inject constructor(
     @LanguageState override val language: @JvmSuppressWildcards(true) StateFlow<MwLocale>,
     private val entityStore: EntityStoreContract.EntityStore,
     private val pageStore: PageStoreContract.PageStore,
+    // private val qrCodeStore: QrCodeStoreContract.QrCodeStore,
 ) : TermboxContract.TermboxViewModel, ViewModel() {
     private val _id = MutableStateFlow("")
     override val id: StateFlow<String> = _id

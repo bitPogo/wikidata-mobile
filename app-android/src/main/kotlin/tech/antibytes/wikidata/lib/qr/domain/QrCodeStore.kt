@@ -9,38 +9,24 @@ package tech.antibytes.wikidata.lib.qr.domain
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.koin.core.KoinApplication
-import org.koin.core.qualifier.named
 import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract.CoroutineScopeDispatcher
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.util.coroutine.wrapper.SharedFlowWrapper
-import tech.antibytes.wikibase.store.database.QrCodeQueries
 import tech.antibytes.wikidata.app.di.FlowDispatcher
 import tech.antibytes.wikidata.app.di.IODispatcher
 import tech.antibytes.wikidata.lib.qr.QrCodeStoreContract
-import tech.antibytes.wikidata.lib.qr.di.initKoin
 
 class QrCodeStore internal constructor(
     private val serviceRepository: DomainContract.ServiceRepository,
     private val storageRepository: DomainContract.StorageRepository,
     @IODispatcher private val ioDispatcher: CoroutineScopeDispatcher,
     @FlowDispatcher flowDispatcher: CoroutineScopeDispatcher
-) : QrCodeStoreContract.QrCodeStore {//koin: KoinApplication)
+) : QrCodeStoreContract.QrCodeStore {
     private val flow: MutableSharedFlow<ResultContract<Bitmap, Exception>> = MutableSharedFlow()
-    /*private val flow: MutableSharedFlow<ResultContract<Bitmap, Exception>> by koin.koin.inject()
 
-    private val serviceRepository: DomainContract.ServiceRepository by koin.koin.inject()
-
-    private val storageRepository: DomainContract.StorageRepository by koin.koin.inject()
-
-    private val ioDispatcher: CoroutineScopeDispatcher by koin.koin.inject(
-        named(DomainContract.DomainKoinIds.PRODUCER_SCOPE)
-    )*/
-
-    //override val qrCode: SharedFlowWrapper<Bitmap, Exception> = koin.koin.get()
     override val qrCode: CoroutineWrapperContract.SharedFlowWrapper<Bitmap, Exception> = SharedFlowWrapper.getInstance(
         flow,
         flowDispatcher
@@ -76,23 +62,6 @@ class QrCodeStore internal constructor(
     override fun fetch(url: String) {
         executeEvent {
             fetchOrCreate(url)
-        }
-    }
-
-    companion object : QrCodeStoreContract.QrCodeStoreFactory {
-        override fun getInstance(
-            database: QrCodeQueries,
-            producerScope: CoroutineScopeDispatcher,
-            consumerScope: CoroutineScopeDispatcher
-        ): QrCodeStoreContract.QrCodeStore {
-            val koin = initKoin(
-                database,
-                producerScope,
-                consumerScope
-            )
-
-            TODO()
-           // return QrCodeStore(koin)
         }
     }
 }

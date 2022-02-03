@@ -41,41 +41,21 @@ class QrCodeStoreSpec {
     private val serviceRepository = ServiceRepositoryStub()
     private val storageRepository = StorageRepositoryStub()
 
-    private fun initKoin(
-        serviceRepository: DomainContract.ServiceRepository,
-        storageRepository: DomainContract.StorageRepository,
-        flow: MutableSharedFlow<ResultContract<Bitmap, Exception>>
-    ): KoinApplication {
-        return koinApplication {
-            modules(
-                module {
-                    single { serviceRepository }
-                    single { storageRepository }
-                    single { flow }
-                }
-            )
-        }
-    }
-
     @Before
     fun setUp() {
         serviceRepository.clear()
         storageRepository.clear()
     }
 
-    /*@Test
-    fun `It fulfils QrCodeStoreFactory`() {
-        QrCodeStore fulfils QrCodeStoreContract.QrCodeStoreFactory::class
-    }
-
     @Test
-    fun `Given getInstance is called it returns a QrCodeStorage`() {
-        QrCodeStore.getInstance(
-            QrCodeQueriesStub(),
+    fun `It fulfils QrCodeStorage`() {
+        QrCodeStore(
+            serviceRepository,
+            storageRepository,
             { CoroutineScope(Dispatchers.IO) },
             { CoroutineScope(Dispatchers.Default) }
         ) fulfils QrCodeStoreContract.QrCodeStore::class
-    }*/
+    }
 
     @Test
     fun `Given fetch is called and a QrCode is store it returns it from the Storage`() {
@@ -113,7 +93,6 @@ class QrCodeStoreSpec {
         }
     }
 
-    /*
     @Test
     fun `Given fetch is called and a QrCode is not store it returns a QrCode while creating and storing`() {
         // Given
@@ -149,6 +128,8 @@ class QrCodeStoreSpec {
             actual.send(result)
         }
 
+        store.fetch(url)
+
         // Then
         runBlocking {
             withTimeout(2000) {
@@ -159,6 +140,142 @@ class QrCodeStoreSpec {
                 capturedStoringUrl mustBe url
                 capturedStoringBitmap mustBe expected
             }
-        }*/
-    //}
+        }
+    }
+
+    @Test
+    fun `Given fetch is called and a QrCode is store it propagates errors from the Storage`() {
+        // Given
+        val url: String = fixture.fixture()
+        val expected = RuntimeException()
+        val actual = Channel<ResultContract<Bitmap, Exception>>()
+
+        var capturedUrl: String? = null
+        storageRepository.fetchQrCode = { givenUrl ->
+            capturedUrl = givenUrl
+
+            throw expected
+        }
+
+        val store = QrCodeStore(
+            serviceRepository,
+            storageRepository,
+            { CoroutineScope(Dispatchers.IO) },
+            { CoroutineScope(Dispatchers.Default) }
+        )
+
+        store.qrCode.subscribeWithSuspendingFunction { result ->
+            actual.send(result)
+        }
+
+        store.fetch(url)
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                actual.receive().error mustBe expected
+                capturedUrl mustBe url
+            }
+        }
+    }
+
+    @Test
+    fun `Given fetch is called and a QrCode is not store it propagates Errors form Creating`() {
+        // Given
+        val url: String = fixture.fixture()
+        val expected = RuntimeException()
+        val actual = Channel<ResultContract<Bitmap, Exception>>()
+
+        storageRepository.fetchQrCode = { null }
+
+        var capturedCreationUrl: String? = null
+        serviceRepository.createQrCode = { givenUrl ->
+            capturedCreationUrl = givenUrl
+
+            throw expected
+        }
+
+        var capturedStoringUrl: String? = null
+        var capturedStoringBitmap: Bitmap? = null
+        storageRepository.storeQrCode = { givenUrl, givenBitmap ->
+            capturedStoringUrl = givenUrl
+            capturedStoringBitmap = givenBitmap
+        }
+
+        // When
+        val store = QrCodeStore(
+            serviceRepository,
+            storageRepository,
+            { CoroutineScope(Dispatchers.IO) },
+            { CoroutineScope(Dispatchers.Default) }
+        )
+
+        store.qrCode.subscribeWithSuspendingFunction { result ->
+            actual.send(result)
+        }
+
+        store.fetch(url)
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                actual.receive().error mustBe expected
+
+                capturedCreationUrl mustBe url
+            }
+        }
+    }
+
+    @Test
+    fun `Given fetch is called and a QrCode is not store it propagates Errors from storing`() {
+        // Given
+        val url: String = fixture.fixture()
+        val bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.RGB_565)
+        val expected = RuntimeException()
+        val actual = Channel<ResultContract<Bitmap, Exception>>()
+
+        storageRepository.fetchQrCode = { null }
+
+        var capturedCreationUrl: String? = null
+        serviceRepository.createQrCode = { givenUrl ->
+            capturedCreationUrl = givenUrl
+
+            bitmap
+        }
+
+        var capturedStoringUrl: String? = null
+        var capturedStoringBitmap: Bitmap? = null
+        storageRepository.storeQrCode = { givenUrl, givenBitmap ->
+            capturedStoringUrl = givenUrl
+            capturedStoringBitmap = givenBitmap
+
+            throw expected
+        }
+
+        // When
+        val store = QrCodeStore(
+            serviceRepository,
+            storageRepository,
+            { CoroutineScope(Dispatchers.IO) },
+            { CoroutineScope(Dispatchers.Default) }
+        )
+
+        store.qrCode.subscribeWithSuspendingFunction { result ->
+            actual.send(result)
+        }
+
+        store.fetch(url)
+
+        // Then
+        runBlocking {
+            withTimeout(2000) {
+                actual.receive().error mustBe expected
+
+                capturedCreationUrl mustBe url
+
+                capturedStoringUrl mustBe url
+                capturedStoringBitmap mustBe bitmap
+            }
+        }
+    }
 }
