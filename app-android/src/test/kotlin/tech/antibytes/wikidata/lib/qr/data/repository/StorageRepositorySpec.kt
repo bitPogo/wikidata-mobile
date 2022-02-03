@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.qr.data
+package tech.antibytes.wikidata.lib.qr.data.repository
 
 import android.graphics.Bitmap
 import kotlinx.coroutines.runBlocking
@@ -15,7 +15,7 @@ import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
-import tech.antibytes.wikidata.app.qr.domain.DomainContract
+import tech.antibytes.wikidata.lib.qr.domain.DomainContract
 import tech.antibytes.wikidata.mock.qr.QrCodeQueriesStub
 import tech.antibytes.wikidata.mock.qr.QueryStub
 import tech.antibytes.wikidata.mock.qr.SqlCursorStub
@@ -29,7 +29,7 @@ class StorageRepositorySpec {
 
     @Test
     fun `It fulfils StorageRepository`() {
-        StorageRepository(queries, mapper) fulfils DomainContract.StorageRepository::class
+        QrCodeStorageRepository(queries, mapper) fulfils DomainContract.StorageRepository::class
     }
 
     @Test
@@ -62,7 +62,7 @@ class StorageRepositorySpec {
 
         runBlocking {
             // When
-            val actual = StorageRepository(queries, mapper).fetchQrCode(url)
+            val actual = QrCodeStorageRepository(queries, mapper).fetchQrCode(url)
 
             // Then
             capturedUrl mustBe url
@@ -76,7 +76,6 @@ class StorageRepositorySpec {
     fun `Given fetchQrCode is called with a Url, it returns null if no QrCode is stored`() {
         // Given
         val url: String = fixture.fixture()
-        val bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.RGB_565)
 
         val nexts = mutableListOf(false)
         val fetchQrCodeCursor = SqlCursorStub { nexts.removeFirst() }
@@ -94,7 +93,7 @@ class StorageRepositorySpec {
 
         runBlocking {
             // When
-            val actual = StorageRepository(queries, mapper).fetchQrCode(url)
+            val actual = QrCodeStorageRepository(queries, mapper).fetchQrCode(url)
 
             // Then
             capturedUrl mustBe url
@@ -127,7 +126,7 @@ class StorageRepositorySpec {
         // When
         runBlocking {
             // When
-            val actual = StorageRepository(queries, mapper).storeQrCode(url, bitmap)
+            val actual = QrCodeStorageRepository(queries, mapper).storeQrCode(url, bitmap)
 
             // Then
             capturedBitmap mustBe bitmap

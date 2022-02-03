@@ -117,9 +117,8 @@ dependencies {
     implementation(Dependency.multiplatform.serialization.android)
     implementation(Dependency.multiplatform.serialization.json)
 
-    implementation(Dependency.multiplatform.koin.core)
-
     implementation(Dependency.multiplatform.ktor.logger)
+    implementation(Dependency.multiplatform.koin.core)
 
     implementation(LocalDependency.zing)
 

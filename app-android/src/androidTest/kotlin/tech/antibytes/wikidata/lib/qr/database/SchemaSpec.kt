@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.qr.database
+package tech.antibytes.wikidata.lib.qr.database
 
 import org.junit.After
 import org.junit.Assert.assertEquals

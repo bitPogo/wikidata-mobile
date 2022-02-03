@@ -4,7 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.qr.data
+package tech.antibytes.wikidata.lib.qr.data.repository
 
 import android.graphics.Bitmap
 import kotlinx.coroutines.runBlocking
@@ -17,7 +17,8 @@ import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs
-import tech.antibytes.wikidata.app.qr.domain.DomainContract
+import tech.antibytes.wikidata.lib.qr.data.repository.QrCodeServiceRepository
+import tech.antibytes.wikidata.lib.qr.domain.DomainContract
 import tech.antibytes.wikidata.mock.qr.transfer.MapperStub
 import tech.antibytes.wikidata.mock.qr.transfer.QrCodeServiceStub
 
@@ -35,7 +36,7 @@ class ServiceRepositorySpec {
 
     @Test
     fun `It fulfils Repository`() {
-        ServiceRepository(service, mapper) fulfils DomainContract.ServiceRepository::class
+        QrCodeServiceRepository(service, mapper) fulfils DomainContract.ServiceRepository::class
     }
 
     @Test
@@ -61,7 +62,7 @@ class ServiceRepositorySpec {
 
         runBlocking {
             // When
-            val actual = ServiceRepository(service, mapper).createQrCode(url)
+            val actual = QrCodeServiceRepository(service, mapper).createQrCode(url)
 
             // Then
             capturedUrl mustBe url

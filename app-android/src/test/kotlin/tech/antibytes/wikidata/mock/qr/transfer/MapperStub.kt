@@ -9,7 +9,7 @@ package tech.antibytes.wikidata.mock.qr.transfer
 import android.graphics.Bitmap
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
-import tech.antibytes.wikidata.app.qr.data.QrCodeDataContract
+import tech.antibytes.wikidata.lib.qr.data.QrCodeDataContract
 
 internal class MapperStub(
     var mapToBitmap: ((ByteArray) -> Bitmap)? = null,

@@ -4,16 +4,16 @@
  * Use of this source code is governed by Apache v2.0
  */
 
-package tech.antibytes.wikidata.app.qr.data
+package tech.antibytes.wikidata.lib.qr.data
 
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.core.graphics.get
 import androidx.core.graphics.set
-import tech.antibytes.wikidata.app.qr.QrCodeStoreContract.Companion.ARRAY_SIZE
-import tech.antibytes.wikidata.app.qr.QrCodeStoreContract.Companion.SIZE
+import tech.antibytes.wikidata.lib.qr.QrCodeStoreContract.Companion.ARRAY_SIZE
+import tech.antibytes.wikidata.lib.qr.QrCodeStoreContract.Companion.SIZE
 
-internal class BitmapMapper(
+internal class BitmapMapper constructor(
     private val base64: QrCodeDataContract.Base64,
     private val size: Int = SIZE,
     private val arraySize: Int = ARRAY_SIZE

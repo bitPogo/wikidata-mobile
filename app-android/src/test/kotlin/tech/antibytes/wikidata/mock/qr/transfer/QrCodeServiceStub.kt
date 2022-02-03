@@ -8,7 +8,7 @@ package tech.antibytes.wikidata.mock.qr.transfer
 
 import tech.antibytes.util.test.MockContract
 import tech.antibytes.util.test.MockError
-import tech.antibytes.wikidata.app.qr.data.QrCodeDataContract
+import tech.antibytes.wikidata.lib.qr.data.QrCodeDataContract
 
 internal class QrCodeServiceStub(
     var create: ((String) -> ByteArray)? = null
