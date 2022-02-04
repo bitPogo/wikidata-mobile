@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.yield
 import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Test
@@ -775,13 +774,13 @@ class TermboxViewModelSpec {
         }
 
         runBlocking {
-            yield()
+            delay(20)
         }
 
         viewModel.addAlias(newAlias)
 
         runBlocking {
-            yield()
+            delay(20)
         }
 
         // Then
