@@ -6,11 +6,13 @@
 
 package tech.antibytes.wikidata.app.login
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +39,7 @@ fun LoginScreen(
     val username = loginViewModel.username.collectAsState()
     val password = loginViewModel.password.collectAsState()
     var isError by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     when (loginState.value) {
         LoginContract.LoginState.LoggedIn -> {
@@ -47,39 +50,39 @@ fun LoginScreen(
         else -> Unit // Do Nothing
     }
 
-    LazyColumn(
+    Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(
-            vertical = 5.dp,
-            horizontal = 20.dp
-        )
+        modifier = Modifier
+            .padding(
+                vertical = 5.dp,
+                horizontal = 20.dp
+            )
+            .verticalScroll(scrollState)
     ) {
-        item {
-            Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
-            Row { Logo() }
+        Row { Logo() }
 
-            Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
-            SingleLineEditableText(
-                label = stringResource(R.string.login_username),
-                value = username.value,
-                isError = isError,
-                onChange = loginViewModel::setUsername
+        SingleLineEditableText(
+            label = stringResource(R.string.login_username),
+            value = username.value,
+            isError = isError,
+            onChange = loginViewModel::setUsername
+        )
+        PasswordField(
+            label = stringResource(R.string.login_password),
+            value = password.value,
+            isError = isError,
+            onChange = loginViewModel::setPassword
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+        Row {
+            SimpleButton(
+                label = stringResource(R.string.login_login),
+                onClick = loginViewModel::login
             )
-            PasswordField(
-                label = stringResource(R.string.login_password),
-                value = password.value,
-                isError = isError,
-                onChange = loginViewModel::setPassword
-            )
-            Spacer(modifier = Modifier.height(25.dp))
-            Row {
-                SimpleButton(
-                    label = stringResource(R.string.login_login),
-                    onClick = loginViewModel::login
-                )
-            }
         }
     }
 }
