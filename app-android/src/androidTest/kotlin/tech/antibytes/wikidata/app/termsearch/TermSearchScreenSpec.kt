@@ -218,6 +218,33 @@ class TermSearchScreenSpec {
     }
 
     @Test
+    fun Given_a_User_clicks_the_search_Icon_and_the_query_has_no_results_it_changes_the_info_text() {
+        // Given
+        viewModel.search = {}
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermSearchScreen(
+                    {},
+                    viewModel
+                )
+            }
+        }
+
+        query.update { fixture.fixture() }
+
+        composeTestRule
+            .onNodeWithContentDescription("Apply your query")
+            .performClick()
+
+        // Then
+        composeTestRule
+            .onNodeWithText("The given query had no results")
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun Given_a_User_clicks_on_a_result_it_delegates_the_call_to_the_ViewModel() {
         // Given
         val result = listOf(
@@ -300,6 +327,49 @@ class TermSearchScreenSpec {
 
         // Then
         assertTrue(wasCalled)
+    }
+
+    @Test
+    fun Given_a_User_clicks_on_a_result_it_reverts_it_info_text() {
+        // Given
+        val result = listOf(
+            SearchEntry(
+                label = fixture.fixture<String>()
+            ),
+            SearchEntry(
+                label = fixture.fixture<String>()
+            ),
+            SearchEntry(
+                label = fixture.fixture<String>()
+            )
+        )
+        val expected = 1
+
+        viewModel.select = { }
+        query.update { fixture.fixture() }
+
+        // When
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                TermSearchScreen(
+                    { },
+                    viewModel
+                )
+            }
+        }
+
+        this.result.update { result }
+
+        composeTestRule
+            .onNodeWithText(result[expected].label!!)
+            .performClick()
+
+        this.result.update { emptyList() }
+
+        // Then
+        composeTestRule
+            .onNodeWithText("Please enter a query")
+            .assertIsDisplayed()
     }
 }
 

@@ -13,6 +13,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -32,10 +36,12 @@ fun TermSearchScreen(
 ) {
     val query = termSearchViewModel.query.collectAsState()
     val result = termSearchViewModel.result.collectAsState()
-    val message = if (query.value.isEmpty()) {
-        R.string.termsearch_missing_query
-    } else {
+    var hasActiveSearch by remember { mutableStateOf(false) }
+
+    val message = if (query.value.isNotEmpty() && hasActiveSearch) {
         R.string.termsearch_no_results
+    } else {
+        R.string.termsearch_missing_query
     }
 
     ScreenWithTopBar(
@@ -43,7 +49,10 @@ fun TermSearchScreen(
             TermSearchBar(
                 value = query.value,
                 onValueChange = termSearchViewModel::setQuery,
-                onSearch = termSearchViewModel::search
+                onSearch = {
+                    termSearchViewModel.search()
+                    hasActiveSearch = true
+                }
             )
         },
         content = @Composable {
@@ -55,6 +64,7 @@ fun TermSearchScreen(
                             description = entry.description.useResourceOnNullOrBlank(R.string.termbox_missing_description),
                             onClick = {
                                 termSearchViewModel.select(idx)
+                                hasActiveSearch = false
                                 navigator.goToTermbox()
                             }
                         )
