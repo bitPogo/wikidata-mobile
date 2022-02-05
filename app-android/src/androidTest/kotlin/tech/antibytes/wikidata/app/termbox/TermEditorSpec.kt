@@ -12,12 +12,12 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class TermEditorSpec {
@@ -93,10 +93,7 @@ class TermEditorSpec {
             .performTextReplacement(newLabel)
 
         // Then
-        assertEquals(
-            newLabel,
-            newValue,
-        )
+        newValue mustBe newLabel
     }
 
     @Test
@@ -129,10 +126,7 @@ class TermEditorSpec {
             .performTextReplacement(newDescription)
 
         // Then
-        assertEquals(
-            newDescription,
-            newValue,
-        )
+        newValue mustBe newDescription
     }
 
     @Test
@@ -167,15 +161,8 @@ class TermEditorSpec {
             .performTextReplacement(newAlias)
 
         // Then
-        assertEquals(
-            newAlias,
-            newValue,
-        )
-
-        assertEquals(
-            3,
-            capturedIndex,
-        )
+        newValue mustBe newAlias
+        capturedIndex mustBe 3
     }
 
     @Test
@@ -205,9 +192,6 @@ class TermEditorSpec {
             .performClick()
 
         // Then
-        assertEquals(
-            "",
-            newValue,
-        )
+        newValue mustBe ""
     }
 }

@@ -15,13 +15,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 import tech.antibytes.wikidata.app.util.UtilContract
 import tech.antibytes.wikidata.mock.MwLocaleAndroidStub
@@ -290,7 +290,7 @@ class TermboxViewSpec {
             .performClick()
 
         // Then
-        assertTrue(wasClicked)
+        wasClicked mustBe true
     }
 
     @Test
@@ -315,7 +315,7 @@ class TermboxViewSpec {
             .performClick()
 
         // Then
-        assertTrue(wasClicked)
+        wasClicked mustBe true
     }
 
     @Test
@@ -340,7 +340,7 @@ class TermboxViewSpec {
             .performClick()
 
         // Then
-        assertTrue(wasClicked)
+        wasClicked mustBe true
     }
 
     @Test
@@ -365,7 +365,7 @@ class TermboxViewSpec {
             .performClick()
 
         // Then
-        assertTrue(wasClicked)
+        wasClicked mustBe true
     }
 
     @Test
@@ -394,7 +394,7 @@ class TermboxViewSpec {
             .performClick()
 
         // Then
-        assertTrue(wasClicked)
+        wasClicked mustBe true
     }
 
     @Test
@@ -425,7 +425,7 @@ class TermboxViewSpec {
             .performClick()
 
         // Then
-        assertTrue(createItemInvoked)
-        assertTrue(editModeInvoked)
+        createItemInvoked mustBe true
+        editModeInvoked mustBe true
     }
 }

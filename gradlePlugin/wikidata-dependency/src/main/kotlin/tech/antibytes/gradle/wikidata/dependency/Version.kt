@@ -31,7 +31,7 @@ object Version {
     }
 
     object Antibytes {
-        val test = "e4cc5b4"
+        val test = "f0f5eec"
     }
 
     /**

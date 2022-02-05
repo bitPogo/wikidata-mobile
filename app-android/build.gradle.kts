@@ -155,6 +155,8 @@ dependencies {
     androidTestImplementation(Dependency.android.test.composeJunit4)
     androidTestImplementation(Dependency.android.test.espressoCore)
     androidTestImplementation(Dependency.android.test.uiAutomator)
+
+    androidTestImplementation(LocalDependency.antibytes.test.core)
     androidTestImplementation(LocalDependency.antibytes.test.fixture)
 
     androidTestImplementation(LocalDependency.hilt.test)

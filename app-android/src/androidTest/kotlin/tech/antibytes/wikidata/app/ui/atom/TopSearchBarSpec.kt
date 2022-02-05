@@ -10,11 +10,11 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextReplacement
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class TopSearchBarSpec {
@@ -68,9 +68,6 @@ class TopSearchBarSpec {
             .performTextReplacement(newValue)
 
         // Then
-        assertEquals(
-            newValue,
-            capturedValue
-        )
+        capturedValue mustBe newValue
     }
 }

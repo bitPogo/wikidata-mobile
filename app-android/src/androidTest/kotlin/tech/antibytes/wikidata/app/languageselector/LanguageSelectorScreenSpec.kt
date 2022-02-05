@@ -18,13 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 import tech.antibytes.wikidata.app.util.UtilContract
 import tech.antibytes.wikidata.mock.MwLocaleAndroidStub
@@ -224,10 +223,7 @@ class LanguageSelectorScreenSpec {
             .performTextInput(filter)
 
         // Then
-        assertEquals(
-            filter,
-            capturedFilter
-        )
+        capturedFilter mustBe filter
     }
 
     @Test
@@ -278,10 +274,7 @@ class LanguageSelectorScreenSpec {
             .performClick()
 
         // Then
-        assertEquals(
-            selection.lastIndex,
-            capturedSelector
-        )
+        capturedSelector mustBe selection.lastIndex
     }
 
     @Test
@@ -332,7 +325,7 @@ class LanguageSelectorScreenSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 }
 

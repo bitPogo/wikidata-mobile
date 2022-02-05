@@ -10,9 +10,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class TermboxEditMenuSpec {
@@ -62,7 +62,7 @@ class TermboxEditMenuSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 
     @Test
@@ -86,6 +86,6 @@ class TermboxEditMenuSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 }
