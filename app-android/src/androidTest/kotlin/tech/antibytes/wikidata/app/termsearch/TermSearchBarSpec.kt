@@ -12,12 +12,11 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class TermSearchBarSpec {
@@ -77,10 +76,7 @@ class TermSearchBarSpec {
             .performTextReplacement(newValue)
 
         // Then
-        assertEquals(
-            newValue,
-            capturedValue
-        )
+        capturedValue mustBe newValue
     }
 
     @Test
@@ -106,6 +102,6 @@ class TermSearchBarSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 }

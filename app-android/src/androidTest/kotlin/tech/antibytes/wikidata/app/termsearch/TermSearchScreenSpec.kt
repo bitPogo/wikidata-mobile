@@ -15,12 +15,11 @@ import androidx.compose.ui.test.performTextInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.page.domain.model.EntityId
 import tech.antibytes.wikibase.store.page.domain.model.LanguageTag
 import tech.antibytes.wikibase.store.page.domain.model.PageModelContract
@@ -105,10 +104,7 @@ class TermSearchScreenSpec {
             .performTextInput(query)
 
         // Then
-        assertEquals(
-            query,
-            capturedQuery
-        )
+        capturedQuery mustBe query
     }
 
     @Test
@@ -214,7 +210,7 @@ class TermSearchScreenSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 
     @Test
@@ -282,10 +278,7 @@ class TermSearchScreenSpec {
             .performClick()
 
         // Then
-        assertEquals(
-            expected,
-            capturedIndex
-        )
+        capturedIndex mustBe expected
     }
 
     @Test
@@ -326,7 +319,7 @@ class TermSearchScreenSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 
     @Test

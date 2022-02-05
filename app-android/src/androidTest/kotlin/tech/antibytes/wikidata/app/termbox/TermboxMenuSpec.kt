@@ -11,11 +11,11 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class TermboxMenuSpec {
@@ -105,7 +105,7 @@ class TermboxMenuSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 
     @Test
@@ -135,7 +135,7 @@ class TermboxMenuSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 
     @Test
@@ -165,7 +165,7 @@ class TermboxMenuSpec {
             .performClick()
 
         // Then
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 
     @Test
@@ -247,7 +247,7 @@ class TermboxMenuSpec {
             .onNodeWithText("Select another language")
             .assertDoesNotExist()
 
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 
     @Test
@@ -293,7 +293,7 @@ class TermboxMenuSpec {
             .onNodeWithText("Select another language")
             .assertDoesNotExist()
 
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 
     @Test
@@ -339,6 +339,6 @@ class TermboxMenuSpec {
             .onNodeWithText("Select another language")
             .assertDoesNotExist()
 
-        assertTrue(wasCalled)
+        wasCalled mustBe true
     }
 }

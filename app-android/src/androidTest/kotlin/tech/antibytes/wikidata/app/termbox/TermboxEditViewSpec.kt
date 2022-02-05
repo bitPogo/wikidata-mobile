@@ -16,14 +16,13 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 import tech.antibytes.wikidata.mock.MwLocaleAndroidStub
 import tech.antibytes.wikidata.mock.TermboxViewModelStub
@@ -135,10 +134,7 @@ class TermboxEditViewSpec {
             .performTextInput(label)
 
         // Then
-        assertEquals(
-            label,
-            capturedLabel
-        )
+        capturedLabel mustBe label
     }
 
     @Test
@@ -188,10 +184,7 @@ class TermboxEditViewSpec {
             .performTextInput(description)
 
         // Then
-        assertEquals(
-            description,
-            capturedDescription
-        )
+        capturedDescription mustBe description
     }
 
     @Test
@@ -249,15 +242,8 @@ class TermboxEditViewSpec {
             .performTextReplacement(newAlias)
 
         // Then
-        assertEquals(
-            index,
-            capturedIndex
-        )
-
-        assertEquals(
-            newAlias,
-            capturedAlias
-        )
+        capturedIndex mustBe index
+        capturedAlias mustBe newAlias
     }
 
     @Test
@@ -288,10 +274,7 @@ class TermboxEditViewSpec {
             .performClick()
 
         // Then
-        assertEquals(
-            "",
-            capturedAlias
-        )
+        capturedAlias mustBe ""
     }
 
     @Test
@@ -318,8 +301,8 @@ class TermboxEditViewSpec {
             .performClick()
 
         // Then
-        assertTrue(cancelWasCalled)
-        assertTrue(readModeWasCalled)
+        cancelWasCalled mustBe true
+        readModeWasCalled mustBe true
     }
 
     @Test
@@ -346,7 +329,7 @@ class TermboxEditViewSpec {
             .performClick()
 
         // Then
-        assertTrue(saveWasCalled)
-        assertTrue(readModeWasCalled)
+        saveWasCalled mustBe true
+        readModeWasCalled mustBe true
     }
 }

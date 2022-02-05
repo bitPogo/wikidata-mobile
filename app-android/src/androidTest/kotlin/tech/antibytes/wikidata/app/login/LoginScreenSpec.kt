@@ -15,14 +15,12 @@ import androidx.compose.ui.test.performTextInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class LoginScreenSpec {
@@ -30,17 +28,17 @@ class LoginScreenSpec {
     val composeTestRule = createComposeRule()
     private val fixture = kotlinFixture()
 
-    private val isLoggedIn = MutableStateFlow(LoginContract.LoginState.LoggedOut)
+    private val loginState = MutableStateFlow<LoginContract.LoginState>(LoginContract.LoginState.LoggedOut)
     private val username = MutableStateFlow("")
     private val password = MutableStateFlow("")
 
-    private val viewModel = LoginViewModelStub(isLoggedIn, username, password)
+    private val viewModel = LoginViewModelStub(loginState, username, password)
 
     @Before
     fun setUp() {
         viewModel.clear()
 
-        isLoggedIn.update { LoginContract.LoginState.LoggedOut }
+        loginState.update { LoginContract.LoginState.LoggedOut }
         username.update { "" }
         password.update { "" }
     }
@@ -145,10 +143,7 @@ class LoginScreenSpec {
             .performTextInput(username)
 
         // Then
-        assertEquals(
-            username,
-            capturedUsername
-        )
+        capturedUsername mustBe username
     }
 
     @Test
@@ -175,10 +170,7 @@ class LoginScreenSpec {
             .performTextInput(password)
 
         // Then
-        assertEquals(
-            password,
-            capturedPassword
-        )
+        capturedPassword mustBe password
     }
 
     @Test
@@ -202,20 +194,14 @@ class LoginScreenSpec {
             .performClick()
 
         // Then
-        assertTrue(wasClicked)
+        wasClicked mustBe true
     }
 
     @Test
-    fun Given_a_login_is_successful_it_calls_the_navigator() {
+    fun Given_a_login_is_not_successful_it_calls_not_the_navigator() {
         // Given
         var wasCalled = false
         val navigator = LoginContract.Navigator { wasCalled = true }
-
-        val loginState = MutableStateFlow<LoginContract.LoginState>(
-            LoginContract.LoginState.LoggedOut
-        )
-
-        viewModel.login = {}
 
         // When
         composeTestRule.setContent {
@@ -228,13 +214,29 @@ class LoginScreenSpec {
         }
 
         // Then
-        assertFalse(wasCalled)
+        wasCalled mustBe false
+    }
+
+    @Test
+    fun Given_a_login_is_successful_it_calls_the_navigator() {
+        // Given
+        var wasCalled = false
+        val navigator = LoginContract.Navigator { wasCalled = true }
+
+        loginState.update { LoginContract.LoginState.LoggedIn }
 
         // When
-        loginState.value = LoginContract.LoginState.LoggedIn
+        composeTestRule.setContent {
+            WikidataMobileTheme {
+                LoginScreen(
+                    navigator,
+                    viewModel,
+                )
+            }
+        }
 
         // Then
-        assertFalse(wasCalled)
+        wasCalled mustBe true
     }
 }
 

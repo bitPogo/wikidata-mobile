@@ -12,11 +12,11 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 import tech.antibytes.wikidata.mock.MwLocaleAndroidStub
 import java.util.Locale.ENGLISH
@@ -123,9 +123,6 @@ class LanguageItemSpec {
             .performClick()
 
         // Then
-        assertEquals(
-            id,
-            capturedId
-        )
+        capturedId mustBe id
     }
 }
