@@ -37,8 +37,8 @@ class LanguageSelectorScreenSpec {
 
     private val currentLanguage = MutableStateFlow<UtilContract.MwLocale>(
         MwLocaleAndroidStub(
-            fixture.fixture<String>().substring(0, 9),
-            fixture.fixture<String>().substring(0, 9),
+            fixture.fixture(),
+            fixture.fixture(),
             ENGLISH
         ),
     )
@@ -46,18 +46,18 @@ class LanguageSelectorScreenSpec {
         listOf(
             currentLanguage.value,
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.GERMAN
             ),
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.KOREAN
             ),
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.JAPAN
             ),
         )
@@ -72,8 +72,8 @@ class LanguageSelectorScreenSpec {
 
         currentLanguage.update {
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 ENGLISH
             )
         }
@@ -81,18 +81,18 @@ class LanguageSelectorScreenSpec {
             listOf(
                 currentLanguage.value,
                 MwLocaleAndroidStub(
-                    fixture.fixture<String>().substring(0, 9),
-                    fixture.fixture<String>().substring(0, 9),
+                    fixture.fixture(),
+                    fixture.fixture(),
                     Locale.GERMAN
                 ),
                 MwLocaleAndroidStub(
-                    fixture.fixture<String>().substring(0, 9),
-                    fixture.fixture<String>().substring(0, 9),
+                    fixture.fixture(),
+                    fixture.fixture(),
                     Locale.KOREAN
                 ),
                 MwLocaleAndroidStub(
-                    fixture.fixture<String>().substring(0, 9),
-                    fixture.fixture<String>().substring(0, 9),
+                    fixture.fixture(),
+                    fixture.fixture(),
                     Locale.JAPAN
                 ),
             )
@@ -231,23 +231,23 @@ class LanguageSelectorScreenSpec {
         // Given
         val selection = listOf(
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 ENGLISH
             ),
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.GERMAN
             ),
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.KOREAN
             ),
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.JAPAN
             ),
         )
@@ -282,23 +282,23 @@ class LanguageSelectorScreenSpec {
         // Given
         val selection = listOf(
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 ENGLISH
             ),
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.GERMAN
             ),
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.KOREAN
             ),
             MwLocaleAndroidStub(
-                fixture.fixture<String>().substring(0, 9),
-                fixture.fixture<String>().substring(0, 9),
+                fixture.fixture(),
+                fixture.fixture(),
                 Locale.JAPAN
             ),
         )

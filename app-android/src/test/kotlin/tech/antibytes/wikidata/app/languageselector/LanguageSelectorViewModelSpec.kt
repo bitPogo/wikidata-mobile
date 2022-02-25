@@ -177,7 +177,7 @@ class LanguageSelectorViewModelSpec {
             MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         )
 
-        val newFilterValue = selection[1].displayName.substring(0, 4)
+        val newFilterValue = selection[1].displayName
         val result = Channel<List<UtilContract.MwLocale>>()
 
         // When
@@ -220,7 +220,7 @@ class LanguageSelectorViewModelSpec {
             MwLocaleStub(fixture.fixture(), fixture.fixture<String>().uppercase(), fixture.fixture())
         )
 
-        val newFilterValue = selection[1].displayName.substring(0, 4)
+        val newFilterValue = selection[1].displayName
         val result = Channel<List<UtilContract.MwLocale>>()
 
         // When
@@ -263,7 +263,7 @@ class LanguageSelectorViewModelSpec {
             MwLocaleStub(fixture.fixture(), fixture.fixture(), fixture.fixture())
         )
 
-        val newFilterValue = selection[1].displayName.substring(0, 4)
+        val newFilterValue = selection[1].displayName
         val result = Channel<List<UtilContract.MwLocale>>()
 
         // When
@@ -371,6 +371,6 @@ class LanguageSelectorViewModelSpec {
         }
 
         capturedId mustBe entity.id
-        capturedLanguage mustBe selection[selector].toLanguageTag().replace('_', '-')
+        capturedLanguage mustBe selection[selector].toLanguageTag()
     }
 }

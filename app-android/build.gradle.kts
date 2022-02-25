@@ -139,7 +139,7 @@ dependencies {
     // Test
     testImplementation(Dependency.android.test.junit)
     testImplementation(Dependency.android.test.junit4)
-    testImplementation(Dependency.multiplatform.test.mockk.junit)
+    testImplementation(Dependency.jvm.test.mockk)
     testImplementation(Dependency.android.test.ktx)
     testImplementation(Dependency.android.test.composeJunit4)
     testImplementation(Dependency.android.test.robolectric)

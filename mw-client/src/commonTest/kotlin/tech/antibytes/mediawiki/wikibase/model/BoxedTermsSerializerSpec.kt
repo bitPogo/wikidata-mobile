@@ -11,17 +11,26 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import tech.antibytes.fixture.StringAlphaGenerator
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mock.wikibase.TestEntity
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.util.test.fixture.qualifier.named
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class BoxedTermsSerializerSpec {
-    private val fixture = kotlinFixture()
+    private val alphaOnly = named("stringAlpha")
+    private val fixture = kotlinFixture { configuration ->
+        configuration.addGenerator(
+            String::class,
+            StringAlphaGenerator,
+            alphaOnly
+        )
+    }
     private val languageValuePairSerializer = LanguageValuePairSerializer()
 
     @Test
@@ -51,27 +60,27 @@ class BoxedTermsSerializerSpec {
         }
 
         val entity = TestEntity(
-            id = fixture.fixture(),
+            id = fixture.fixture(alphaOnly),
             type = DataModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
-                fixture.fixture<String>() to LanguageValuePair(
-                    language = fixture.fixture(),
-                    value = fixture.fixture()
+                fixture.fixture<String>(alphaOnly) to LanguageValuePair(
+                    language = fixture.fixture(alphaOnly),
+                    value = fixture.fixture(alphaOnly)
                 )
             ),
             descriptions = mapOf(
-                fixture.fixture<String>() to LanguageValuePair(
-                    language = fixture.fixture(),
-                    value = fixture.fixture()
+                fixture.fixture<String>(alphaOnly) to LanguageValuePair(
+                    language = fixture.fixture(alphaOnly),
+                    value = fixture.fixture(alphaOnly)
                 )
             ),
             aliases = mapOf(
-                fixture.fixture<String>() to listOf(
+                fixture.fixture<String>(alphaOnly) to listOf(
                     LanguageValuePair(
-                        language = fixture.fixture(),
-                        value = fixture.fixture()
+                        language = fixture.fixture(alphaOnly),
+                        value = fixture.fixture(alphaOnly)
                     )
                 )
             )
@@ -106,24 +115,24 @@ class BoxedTermsSerializerSpec {
         }
 
         val entity = TestEntity(
-            id = fixture.fixture(),
+            id = fixture.fixture(alphaOnly),
             type = DataModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
-                fixture.fixture<String>() to LanguageValuePair(
-                    language = fixture.fixture(),
-                    value = fixture.fixture()
+                fixture.fixture<String>(alphaOnly) to LanguageValuePair(
+                    language = fixture.fixture(alphaOnly),
+                    value = fixture.fixture(alphaOnly)
                 )
             ),
             descriptions = mapOf(
-                fixture.fixture<String>() to LanguageValuePair(
-                    language = fixture.fixture(),
-                    value = fixture.fixture()
+                fixture.fixture<String>(alphaOnly) to LanguageValuePair(
+                    language = fixture.fixture(alphaOnly),
+                    value = fixture.fixture(alphaOnly)
                 )
             ),
             aliases = mapOf(
-                fixture.fixture<String>() to emptyList()
+                fixture.fixture<String>(alphaOnly) to emptyList()
             )
         )
 
@@ -156,24 +165,24 @@ class BoxedTermsSerializerSpec {
         }
 
         val entity = TestEntity(
-            id = fixture.fixture(),
+            id = fixture.fixture(alphaOnly),
             type = DataModelContract.EntityType.ITEM,
             revision = fixture.fixture(),
             lastModification = Instant.DISTANT_FUTURE,
             labels = mapOf(
-                fixture.fixture<String>() to LanguageValuePair(
-                    language = fixture.fixture(),
-                    value = fixture.fixture()
+                fixture.fixture<String>(alphaOnly) to LanguageValuePair(
+                    language = fixture.fixture(alphaOnly),
+                    value = fixture.fixture(alphaOnly)
                 )
             ),
             descriptions = mapOf(
                 fixture.fixture<String>() to LanguageValuePair(
-                    language = fixture.fixture(),
-                    value = fixture.fixture()
+                    language = fixture.fixture(alphaOnly),
+                    value = fixture.fixture(alphaOnly)
                 )
             ),
             aliases = mapOf(
-                fixture.fixture<String>() to emptyList()
+                fixture.fixture<String>(alphaOnly) to emptyList()
             )
         )
 
