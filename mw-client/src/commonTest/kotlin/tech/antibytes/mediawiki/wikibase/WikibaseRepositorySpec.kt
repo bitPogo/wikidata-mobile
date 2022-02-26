@@ -179,7 +179,7 @@ class WikibaseRepositorySpec {
     }
 
     @Test
-    fun `Given search is called with a SearchTerm, LanguageTag, EntityType, a Limit and a PageIndex, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() = runBlockingTest {
+    fun `Given search is called with a SearchTerm, LanguageTag, EntityType, a Limit and a PageIndex, it delegates the Ids to the ApiService returns a List of Entities if the call was a Success`() {
         // Given
         val searchTerm: String = fixture.fixture()
         val language: String = fixture.fixture()
@@ -220,48 +220,50 @@ class WikibaseRepositorySpec {
         }
 
         // When
-        val result = WikibaseRepository(
-            apiService,
-            Json,
-            boxedTermsSerializer,
-            clock
-        ).search(searchTerm, language, type, limit, page)
+        runBlockingTest {
+            val result = WikibaseRepository(
+                apiService,
+                Json,
+                boxedTermsSerializer,
+                clock
+            ).search(searchTerm, language, type, limit, page)
 
-        // Then
-        val expectedAliases = response.search.first().aliases
-            .map { alias ->
-                LanguageValuePair(
-                    language = language,
-                    value = alias
-                )
-            }
+            // Then
+            val expectedAliases = response.search.first().aliases
+                .map { alias ->
+                    LanguageValuePair(
+                        language = language,
+                        value = alias
+                    )
+                }
 
-        result mustBe listOf(
-            Entity(
-                id = response.search.first().id,
-                type = type,
-                labels = mapOf(
-                    language to LanguageValuePair(
-                        language = language,
-                        value = response.search.first().label
+            result mustBe listOf(
+                Entity(
+                    id = response.search.first().id,
+                    type = type,
+                    labels = mapOf(
+                        language to LanguageValuePair(
+                            language = language,
+                            value = response.search.first().label
+                        )
+                    ),
+                    descriptions = mapOf(
+                        language to LanguageValuePair(
+                            language = language,
+                            value = response.search.first().description
+                        )
+                    ),
+                    aliases = mapOf(
+                        language to expectedAliases
                     )
-                ),
-                descriptions = mapOf(
-                    language to LanguageValuePair(
-                        language = language,
-                        value = response.search.first().description
-                    )
-                ),
-                aliases = mapOf(
-                    language to expectedAliases
                 )
             )
-        )
-        capturedTerm mustBe searchTerm
-        capturedLanguageTag mustBe language
-        capturedEntityType mustBe type
-        capturedLimit mustBe limit
-        capturedPageIdx mustBe page
+            capturedTerm mustBe searchTerm
+            capturedLanguageTag mustBe language
+            capturedEntityType mustBe type
+            capturedLimit mustBe limit
+            capturedPageIdx mustBe page
+        }
     }
 
     @Test

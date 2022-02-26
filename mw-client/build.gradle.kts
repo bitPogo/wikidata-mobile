@@ -63,6 +63,7 @@ kotlin {
                 implementation(Dependency.multiplatform.test.annotations)
 
                 implementation(Dependency.multiplatform.ktor.mock)
+                implementation(Dependency.multiplatform.stately.isolate)
 
                 implementation(LocalDependency.antibytes.test.core)
                 implementation(LocalDependency.antibytes.test.fixture)

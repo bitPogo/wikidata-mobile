@@ -29,7 +29,7 @@ class AuthenticationRepositorySpec {
     )
 
     private fun PublicApi.Fixture.loginStatusFixture(): LoginStatus {
-        val choice: Int = random.nextInt(0, statuus.lastIndex)
+        val choice: Int = random.access { it.nextInt(0, statuus.lastIndex) }
         return statuus[choice]
     }
 

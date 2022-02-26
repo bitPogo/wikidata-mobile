@@ -922,8 +922,10 @@ class TermboxViewModelSpec {
         }
 
         entityStore.fetchEntity = { givenId, givenLanguage ->
-            capturedId = givenId
-            capturedLanguageTag = givenLanguage
+            if (givenId != "Q214750") {
+                capturedId = givenId
+                capturedLanguageTag = givenLanguage
+            }
         }
 
         // When

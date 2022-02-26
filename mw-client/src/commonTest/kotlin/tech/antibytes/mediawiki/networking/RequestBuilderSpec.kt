@@ -18,12 +18,14 @@ import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.util.toMap
 import kotlinx.coroutines.GlobalScope
+import tech.antibytes.fixture.StringAlphaGenerator
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.util.test.coroutine.runBlockingTestInContext
 import tech.antibytes.util.test.fixture.fixture
 import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fixture.pairFixture
+import tech.antibytes.util.test.fixture.qualifier.named
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
@@ -32,7 +34,14 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class RequestBuilderSpec {
-    private val fixture = kotlinFixture()
+    private val alphaOnly = named("stringAlpha")
+    private val fixture = kotlinFixture { configuration ->
+        configuration.addGenerator(
+            String::class,
+            StringAlphaGenerator,
+            alphaOnly
+        )
+    }
     private val host: String = fixture.fixture()
 
     private fun createMockClientWithAssertion(assert: (HttpRequestData) -> Unit): HttpClient {
@@ -41,7 +50,7 @@ class RequestBuilderSpec {
                 addHandler { request ->
                     assert.invoke(request)
                     respond(
-                        fixture.fixture<String>(),
+                        fixture.fixture<String>(alphaOnly),
                         headers = headersOf(
                             "Content-Type" to listOf(
                                 ContentType.Text.Plain.toString()
@@ -61,7 +70,7 @@ class RequestBuilderSpec {
         // When
         val builder: Any = RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         )
 
         // Then
@@ -76,7 +85,7 @@ class RequestBuilderSpec {
         // When
         val builder: Any = RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create()
 
         // Then
@@ -94,14 +103,14 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare().execute()
     }
 
     @Test
     fun `Given a Request was prepared and executed it calls the given Host`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val host: String = fixture.fixture()
+        val host: String = fixture.fixture(alphaOnly)
         val client = createMockClientWithAssertion { request ->
             // Then
             request.url.host mustBe host
@@ -125,14 +134,14 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare().execute()
     }
 
     @Test
     fun `Given a Request was prepared and executed with a Path it calls the given path`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val path = fixture.listFixture<String>(size = 3)
+        val path = fixture.listFixture<String>(alphaOnly, size = 3)
 
         val client = createMockClientWithAssertion { request ->
             // Then
@@ -142,7 +151,7 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare(path = path).execute()
     }
 
@@ -157,7 +166,7 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare().execute()
     }
 
@@ -188,7 +197,7 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare().execute()
     }
 
@@ -196,7 +205,7 @@ class RequestBuilderSpec {
     fun `Given a instance was create with a Environment and a Port and it was prepared and executed it uses the given Port`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
         val port = fixture.fixture<Short>().toInt().absoluteValue
-        val host: String = fixture.fixture()
+        val host: String = fixture.fixture(alphaOnly)
 
         val client = createMockClientWithAssertion { request ->
             // Then
@@ -225,7 +234,7 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare().execute()
     }
 
@@ -233,12 +242,12 @@ class RequestBuilderSpec {
     fun `Given a instance was create with a Environment, setHeaders was called with Headers and it was prepared and executed itsets the given headers to the request`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
         val headers = mapOf<String, String>(
-            fixture.pairFixture(),
-            fixture.pairFixture()
+            fixture.pairFixture(alphaOnly, alphaOnly),
+            fixture.pairFixture(alphaOnly, alphaOnly)
         )
 
         val keys = headers.keys.toList()
-        val host: String = fixture.fixture()
+        val host: String = fixture.fixture(alphaOnly)
         val client = createMockClientWithAssertion { request ->
             // Then
             request.headers.toMap() mustBe mapOf(
@@ -267,7 +276,7 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare().execute()
     }
 
@@ -275,13 +284,13 @@ class RequestBuilderSpec {
     fun `Given a instance was create with a Environment, setParameter was called with parameter and it was prepared and executed itsets custom parameter to the request`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
         val parameter = mapOf<String, String>(
-            fixture.pairFixture(),
-            fixture.pairFixture()
+            fixture.pairFixture(alphaOnly, alphaOnly),
+            fixture.pairFixture(alphaOnly, alphaOnly)
         )
 
         val keys = parameter.keys.toList()
 
-        val host: String = fixture.fixture()
+        val host: String = fixture.fixture(alphaOnly)
         val client = createMockClientWithAssertion { request ->
             // Then
             request.url.parameters.toMap() mustBe mapOf(
@@ -308,14 +317,14 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare().execute()
     }
 
     @Test
     fun `Given a Requests setBody is called with a Payload and it was prepared and executed with GET, it fails`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
+        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture(alphaOnly))
 
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
@@ -323,7 +332,7 @@ class RequestBuilderSpec {
             RequestBuilder.Factory(
                 client,
                 host,
-            ).create().setBody(fixture.fixture<String>()).prepare(NetworkingContract.Method.GET)
+            ).create().setBody(fixture.fixture<String>(alphaOnly)).prepare(NetworkingContract.Method.GET)
         }
 
         // Then
@@ -341,7 +350,7 @@ class RequestBuilderSpec {
             RequestBuilder.Factory(
                 client,
                 host,
-            ).create().setBody(fixture.fixture<String>()).prepare(NetworkingContract.Method.HEAD)
+            ).create().setBody(fixture.fixture<String>(alphaOnly)).prepare(NetworkingContract.Method.HEAD)
         }
 
         // Then
@@ -351,7 +360,7 @@ class RequestBuilderSpec {
     @Test
     fun `Given a Requests setBody was not called and it was prepared and executed with POST, it fails`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
+        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture(alphaOnly))
 
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
@@ -369,7 +378,7 @@ class RequestBuilderSpec {
     @Test
     fun `Given a Requests setBody was not called and it was prepared and executed with PUT, it fails`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
+        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture(alphaOnly))
 
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
@@ -387,7 +396,7 @@ class RequestBuilderSpec {
     @Test
     fun `Given Requests setBody was not called and it was prepared and executed with DELETE, it fails`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture())
+        val client = KtorMockClientFactory.createSimpleMockClient(fixture.fixture(alphaOnly))
 
         // Then
         val error = assertFailsWith<MwClientError.RequestValidationFailure> {
@@ -413,14 +422,14 @@ class RequestBuilderSpec {
         // When
         RequestBuilder.Factory(
             client,
-            fixture.fixture(),
+            fixture.fixture(alphaOnly),
         ).create().prepare(NetworkingContract.Method.HEAD).execute()
     }
 
     @Test
     fun `Given a Requests setBody was called with a Payload and it was prepared and executed with POST it uses post`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val payload: String = fixture.fixture()
+        val payload: String = fixture.fixture(alphaOnly)
 
         val client = createMockClientWithAssertion { request ->
             // Then
@@ -437,14 +446,14 @@ class RequestBuilderSpec {
     @Test
     fun `Given a Requests setBody was called with a Payload and it was prepared and executed with POST it attaches the body to the request`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val payload: String = fixture.fixture()
+        val payload: String = fixture.fixture(alphaOnly)
 
         val client = HttpClient(MockEngine) {
             engine {
                 addHandler { request ->
                     // Then
                     request.body.toByteReadPacket().readText() mustBe payload
-                    respond(fixture.fixture<String>())
+                    respond(fixture.fixture<String>(alphaOnly))
                 }
             }
         }
@@ -459,7 +468,7 @@ class RequestBuilderSpec {
     @Test
     fun `Given a Requests setBody was called with a Payload and it was prepared and executed with PUT it uses put`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val payload: String = fixture.fixture()
+        val payload: String = fixture.fixture(alphaOnly)
 
         val client = createMockClientWithAssertion { request ->
             // Then
@@ -476,14 +485,14 @@ class RequestBuilderSpec {
     @Test
     fun `Given a Requests setBody was called with a Payload and it was prepared and executed with PUT it attaches the body to the request`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val payload: String = fixture.fixture()
+        val payload: String = fixture.fixture(alphaOnly)
 
         val client = HttpClient(MockEngine) {
             engine {
                 addHandler { request ->
                     // Then
                     request.body.toByteReadPacket().readText() mustBe payload
-                    respond(fixture.fixture<String>())
+                    respond(fixture.fixture<String>(alphaOnly))
                 }
             }
         }
@@ -498,7 +507,7 @@ class RequestBuilderSpec {
     @Test
     fun `Given a Requests setBody was called with a Payload and it was prepared and executed with DELETE it uses delete`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val payload: String = fixture.fixture()
+        val payload: String = fixture.fixture(alphaOnly)
 
         val client = createMockClientWithAssertion { request ->
             // Then
@@ -515,7 +524,7 @@ class RequestBuilderSpec {
     @Test
     fun `Given a Requests setBody was called with a Payload and it was prepared and executed with DELETE it attaches the body to the request`() = runBlockingTestInContext(GlobalScope.coroutineContext) {
         // Given
-        val payload: String = fixture.fixture()
+        val payload: String = fixture.fixture(alphaOnly)
 
         val client = HttpClient(MockEngine) {
             engine {
@@ -523,7 +532,7 @@ class RequestBuilderSpec {
                     // Then
                     request.body.toByteReadPacket().readText() mustBe payload
 
-                    respond(fixture.fixture<String>())
+                    respond(fixture.fixture<String>(alphaOnly))
                 }
             }
         }
