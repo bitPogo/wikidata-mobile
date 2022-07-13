@@ -9,8 +9,8 @@ package tech.antibytes.wikidata.lib.qr.database
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.database.QrCodeQueries
 import tech.antibytes.wikibase.store.database.WikibaseDataBase

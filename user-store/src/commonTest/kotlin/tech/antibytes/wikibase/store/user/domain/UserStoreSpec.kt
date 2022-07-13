@@ -10,12 +10,12 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.test.coroutine.runBlockingTestWithTimeout
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs

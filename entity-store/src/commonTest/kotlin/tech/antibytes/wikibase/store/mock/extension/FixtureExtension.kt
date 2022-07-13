@@ -7,9 +7,9 @@
 package tech.antibytes.wikibase.store.mock.extension
 
 import kotlinx.datetime.Instant
-import tech.antibytes.util.test.fixture.PublicApi
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.listFixture
+import tech.antibytes.kfixture.PublicApi
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.listFixture
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
 import tech.antibytes.wikibase.store.entity.domain.model.MonolingualEntity
 

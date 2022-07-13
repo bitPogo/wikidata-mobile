@@ -26,11 +26,11 @@ object Dependency {
         val test = Test
 
         object Test {
-            val annotations = "tech.antibytes.test-utils-kmp:test-utils-annotations:${Version.antibytes.test}"
-            val core = "tech.antibytes.test-utils-kmp:test-utils:${Version.antibytes.test}"
-            val fixture = "tech.antibytes.test-utils-kmp:test-utils-fixture:${Version.antibytes.test}"
-            val coroutine = "tech.antibytes.test-utils-kmp:test-utils-coroutine:${Version.antibytes.test}"
-            val ktor = "tech.antibytes.test-utils-kmp:test-utils-ktor:${Version.antibytes.test}"
+            const val annotations = "tech.antibytes.test-utils-kmp:test-utils-annotations:${Version.antibytes.test}"
+            const val core = "tech.antibytes.test-utils-kmp:test-utils:${Version.antibytes.test}"
+            const val fixture = "tech.antibytes.kfixture:core:${Version.antibytes.kfixture}"
+            const val coroutine = "tech.antibytes.test-utils-kmp:test-utils-coroutine:${Version.antibytes.test}"
+            const val ktor = "tech.antibytes.test-utils-kmp:test-utils-ktor:${Version.antibytes.test}"
         }
     }
 

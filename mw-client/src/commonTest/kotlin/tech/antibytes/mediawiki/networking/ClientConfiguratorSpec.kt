@@ -13,11 +13,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mock.networking.FeatureStub
 import tech.antibytes.mock.networking.PluginConfiguratorStub
 import tech.antibytes.util.test.coroutine.runBlockingTestInContext
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.native.concurrent.ThreadLocal

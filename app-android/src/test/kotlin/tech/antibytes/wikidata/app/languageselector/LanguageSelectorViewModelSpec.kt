@@ -21,11 +21,11 @@ import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Test
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.coroutine.wrapper.SharedFlowWrapper
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract

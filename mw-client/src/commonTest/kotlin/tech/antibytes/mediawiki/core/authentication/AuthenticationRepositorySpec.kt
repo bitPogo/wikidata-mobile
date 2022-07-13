@@ -6,14 +6,14 @@
 
 package tech.antibytes.mediawiki.core.authentication
 
+import tech.antibytes.kfixture.PublicApi
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.core.authentication.model.ClientLogin
 import tech.antibytes.mediawiki.core.authentication.model.LoginResponse
 import tech.antibytes.mediawiki.core.authentication.model.LoginStatus
 import tech.antibytes.mock.core.authentication.AuthenticationApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
-import tech.antibytes.util.test.fixture.PublicApi
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
@@ -29,7 +29,7 @@ class AuthenticationRepositorySpec {
     )
 
     private fun PublicApi.Fixture.loginStatusFixture(): LoginStatus {
-        val choice: Int = random.access { it.nextInt(0, statuus.lastIndex) }
+        val choice: Int = random.nextInt(0, statuus.lastIndex)
         return statuus[choice]
     }
 

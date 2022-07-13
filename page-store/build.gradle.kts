@@ -68,10 +68,17 @@ kotlin {
                 implementation(LocalDependency.sqldelight.android)
             }
         }
+        val androidAndroidTestRelease by getting
+        val androidTestFixtures by getting
+        val androidTestFixturesDebug by getting
+        val androidTestFixturesRelease by getting
         val androidTest by getting {
-            dependencies {
-                dependsOn(commonTest)
+            dependsOn(androidAndroidTestRelease)
+            dependsOn(androidTestFixtures)
+            dependsOn(androidTestFixturesDebug)
+            dependsOn(androidTestFixturesRelease)
 
+            dependencies {
                 implementation(Dependency.multiplatform.test.jvm)
                 implementation(Dependency.multiplatform.test.junit)
                 implementation(Dependency.android.test.ktx)

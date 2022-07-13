@@ -7,8 +7,8 @@
 package tech.antibytes.util.coroutine.result
 
 import co.touchlab.stately.isFrozen
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs

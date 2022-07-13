@@ -9,6 +9,8 @@ package tech.antibytes.mediawiki.core.token
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpStatement
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.core.token.model.MetaTokenResponse
 import tech.antibytes.mediawiki.core.token.model.Query
 import tech.antibytes.mediawiki.error.MwClientError
@@ -17,8 +19,6 @@ import tech.antibytes.mediawiki.networking.Path
 import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.mock.networking.RequestBuilderStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory.createObjectMockClient
 import tech.antibytes.util.test.mustBe

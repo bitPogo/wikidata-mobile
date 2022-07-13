@@ -10,13 +10,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.networking.NetworkingContract
 import tech.antibytes.mock.ConnectivityManagerStub
 import tech.antibytes.mock.LoggerStub
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.isNot
 import kotlin.test.Test
 

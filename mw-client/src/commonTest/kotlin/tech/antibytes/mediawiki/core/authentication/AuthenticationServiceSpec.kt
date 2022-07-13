@@ -6,13 +6,13 @@
 
 package tech.antibytes.mediawiki.core.authentication
 
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.core.token.MetaTokenContract
 import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.authentication.AuthenticationRepositoryStub
 import tech.antibytes.mock.core.token.MetaTokenRepositoryStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs

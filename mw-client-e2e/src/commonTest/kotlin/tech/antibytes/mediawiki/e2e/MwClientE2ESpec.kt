@@ -9,12 +9,12 @@ package tech.antibytes.mediawiki.e2e
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Instant
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.MwClient
 import tech.antibytes.mediawiki.e2e.test.config.TestConfig
 import tech.antibytes.util.test.coroutine.runBlockingTest
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Ignore
 import kotlin.test.Test

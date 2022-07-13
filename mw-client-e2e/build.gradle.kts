@@ -57,7 +57,7 @@ kotlin {
             }
         }
         val commonTest by getting {
-            kotlin.srcDir("src-gen/commonTest/kotlin")
+            kotlin.srcDir("${buildDir.absolutePath.trimEnd('/')}/generated/antibytes/commonTest/kotlin")
 
             dependencies {
                 implementation(Dependency.multiplatform.test.common)
@@ -117,24 +117,15 @@ val configPath = "${projectDir}/src-gen/commonTest/kotlin/tech/antibytes/mediawi
 val username: String = project.findProperty("gpr.wb.user").toString()
 val password: String = project.findProperty("gpr.wb.pw").toString()
 
-val provideTestConfig: Task by tasks.creating {
-    doFirst {
-        val templates = File(templatesPath)
-        val configs = File(configPath)
-
-        val config = File(templates, "TestConfig.tmpl")
-            .readText()
-            .replace("PROJECT_DIR", projectDir.toPath().toAbsolutePath().toString())
-            .replace("USERNAME", username)
-            .replace("PASSWORD", password)
-
-        if (!configs.exists()) {
-            if(!configs.mkdir()) {
-                System.err.println("The script not able to create the config directory")
-            }
-        }
-        File(configPath, "TestConfig.kt").writeText(config)
-    }
+val provideTestConfig: Task by tasks.creating(tech.antibytes.gradle.configuration.runtime.AntiBytesTestConfigurationTask::class) {
+    packageName.set("tech.antibytes.mediawiki.e2e.test.config")
+    this.stringFields.set(
+        mapOf(
+            "projectDir" to projectDir.toPath().toAbsolutePath().toString(),
+            "username" to username,
+            "password" to password,
+        )
+    )
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile::class.java) {

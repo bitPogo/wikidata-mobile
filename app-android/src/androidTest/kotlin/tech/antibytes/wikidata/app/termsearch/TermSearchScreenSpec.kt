@@ -17,8 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.junit.Rule
 import org.junit.Test
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.page.domain.model.EntityId
 import tech.antibytes.wikibase.store.page.domain.model.LanguageTag

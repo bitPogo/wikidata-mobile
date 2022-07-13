@@ -24,13 +24,13 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
+import tech.antibytes.kfixture.listFixture
 import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.coroutine.wrapper.SharedFlowWrapper
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs

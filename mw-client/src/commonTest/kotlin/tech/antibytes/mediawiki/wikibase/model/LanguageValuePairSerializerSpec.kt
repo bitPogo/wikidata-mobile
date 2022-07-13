@@ -10,9 +10,9 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.DataModelContract
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test

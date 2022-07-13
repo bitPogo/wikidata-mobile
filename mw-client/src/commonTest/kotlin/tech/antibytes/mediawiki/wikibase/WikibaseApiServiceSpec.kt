@@ -11,6 +11,9 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.statement.HttpStatement
 import tech.antibytes.fixture.wikibase.q42
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
+import tech.antibytes.kfixture.listFixture
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mediawiki.networking.NetworkingContract
@@ -24,9 +27,6 @@ import tech.antibytes.mediawiki.wikibase.model.SearchEntityResponse
 import tech.antibytes.mock.networking.RequestBuilderFactoryStub
 import tech.antibytes.mock.networking.RequestBuilderStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
