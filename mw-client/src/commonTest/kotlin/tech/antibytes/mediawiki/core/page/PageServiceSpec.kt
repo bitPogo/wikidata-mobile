@@ -6,13 +6,13 @@
 
 package tech.antibytes.mediawiki.core.page
 
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
+import tech.antibytes.kfixture.listFixture
 import tech.antibytes.mediawiki.core.page.model.Page
 import tech.antibytes.mock.ServiceResponseWrapperStub
 import tech.antibytes.mock.core.page.PageRepositoryStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs

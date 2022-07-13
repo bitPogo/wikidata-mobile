@@ -4,6 +4,7 @@
  * Use of this source code is governed by Apache v2.0
  */
 
+import tech.antibytes.gradle.configuration.runtime.AntiBytesTestConfigurationTask
 import tech.antibytes.gradle.dependency.Dependency
 import tech.antibytes.gradle.wikidata.dependency.Dependency as LocalDependency
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
@@ -56,7 +57,7 @@ kotlin {
             }
         }
         val commonTest by getting {
-            kotlin.srcDir("src-gen/commonTest/kotlin")
+            kotlin.srcDir("${buildDir.absolutePath.trimEnd('/')}/generated/antibytes/commonTest/kotlin")
 
             dependencies {
                 implementation(Dependency.multiplatform.test.common)
@@ -79,10 +80,17 @@ kotlin {
                 implementation(Dependency.multiplatform.ktor.android.client)
             }
         }
+        val androidAndroidTestRelease by getting
+        val androidTestFixtures by getting
+        val androidTestFixturesDebug by getting
+        val androidTestFixturesRelease by getting
         val androidTest by getting {
-            dependencies {
-                dependsOn(commonTest)
+            dependsOn(androidAndroidTestRelease)
+            dependsOn(androidTestFixtures)
+            dependsOn(androidTestFixturesDebug)
+            dependsOn(androidTestFixturesRelease)
 
+            dependencies {
                 implementation(Dependency.multiplatform.test.jvm)
                 implementation(Dependency.multiplatform.test.junit)
                 implementation(Dependency.android.test.robolectric)
@@ -98,8 +106,6 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                dependsOn(commonTest)
-
                 implementation(Dependency.multiplatform.test.jvm)
                 implementation(Dependency.multiplatform.test.junit)
             }
@@ -113,24 +119,16 @@ tasks.withType(Test::class.java) {
     }
 }
 
-val templatesPath = "${projectDir}/src/commonTest/resources/template"
-val configPath = "${projectDir}/src-gen/commonTest/kotlin/tech/antibytes/mediawiki/test/config"
+val provideTestConfig: Task by tasks.creating(AntiBytesTestConfigurationTask::class) {
+    packageName.set("tech.antibytes.mediawiki.test.config")
+    this.stringFields.set(
+        mapOf("projectDir" to projectDir.toPath().toAbsolutePath().toString()),
+    )
+}
 
-val provideTestConfig: Task by tasks.creating {
-    doFirst {
-        val templates = File(templatesPath)
-        val configs = File(configPath)
-
-        val config = File(templates, "TestConfig.tmpl")
-            .readText()
-            .replace("PROJECT_DIR", projectDir.toPath().toAbsolutePath().toString())
-
-        if (!configs.exists()) {
-            if(!configs.mkdir()) {
-                System.err.println("The script not able to create the config directory")
-            }
-        }
-        File(configPath, "TestConfig.kt").writeText(config)
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile::class.java) {
+    if (this.name.contains("Test")) {
+        this.dependsOn(provideTestConfig)
     }
 }
 

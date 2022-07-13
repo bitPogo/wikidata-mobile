@@ -11,9 +11,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import org.junit.Rule
 import org.junit.Test
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.listFixture
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
+import tech.antibytes.kfixture.listFixture
 import tech.antibytes.wikidata.app.ui.theme.WikidataMobileTheme
 
 class TermViewSpec {

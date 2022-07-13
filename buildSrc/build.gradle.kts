@@ -20,6 +20,7 @@ dependencies {
     implementation(Dependency.gradle.coverage)
     implementation(Dependency.gradle.spotless)
     implementation(Dependency.gradle.projectConfig)
+    implementation(Dependency.gradle.runtimeConfig)
     implementation(Dependency.gradle.sqldelight)
     implementation(Dependency.gradle.hilt)
 }

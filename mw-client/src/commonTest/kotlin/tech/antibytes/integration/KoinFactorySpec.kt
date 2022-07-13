@@ -8,12 +8,12 @@ package tech.antibytes.integration
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.di.initKoin
 import tech.antibytes.mock.ConnectivityManagerStub
 import tech.antibytes.mock.LoggerStub
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.isNot
 import kotlin.test.Test
 

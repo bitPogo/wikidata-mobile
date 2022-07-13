@@ -17,12 +17,12 @@ object Version {
         /**
          * [AnitBytes GradlePlugins](https://github.com/bitPogo/gradle-plugins)
          */
-        const val antibytes = "ed855ae"
+        const val antibytes = "b1a580e"
 
         /**
          * [Spotless](https://plugins.gradle.org/plugin/com.diffplug.gradle.spotless)
          */
-        const val spotless = "6.3.0"
+        const val spotless = "6.4.2"
 
         /**
          * [Google Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
@@ -31,7 +31,8 @@ object Version {
     }
 
     object Antibytes {
-        val test = "c3e5acf"
+        const val test = "98f5a1d"
+        const val kfixture = "0.1.0"
     }
 
     /**

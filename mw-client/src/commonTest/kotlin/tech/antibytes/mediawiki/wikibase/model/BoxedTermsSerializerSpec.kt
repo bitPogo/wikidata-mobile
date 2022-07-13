@@ -12,20 +12,20 @@ import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import tech.antibytes.fixture.StringAlphaGenerator
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
+import tech.antibytes.kfixture.qualifier.qualifiedBy
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mock.wikibase.TestEntity
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.qualifier.named
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class BoxedTermsSerializerSpec {
-    private val alphaOnly = named("stringAlpha")
-    private val fixture = kotlinFixture { configuration ->
-        configuration.addGenerator(
+    private val alphaOnly = qualifiedBy("stringAlpha")
+    private val fixture = kotlinFixture {
+        addGenerator(
             String::class,
             StringAlphaGenerator,
             alphaOnly

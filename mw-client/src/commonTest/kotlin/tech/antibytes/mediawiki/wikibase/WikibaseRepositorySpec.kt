@@ -9,6 +9,9 @@ package tech.antibytes.mediawiki.wikibase
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import tech.antibytes.fixture.wikibase.q42
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
+import tech.antibytes.kfixture.listFixture
 import tech.antibytes.mediawiki.DataModelContract
 import tech.antibytes.mediawiki.EntityId
 import tech.antibytes.mediawiki.LanguageTag
@@ -25,9 +28,6 @@ import tech.antibytes.mock.serialization.SerializerStub
 import tech.antibytes.mock.wikibase.TestEntity
 import tech.antibytes.mock.wikibase.WikibaseApiServiceStub
 import tech.antibytes.util.test.coroutine.runBlockingTest
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import kotlin.test.BeforeTest

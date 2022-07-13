@@ -21,12 +21,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.util.coroutine.result.Failure
 import tech.antibytes.util.coroutine.result.ResultContract
 import tech.antibytes.util.coroutine.result.Success
 import tech.antibytes.util.coroutine.wrapper.SharedFlowWrapper
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.entity.domain.model.EntityModelContract
@@ -39,6 +41,7 @@ import tech.antibytes.wikidata.mock.PageStoreStub
 import tech.antibytes.wikidata.mock.SearchEntry
 import java.lang.RuntimeException
 
+@RunWith(RobolectricTestRunner::class)
 class TermSearchViewModelSpec {
     private val fixture = kotlinFixture()
     private val pageFlow: MutableSharedFlow<ResultContract<List<PageModelContract.SearchEntry>, Exception>> = MutableSharedFlow()
@@ -187,7 +190,7 @@ class TermSearchViewModelSpec {
             }
         }
 
-        capturedLanguage mustBe language.toLanguageTag().replace('_', '-').lowercase()
+        capturedLanguage mustBe language.toLanguageTag()
         capturedQuery mustBe query
     }
 
@@ -237,7 +240,7 @@ class TermSearchViewModelSpec {
             delay(10)
         }
 
-        capturedLanguage mustBe language.toLanguageTag().replace('_', '-').lowercase()
+        capturedLanguage mustBe language.toLanguageTag()
         capturedQuery mustBe query
         viewModel.result.value mustBe emptyList()
     }
@@ -296,6 +299,6 @@ class TermSearchViewModelSpec {
 
         // Then
         capturedId mustBe id
-        capturedLanguage mustBe language.toLanguageTag().replace('_', '-').lowercase()
+        capturedLanguage mustBe language.toLanguageTag()
     }
 }

@@ -13,6 +13,8 @@ import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.MwClientContract
 import tech.antibytes.mediawiki.PublicApi
 import tech.antibytes.mediawiki.serialization.JsonConfiguratorContract
@@ -20,8 +22,6 @@ import tech.antibytes.mock.ConnectivityManagerStub
 import tech.antibytes.mock.SuspendingFunctionWrapperFactoryStub
 import tech.antibytes.mock.serialization.JsonConfiguratorStub
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.isNot
 import tech.antibytes.util.test.mustBe
 import kotlin.test.Test

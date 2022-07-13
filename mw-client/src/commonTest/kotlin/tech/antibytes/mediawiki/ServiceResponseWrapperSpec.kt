@@ -8,14 +8,14 @@ package tech.antibytes.mediawiki
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.mock.ConnectivityManagerStub
 import tech.antibytes.mock.SuspendingFunctionWrapperFactoryStub
 import tech.antibytes.mock.SuspendingFunctionWrapperStub
 import tech.antibytes.util.coroutine.wrapper.CoroutineWrapperContract
 import tech.antibytes.util.test.coroutine.runBlockingTest
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.util.test.sameAs

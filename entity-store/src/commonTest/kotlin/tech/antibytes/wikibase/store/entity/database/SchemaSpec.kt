@@ -7,12 +7,12 @@
 package tech.antibytes.wikibase.store.entity.database
 
 import kotlinx.datetime.Instant
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
+import tech.antibytes.kfixture.listFixture
 import tech.antibytes.util.test.annotations.RobolectricConfig
 import tech.antibytes.util.test.annotations.RobolectricTestRunner
 import tech.antibytes.util.test.annotations.RunWithRobolectricTestRunner
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.listFixture
 import tech.antibytes.util.test.mustBe
 import tech.antibytes.wikibase.store.database.entity.Entity
 import tech.antibytes.wikibase.store.database.entity.EntityQueries

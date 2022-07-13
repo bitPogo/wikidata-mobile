@@ -19,13 +19,13 @@ import io.ktor.http.headersOf
 import io.ktor.util.toMap
 import kotlinx.coroutines.GlobalScope
 import tech.antibytes.fixture.StringAlphaGenerator
+import tech.antibytes.kfixture.fixture
+import tech.antibytes.kfixture.kotlinFixture
+import tech.antibytes.kfixture.listFixture
+import tech.antibytes.kfixture.pairFixture
+import tech.antibytes.kfixture.qualifier.qualifiedBy
 import tech.antibytes.mediawiki.error.MwClientError
 import tech.antibytes.util.test.coroutine.runBlockingTestInContext
-import tech.antibytes.util.test.fixture.fixture
-import tech.antibytes.util.test.fixture.kotlinFixture
-import tech.antibytes.util.test.fixture.listFixture
-import tech.antibytes.util.test.fixture.pairFixture
-import tech.antibytes.util.test.fixture.qualifier.named
 import tech.antibytes.util.test.fulfils
 import tech.antibytes.util.test.ktor.KtorMockClientFactory
 import tech.antibytes.util.test.mustBe
@@ -34,9 +34,9 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class RequestBuilderSpec {
-    private val alphaOnly = named("stringAlpha")
-    private val fixture = kotlinFixture { configuration ->
-        configuration.addGenerator(
+    private val alphaOnly = qualifiedBy("stringAlpha")
+    private val fixture = kotlinFixture {
+        addGenerator(
             String::class,
             StringAlphaGenerator,
             alphaOnly

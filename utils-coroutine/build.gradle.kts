@@ -41,8 +41,6 @@ kotlin {
             }
         }
         val commonTest by getting {
-            kotlin.srcDir("src-gen/commonTest/kotlin")
-
             dependencies {
                 implementation(Dependency.multiplatform.test.common)
                 implementation(Dependency.multiplatform.test.annotations)
@@ -61,10 +59,17 @@ kotlin {
                 implementation(LocalDependency.sqldelight.android)
             }
         }
+        val androidAndroidTestRelease by getting
+        val androidTestFixtures by getting
+        val androidTestFixturesDebug by getting
+        val androidTestFixturesRelease by getting
         val androidTest by getting {
-            dependencies {
-                dependsOn(commonTest)
+            dependsOn(androidAndroidTestRelease)
+            dependsOn(androidTestFixtures)
+            dependsOn(androidTestFixturesDebug)
+            dependsOn(androidTestFixturesRelease)
 
+            dependencies {
                 implementation(Dependency.multiplatform.test.jvm)
                 implementation(Dependency.multiplatform.test.junit)
                 implementation(Dependency.android.test.ktx)
@@ -82,8 +87,6 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                dependsOn(commonTest)
-
                 implementation(Dependency.multiplatform.test.jvm)
                 implementation(Dependency.multiplatform.test.junit)
             }
@@ -102,32 +105,5 @@ android {
 tasks.withType(Test::class.java) {
     testLogging {
         events(FAILED)
-    }
-}
-
-val templatesPath = "${projectDir}/src/commonTest/resources/template"
-val configPath = "${projectDir}/src-gen/commonTest/kotlin/tech/antibytes/util/coroutine/test/config"
-
-val provideTestConfig: Task by tasks.creating {
-    doFirst {
-        val templates = File(templatesPath)
-        val configs = File(configPath)
-
-        val config = File(templates, "TestConfig.tmpl")
-            .readText()
-            .replace("PROJECT_DIR", projectDir.toPath().toAbsolutePath().toString())
-
-        if (!configs.exists()) {
-            if(!configs.mkdir()) {
-                System.err.println("The script not able to create the config directory")
-            }
-        }
-        File(configPath, "TestConfig.kt").writeText(config)
-    }
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile::class.java) {
-    if (this.name.contains("Test")) {
-        this.dependsOn(provideTestConfig)
     }
 }
